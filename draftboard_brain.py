@@ -59,6 +59,7 @@ def save_keepers(keeper_list):
     # keeper_path = Path('../sleeper-api-wrapper/data/keepers/keepers.json')
     keeper_path = Path('data/keepers/keepers.json')
     print(f"Saving {len(keeper_list)} keepers to {keeper_path}")
+    Path('data/keepers').mkdir(parents=True, exist_ok=True)
     with open(keeper_path, 'w') as file:
         json.dump(keeper_list, file, indent=4)
     pass
@@ -146,6 +147,10 @@ def get_adp_df(adp_type="2qb", adp_year=YEAR, teams_count=12, positions="all"):
                 print("Error reading local copy and error reading remote copy.  Must break. ")
                 pass
         finally:
+            adp_dir = Path('data/adp')
+            adp_dir.mkdir(parents=True, exist_ok=True)
+            # file_path.mkdir(parents=True, exist_ok=True)
+            # pathlib.Path('data/adp').mkdir(parents=True, exist_ok=True)
             with open(file_path, 'w') as data_file:
                 json.dump(adp_data, data_file, indent=4)
 
@@ -557,9 +562,6 @@ def get_player_pool(player_count=400):
     # ---- Add VBD per position  ----- #
     p_pool = add_vbd(p_pool)
 
-    # ------ Save Columns to JSON for reference ------- #
-    # with open('data/draftboard/player_pool_columns.json', "w") as file:
-    #     json.dump(p_pool.columns.tolist(), file, indent=4)
     end_time = time.time()
     print(f"Time to make Player Draft Pool: {end_time - start_time}")
     return p_pool, draft_order, league_found
@@ -634,6 +636,7 @@ def open_keepers(get=None):
 
 def clear_all_keepers():
     keeper_list = []
+    Path('data/keepers').mkdir(exist_ok=True, parents=True)
     with open('data/keepers/keepers.json', 'w') as file:
         json.dump(keeper_list, file, indent=4)
     print("keepers.json overwritten, set as []")

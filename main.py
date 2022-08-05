@@ -1,3 +1,4 @@
+import WeezDraftboard
 # This is a sample Python script.
 
 # Press ⌃R to execute it or replace it with your code.
@@ -11,6 +12,6 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('Weezy 3')
+    WeezDraftboard()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
