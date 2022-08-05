@@ -362,7 +362,7 @@ def WeezDraftboard():
     window.close()
 
 
-WeezDraftboard()
+# WeezDraftboard()
 
 """
       
