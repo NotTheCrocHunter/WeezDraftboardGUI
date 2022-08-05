@@ -168,12 +168,15 @@ def WeezDraftboard():
             break
         elif event == 'Select League':
             league = LeaguePopUp()
-            draft_order = get_draft_order(league)
-            for c in range(MAX_COLS):
-                window[f"TEAM{c}"].update(text=f"{draft_order[c + 1]}")
-            sg.popup_quick_message("Calculating Custom Score")
-            PP['fpts'] = PP.apply(lambda row: get_custom_score_row(row, league.scoring_settings), axis=1)
-            PP = add_vbd(PP)
+            if league:
+                draft_order = get_draft_order(league)
+                for c in range(MAX_COLS):
+                    window[f"TEAM{c}"].update(text=f"{draft_order[c + 1]}")
+                sg.popup_quick_message("Calculating Custom Score")
+                PP['fpts'] = PP.apply(lambda row: get_custom_score_row(row, league.scoring_settings), axis=1)
+                PP = add_vbd(PP)
+            else:
+                pass
         elif event == "-HIDE-DRAFTED-":
             for t in ["ALL", "QB", "WR", "TE", "RB"]:
                 table_data = get_cheatsheet_data(PP, pos=t, hide_drafted=window["-HIDE-DRAFTED-"].get())
