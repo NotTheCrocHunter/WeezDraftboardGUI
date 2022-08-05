@@ -4,11 +4,11 @@ from pathlib import Path
 import json
 from sleeper_wrapper import League
 
+
 """
 Select the League
 Display League Info
 Calculate Custom Score 
-
 """
 def LeaguePopUp():
 
@@ -27,7 +27,6 @@ def LeaguePopUp():
         new_file = True  # This will clear out the "Enter League ID text" when saving the first time
         id_path.mkdir(parents=True, exist_ok=True)
         league_id_list = ["Enter League ID"]
-
     col1_layout = [[sg.DropDown(values=league_id_list,
                                 default_value=league_id_list[0],
                                 size=(20, 1),

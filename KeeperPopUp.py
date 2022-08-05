@@ -121,7 +121,10 @@ def KeeperPopUp(df):
             # df Switch the keeper values on/off
             df = reset_keepers(df)  # resets the keeper values in the json and the dataframe
             # get the mock keeper list
-            mock_keepers = get_mock_keepers(855693188285992960)
+            mock_id = sg.PopupGetText("Get Mock Keepers")
+            if not mock_id:
+                break
+            mock_keepers = get_mock_keepers(mock_id)
             # fix the column names
             for k in mock_keepers:
                 k['sleeper_id'] = k['player_id']
@@ -135,11 +138,11 @@ def KeeperPopUp(df):
             for p in keeper_list:
                 id = p['sleeper_id']
                 is_keeper = p['is_keeper']
-                is_drafted = p["is_drafted"]
+                # is_drafted = p["is_drafted"]
                 pick_no = p['pick_no']
                 slot = p['draft_slot']
                 rd = p['round']
-                df.loc[df['sleeper_id'] == id, k_cols] = [is_keeper, is_drafted, pick_no, slot, rd]
+                df.loc[df['sleeper_id'] == id, k_cols] = [is_keeper, pick_no, slot, rd]  # is_drafted
 
             window["-KEEPER-LIST-"].update(values=keeper_list_text)
             # print(mock_keepers)

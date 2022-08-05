@@ -36,10 +36,12 @@ def make_pick_list():
     return pl.tolist()
 
 
-def get_mock_keepers(mock_id=856772332067360768):
-    mock_draft = Drafts(mock_id)
-
-    return mock_draft.get_all_picks()
+def get_mock_keepers(mock_id):
+    try:
+        mock_draft = Drafts(mock_id)
+        return mock_draft.get_all_picks()
+    except:
+        sg.popup_quick_message("Error getting mock keepers")
 
 
 def reset_keepers(df):
@@ -606,12 +608,14 @@ def open_keepers(get=None):
         with open(keeper_json_path, "r") as data:
             keeper_list = json.load(data)
             print(f"Total Keepers Found: {len(keeper_list)}")
-            keeper_list_text = [f"{k['round']}.{k['draft_slot']} {k['sleeper_id']}" for k in keeper_list]
+            keeper_list_text = [f"{k['round']}.{k['draft_slot']}" for k in keeper_list]
+            # keeper_list_text = [f"{k['name']} {k['round']}.{k['draft_slot']}" for k in keeper_list]
     except KeyError:
         with open(keeper_json_path, "r") as data:
             keeper_list = json.load(data)
             print(f"Opened Keeper List: {keeper_list}")
-            keeper_list_text = [f"{k['round']}.{k['draft_slot']} {k['player_id']}" for k in keeper_list]
+            keeper_list_text = [f"{k['round']}.{k['draft_slot']}" for k in keeper_list]
+            # keeper_list_text = [f"{k['name']} {k['round']}.{k['draft_slot']}" for k in keeper_list]
     except FileNotFoundError:
         keeper_list = []
         keeper_list_text = []
