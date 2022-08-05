@@ -3,7 +3,8 @@ from draftboard_brain import *
 import pdb
 
 def KeeperPopUp(df):
-
+    df['name'].fillna("NA", inplace=True)
+    print(df["sleeper_id"].loc[df["name"] == "NA"])
     keeper_list = df.loc[df["is_keeper"] == True, 'name'].to_list()
     not_kept_list = df.loc[df["is_keeper"] != True, 'name'].to_list()
     # Create pick_list list for window["-KEEPER-PICK-"]
@@ -40,6 +41,7 @@ def KeeperPopUp(df):
             save_keepers(df.loc[df["is_keeper"] == True].to_dict('records'))
             break
         elif event == "-FILTER-":
+
             new_list = [i for i in not_kept_list if values['-FILTER-'].lower() in i.lower()]
             window['-DRAFT-POOL-'].update(new_list)
         elif event == "-ADD-KEEPER-":
