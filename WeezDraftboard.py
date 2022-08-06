@@ -14,11 +14,12 @@ def WeezDraftboard():
                            non_blocking=True, font='Default 18')
 
     sg.set_options(element_padding=(1, 1))
-    sg.set_options(font=("Calibri", 10, "normal"))
+    sg.set_options(font=("Calibri", 11, "normal"))
     # --- GUI Definitions ------- #
     menu_def = [['File', ['Open', 'Save', 'Exit']],
                 ['Draft ID', ['Select Draft ID']],
                 ['League', ['Select League']],
+                ['ADP', ['2QB', 'PPR', 'Half-PPR', 'Standard']],
                 ['Player Pool', ['View Player Pool', 'View Projections', 'View Rank Differences']],
                 ['Keepers', ['Set Keepers', 'Clear All Keepers']],
                 ['Edit', ['Paste', ['Special', 'Normal', ], 'Undo'], ],
@@ -113,7 +114,7 @@ def WeezDraftboard():
     #  table = sg.Table(table_data, headings=headings, vertical_scroll_only=False)
     table = get_bottom_table(PP)
     col3_layout = [[table]]
-    col3 = sg.Column(col3_layout)
+    col3 = sg.Column(col3_layout, size=(1550, 300))
     # wrapping col1 in another column before the pane for scrolling
     col1_1 = sg.Column([[col1]], expand_x=True, expand_y=True)
     pane1 = sg.Pane([col1_1, col2],
@@ -127,11 +128,10 @@ def WeezDraftboard():
                     handle_size=5,
                     expand_x=True,
                     expand_y=True)
-    # pane2 = sg.Pane
     layout = [[sg.Menu(menu_def)],
               [sg.Text('Weez Draftboard', font='Any 18'),
-               sg.Button('Load ECR', key="-Load-ECR-"),
-               sg.Button('Load ADP', key="-Load-ADP-"),
+               sg.Button('Load ECR', key="-LOAD-ECR-"),
+               sg.Button('Load ADP', key="-LOAD-ADP-"),
                sg.Button('Load Draftboard', key="-LOAD-DB-"),
                sg.Button('Refresh', key="-Refresh-"),
                sg.Button('Connect to Draft', key="-CONNECT-TO-LIVE-DRAFT-"),
@@ -166,6 +166,10 @@ def WeezDraftboard():
         # --- Process buttons --- #
         if event in (sg.WIN_CLOSED, 'Exit'):
             break
+        elif event in ['2QB', 'PPR', 'Half-PPR', 'STD']:
+            PP, draft_order, league_found = get_player_pool(adp_type=event.lower())
+            adp_db = get_db_arr(PP, "adp")
+            window["-LOAD-ADP-"].click()
         elif event == 'Select League':
             league = LeaguePopUp()
             if league:
@@ -301,7 +305,7 @@ def WeezDraftboard():
                             window[(r, c)].update(button_color="gray")
                         else:
                             window[(r, c)].update(button_color=button_reset_color)
-        elif event == "-Load-ADP-":
+        elif event == "-LOAD-ADP-":
             live_board = False
             for c in range(MAX_COLS):
                 for r in range(MAX_ROWS):
@@ -309,7 +313,7 @@ def WeezDraftboard():
                                           text=adp_db[r, c]['button_text'], )
                     window[(r, c)].metadata["button_color"] = BG_COLORS[adp_db[r, c]["position"]]
                     window[(r, c)].metadata["sleeper_id"] = adp_db[r, c]["sleeper_id"]
-        elif event == "-Load-ECR-":
+        elif event == "-LOAD-ECR-":
             live_board = False
             for c in range(MAX_COLS):
                 for r in range(MAX_ROWS):

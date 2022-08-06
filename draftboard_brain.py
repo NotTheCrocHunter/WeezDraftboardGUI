@@ -90,6 +90,7 @@ def get_sleeper_ids(df):
 
         if new_name == "williamfullerv":
             new_name = "williamfuller"
+
         if new_name == "gabrieldavis":
             new_name = "gabedavis"
         search_names.append(new_name)
@@ -108,22 +109,19 @@ def get_sleeper_ids(df):
             df.loc[index, "sleeper_id"] = row["team"]
         else:
             df.loc[index, "sleeper_id"] = row["player_id"]
-    # df['sleeper_id'] = df.apply(lambda x: x['team'] if x['player_id'] is None else x['player_id'], axis=1)
     match_search_names = df['search_full_name'].to_list()
     missing_search_names = [n for n in search_names if n not in match_search_names]
     if missing_search_names:
         print(f"Missing Search Names: {missing_search_names}")
-    # print(df.loc[df['name'] == "Tyreek Hill"])
-    # pdb.set_trace()
     return df
 
 
 def get_adp_df(adp_type="2qb", adp_year=YEAR, teams_count=12, positions="all"):
     start_time = time.time()
+    adp_type = adp_type.lower()
     base_url = f"https://fantasyfootballcalculator.com/api/v1/adp/" \
                f"{adp_type}?teams={teams_count}&{adp_year}&position={positions}"
-    # file_path = Path('../sleeper-api-wrapper/data/adp/adp.json')
-    file_path = Path('data/adp/adp.json')
+    file_path = Path(f'data/adp/adp_{adp_type}.json')
     try:
         with open(file_path, "r") as data_file:
             adp_data = json.load(data_file)
@@ -149,13 +147,10 @@ def get_adp_df(adp_type="2qb", adp_year=YEAR, teams_count=12, positions="all"):
         finally:
             adp_dir = Path('data/adp')
             adp_dir.mkdir(parents=True, exist_ok=True)
-            # file_path.mkdir(parents=True, exist_ok=True)
-            # pathlib.Path('data/adp').mkdir(parents=True, exist_ok=True)
             with open(file_path, 'w') as data_file:
                 json.dump(adp_data, data_file, indent=4)
 
-    # with open('../sleeper-api-wrapper/data/adp/adp.json', 'r') as file:
-    with open('data/adp/adp.json', 'r') as file:
+    with open(file_path, 'r') as file:
         adp_data = json.load(file)
 
     adp_dict = adp_data["players"]
@@ -253,10 +248,6 @@ def get_ecr_rankings(player_count=225):
                        "SOS SEASON": "sos_season",
                        "ECR VS. ADP": "ecr_vs_adp"}
 
-    # ecr_qb_df = pd.read_csv("../sleeper-api-wrapper/data/fpros/FantasyPros_2022_Draft_QB_Rankings.csv")
-    # ecr_rb_df = pd.read_csv("../sleeper-api-wrapper/data/fpros/FantasyPros_2022_Draft_RB_Rankings.csv")
-    # ecr_wr_df = pd.read_csv("../sleeper-api-wrapper/data/fpros/FantasyPros_2022_Draft_WR_Rankings.csv")
-    # ecr_te_df = pd.read_csv("../sleeper-api-wrapper/data/fpros/FantasyPros_2022_Draft_TE_Rankings.csv")
     ecr_qb_df = pd.read_csv("data/fpros/FantasyPros_2022_Draft_QB_Rankings.csv")
     ecr_rb_df = pd.read_csv("data/fpros/FantasyPros_2022_Draft_RB_Rankings.csv")
     ecr_wr_df = pd.read_csv("data/fpros/FantasyPros_2022_Draft_WR_Rankings.csv")
@@ -294,12 +285,13 @@ def clean_qb_df(qb_df):
     qb_df["position_rank_projections"] = qb_df.index + 1
     qb_df["position_rank_projections"].fillna(0, inplace=True)
     # remove non-numeric (commas) characters from the number fields
+    qb_df.dropna(inplace=True, thresh=5)
     qb_df.replace(',', '', regex=True, inplace=True)
     qb_df["pass_yd"] = qb_df["pass_yd"].apply(pd.to_numeric)
     qb_df["position"] = "QB"
     qb_df["pos_rank"] = qb_df["position"] + qb_df["position_rank_projections"].astype(str)
 
-    qb_df.dropna(inplace=True, thresh=5)
+
 
     return qb_df
 
@@ -487,10 +479,10 @@ def merge_dfs(df1, df2, col_to_match, how="left"):
     return df
 
 
-def get_player_pool(player_count=400):
+def get_player_pool(player_count=400, adp_type='2qb'):
     start_time = time.time()
     fpros_df = get_fpros_data(player_count)
-    adp_df = get_adp_df()
+    adp_df = get_adp_df(adp_type=adp_type)
 
     # remove kickers and defenses
     adp_kd = adp_df.loc[adp_df['position'].isin(["PK", "DEF"])]
