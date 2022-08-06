@@ -224,9 +224,6 @@ def get_ecr_rankings(player_count=225):
     and pos_rank, pos_tier.  Also modify the self.dfs for projections.
     self.flex_df, self.rb_df, self.wr_df, self.te_df = self.clean_flex_df()
     """
-    # pd.set_option('display.max_columns', None)
-
-    # sf_rank_path = Path("../sleeper-api-wrapper/data/fpros/FantasyPros_2022_Draft_SuperFlex_Rankings.csv")
     sf_rank_path = Path("data/fpros/FantasyPros_2022_Draft_SuperFlex_Rankings.csv")
     ecr_sf_df = pd.read_csv(sf_rank_path)
     ecr_sf_df.drop(columns="ECR VS. ADP", inplace=True)
@@ -272,7 +269,7 @@ def get_ecr_rankings(player_count=225):
 def clean_qb_df(qb_df):
     # lower case all column names
     qb_df.columns = qb_df.columns.str.lower()
-
+    qb_df.dropna(inplace=True)
     qb_df.rename(columns={"tds": "pass_td",
                           "ints": "pass_int",
                           "att": "pass_att",
@@ -285,9 +282,10 @@ def clean_qb_df(qb_df):
     qb_df["position_rank_projections"] = qb_df.index + 1
     qb_df["position_rank_projections"].fillna(0, inplace=True)
     # remove non-numeric (commas) characters from the number fields
-    qb_df.dropna(inplace=True, thresh=5)
-    qb_df.replace(',', '', regex=True, inplace=True)
-    qb_df["pass_yd"] = qb_df["pass_yd"].apply(pd.to_numeric)
+    print(qb_df[pd.to_numeric(qb_df.pass_yd, errors='coerce').isnull()])
+    # qb_df.apply(lambda x: x.str.replace(',', '.'))  # replace(',', '', regex=True, inplace=True)
+    # df.apply(lambda ))
+    qb_df["pass_yd"] = qb_df["pass_yd"].apply(pd.to_numeric, errors='coerce')
     qb_df["position"] = "QB"
     qb_df["pos_rank"] = qb_df["position"] + qb_df["position_rank_projections"].astype(str)
 
@@ -451,8 +449,8 @@ def get_fpros_projections():
     # flex_path = Path("../sleeper-api-wrapper/data/fpros/FantasyPros_Fantasy_Football_Projections_FLX.csv")
     qb_path = Path("data/fpros/FantasyPros_Fantasy_Football_Projections_QB.csv")
     flex_path = Path("data/fpros/FantasyPros_Fantasy_Football_Projections_FLX.csv")
-    qb_df = pd.read_csv(qb_path, skiprows=[1])
-    flex_df = pd.read_csv(flex_path, skiprows=[1])
+    qb_df = pd.read_csv(qb_path, skiprows=[1], thousands=",")
+    flex_df = pd.read_csv(flex_path, skiprows=[1], thousands=",")
 
     qb_df = clean_qb_df(qb_df)
     qb_df = get_sleeper_ids(qb_df)

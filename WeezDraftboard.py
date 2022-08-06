@@ -22,7 +22,7 @@ def WeezDraftboard():
                 ['ADP', ['2QB', 'PPR', 'Half-PPR', 'Standard']],
                 ['Player Pool', ['View Player Pool', 'View Projections', 'View Rank Differences']],
                 ['Keepers', ['Set Keepers', 'Clear All Keepers']],
-                ['Edit', ['Paste', ['Special', 'Normal', ], 'Undo'], ],
+                ['Edit', ['Edit Me', 'Paste', ['Special', 'Normal', ], 'Undo'], ],
                 ['Help', 'About...'], ]
 
     RELIEF_ = "flat"  # "groove" "raised" "sunken" "solid" "ridge"
@@ -102,12 +102,23 @@ def WeezDraftboard():
                    [get_cheatsheet_table(PP, pos="TE", hide_drafted=False)],
                    ]
     tab2_layout = [[get_cheatsheet_table(PP, pos="ALL", hide_drafted=False)]]
+    tab3_layout = [[sg.Text(f"TEMP_{n}", enable_events=True)] for n in range(192)]
+    """   layout = [[sg.Button("OK")],
+              [sg.Button("OK 2")],
+              [sg.Button("OK 3")],
+              [sg.Button("OK 4")],
+              [sg.Button("OK 5")]]"""
+    #tab3_layout = [[sg.T("R", size=(3, 1), justification='left')] +
+    #                [sg.Checkbox(f"Temp {c}")
+    #                 for c in range(MAX_COLS)]] # for r in range(MAX_ROWS)]
+
 
     # ---Cheatsheet for tables in Tabs---#
-    tab1 = sg.Tab("Pos. Cheatsheets", tab1_layout, key="tab1")
-    tab2 = sg.Tab("ECR Overall", tab2_layout, key="tab2")
+    tab1 = sg.Tab("ECR", tab1_layout, key="tab1")
+    tab2 = sg.Tab("TAB", tab2_layout, key="tab2")
+    tab3 = sg.Tab("T3", tab3_layout, key="tab3")
     # ------ Put Tabs in Groups and then in a Pane ------ #
-    tab_group = [[sg.TabGroup([[tab1, tab2]], key="tab_group")]]
+    tab_group = [[sg.TabGroup([[tab1, tab2, tab3]], key="tab_group")]]
     col2 = sg.Column(tab_group, scrollable=False, grab=True, pad=(1,5), size=(300, 800))
     headings = PP.columns.tolist()
     table_data = PP.values.tolist()
@@ -166,6 +177,11 @@ def WeezDraftboard():
         # --- Process buttons --- #
         if event in (sg.WIN_CLOSED, 'Exit'):
             break
+        if event == 'Edit Me':
+            sg.execute_editor(__file__)
+        elif event in [f"TEMP_{n}" for n in range(192)]:
+            print(event)
+            window[event].update(value="Blue")
         elif event in ['2QB', 'PPR', 'Half-PPR', 'STD']:
             PP, draft_order, league_found = get_player_pool(adp_type=event.lower())
             adp_db = get_db_arr(PP, "adp")
