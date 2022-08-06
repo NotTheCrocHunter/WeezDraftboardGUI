@@ -85,7 +85,7 @@ def WeezDraftboard():
                          key=(r, c))
                     for c in range(MAX_COLS)] for r in range(MAX_ROWS)]
 
-    col1 = sg.Column(col1_layout, scrollable=True, vertical_alignment="bottom", size=(1250, 800),
+    col1 = sg.Column(col1_layout, scrollable=True, vertical_alignment="bottom", size=(1250, 400),
                      justification="left",
                      vertical_scroll_only=True,
                      element_justification="left",
