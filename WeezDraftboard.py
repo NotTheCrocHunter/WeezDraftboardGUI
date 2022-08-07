@@ -93,33 +93,13 @@ def WeezDraftboard():
                      expand_y=True,
                      expand_x=False,
                      pad=1)
-
-    # New layouts for Tabs containing tables:
-    tab1_layout = [[sg.T("Cheat Sheets")],
+    col2_layout = [[sg.T("Cheat Sheets")],
                    [get_cheatsheet_table(PP, pos="QB", hide_drafted=False)],
                    [get_cheatsheet_table(PP, pos="RB", hide_drafted=False)],
                    [get_cheatsheet_table(PP, pos="WR", hide_drafted=False)],
                    [get_cheatsheet_table(PP, pos="TE", hide_drafted=False)],
                    ]
-    tab2_layout = [[get_cheatsheet_table(PP, pos="ALL", hide_drafted=False)]]
-    tab3_layout = [[sg.Text(f"TEMP_{n}", enable_events=True)] for n in range(192)]
-    """   layout = [[sg.Button("OK")],
-              [sg.Button("OK 2")],
-              [sg.Button("OK 3")],
-              [sg.Button("OK 4")],
-              [sg.Button("OK 5")]]"""
-    #tab3_layout = [[sg.T("R", size=(3, 1), justification='left')] +
-    #                [sg.Checkbox(f"Temp {c}")
-    #                 for c in range(MAX_COLS)]] # for r in range(MAX_ROWS)]
-
-
-    # ---Cheatsheet for tables in Tabs---#
-    tab1 = sg.Tab("ECR", tab1_layout, key="tab1")
-    tab2 = sg.Tab("TAB", tab2_layout, key="tab2")
-    tab3 = sg.Tab("T3", tab3_layout, key="tab3")
-    # ------ Put Tabs in Groups and then in a Pane ------ #
-    tab_group = [[sg.TabGroup([[tab1, tab2, tab3]], key="tab_group")]]
-    col2 = sg.Column(tab_group, scrollable=False, grab=True, pad=(1,5), size=(300, 800))
+    col2 = sg.Column(col2_layout, scrollable=False, grab=True, pad=(1,5), size=(300, 800))
     headings = PP.columns.tolist()
     table_data = PP.values.tolist()
     #  table = sg.Table(table_data, headings=headings, vertical_scroll_only=False)
@@ -177,11 +157,8 @@ def WeezDraftboard():
         # --- Process buttons --- #
         if event in (sg.WIN_CLOSED, 'Exit'):
             break
-        if event == 'Edit Me':
+        elif event == 'Edit Me':
             sg.execute_editor(__file__)
-        elif event in [f"TEMP_{n}" for n in range(192)]:
-            print(event)
-            window[event].update(value="Blue")
         elif event in ['2QB', 'PPR', 'Half-PPR', 'STD']:
             PP, draft_order, league_found = get_player_pool(adp_type=event.lower())
             adp_db = get_db_arr(PP, "adp")
@@ -198,7 +175,7 @@ def WeezDraftboard():
             else:
                 pass
         elif event == "-HIDE-DRAFTED-":
-            for t in ["ALL", "QB", "WR", "TE", "RB"]:
+            for t in ["QB", "WR", "TE", "RB"]: # "ALL",
                 table_data = get_cheatsheet_data(PP, pos=t, hide_drafted=window["-HIDE-DRAFTED-"].get())
                 window[f"-{t}-TABLE-"].update(values=table_data)
         # click on button event
@@ -210,13 +187,13 @@ def WeezDraftboard():
             if window[(r, c)].metadata["is_clicked"]:
                 window[(r, c)].update(button_color='white on gray')
                 PP.loc[PP["sleeper_id"] == s_id, "is_drafted"] = True
-                for t in ["ALL", "QB", "WR", "TE", "RB", "BOTTOM"]:
+                for t in ["QB", "WR", "TE", "RB", "BOTTOM"]:  # "ALL",
                     table_data = get_cheatsheet_data(PP, pos=t, hide_drafted=window["-HIDE-DRAFTED-"].get())
                     window[f"-{t}-TABLE-"].update(values=table_data)
             else:
                 window[(r, c)].update(button_color=window[(r, c)].metadata["button_color"])
                 PP.loc[PP["sleeper_id"] == s_id, "is_drafted"] = False
-                for t in ["ALL", "QB", "WR", "TE", "RB", "BOTTOM"]:
+                for t in ["QB", "WR", "TE", "RB", "BOTTOM"]:  # "ALL",
                     table_data = get_cheatsheet_data(PP, pos=t, hide_drafted=window["-HIDE-DRAFTED-"].get())
                     window[f"-{t}-TABLE-"].update(values=table_data)
         elif event == "-CONNECT-TO-LIVE-DRAFT-":
@@ -273,7 +250,7 @@ def WeezDraftboard():
             else:
                 drafted_ids = PP.loc[PP["is_drafted"] == True, "sleeper_id"].tolist()
             PP.loc[PP["sleeper_id"].isin(drafted_ids), "is_drafted"] = True
-            for t in ["ALL", "QB", "WR", "TE", "RB", "BOTTOM"]:
+            for t in ["QB", "WR", "TE", "RB", "BOTTOM"]: # "ALL",
                 table_data = get_cheatsheet_data(PP, pos=t, hide_drafted=window["-HIDE-DRAFTED-"].get())
                 window[f"-{t}-TABLE-"].update(values=table_data)
             # assign the player to the draftboard array

@@ -510,7 +510,8 @@ def get_player_pool(player_count=400, adp_type='2qb'):
     p_pool['pos_rank'] = p_pool["pos_rank"].fillna("NA999")
 
     # Now time to add the button_text and cheatsheet_text values
-    p_pool["cheatsheet_text"] = p_pool['pos_rank'] + ' ' + p_pool['name'] + ' ' + p_pool['team']
+    # p_pool["cheatsheet_text"] = p_pool['pos_rank'] + ' ' + p_pool['name'] + ' ' + p_pool['team']
+    p_pool["cheatsheet_text"] = p_pool['first_name'].astype(str).str[0] + '. ' + p_pool['last_name'] + ' ' + p_pool['team']
     p_pool["button_text"] = p_pool['first_name'] + '\n' + p_pool['last_name'] + '\n' + p_pool[
         'position'] + ' (' + p_pool['team'] + ') ' + p_pool['bye'].astype(str)
 
@@ -676,11 +677,15 @@ def add_vbd(df):
         # print(new_df)
 
     new_df = merge_dfs(new_df, df, "sleeper_id", how="outer")
+
     new_df = sort_reset_index(new_df, sort_by=["vbd", "fpts"])
     new_df['vbd_rank'] = new_df.index + 1
+    s = new_df['position_tier_ecr']
+    pd.to_numeric(s, downcast="integer")
+    new_df['position_tier_ecr'] = s
     name1 = df["name"].tolist()
     name2 = new_df["name"].tolist()
-    names_not_in = list(set(name2) - set(name1))
+    names_not_in = list(set(name1) - set(name2))
     print(names_not_in)
 
     return new_df
