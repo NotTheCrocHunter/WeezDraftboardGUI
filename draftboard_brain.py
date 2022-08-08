@@ -9,6 +9,7 @@ import json
 import PySimpleGUI as sg
 import numpy as np
 from datetime import datetime
+from scrape import scrape_bchen
 
 MAX_ROWS = 17
 MAX_COLS = 12
@@ -59,7 +60,7 @@ def save_keepers(keeper_list):
     # keeper_path = Path('../sleeper-api-wrapper/data/keepers/keepers.json')
     keeper_path = Path('data/keepers/keepers.json')
     print(f"Saving {len(keeper_list)} keepers to {keeper_path}")
-    Path('data/keepers').mkdir(parents=True, exist_ok=True)
+
     with open(keeper_path, 'w') as file:
         json.dump(keeper_list, file, indent=4)
     pass
@@ -67,15 +68,17 @@ def save_keepers(keeper_list):
 
 def get_sleeper_ids(df):
     # ----- Create the search_names (all lowercase, no spaces) ------ #
+
     search_names = []
     remove = ['jr', 'ii', 'sr']
     for idx, row in df.iterrows():
-        if row["team"] == "JAC":
-            df.loc[idx, "team"] = "JAX"
-        if row['name'] == "Kyle Rudolph":
-            row["team"] == "TB"
-        if row["team"] == "FA":
-            df.loc[idx, "team"] = None
+        if "team" in row.keys():
+            if ["team"] == "JAC":
+                df.loc[idx, "team"] = "JAX"
+            if row['name'] == "Kyle Rudolph":
+                row["team"] == "TB"
+            if row["team"] == "FA":
+                df.loc[idx, "team"] = None
         new_name = re.sub(r'\W+', '', row['name']).lower()
         if new_name[-3:] == "iii":
             new_name = new_name[:-3]
@@ -96,11 +99,16 @@ def get_sleeper_ids(df):
         search_names.append(new_name)
 
     df['search_full_name'] = search_names
-    search_name_tuples = list(zip(df.search_full_name, df.team))
-
     players_df = players.get_players_df()
-    players_match_df = players_df[
-        players_df[['search_full_name', 'team']].apply(tuple, axis=1).isin(search_name_tuples)]
+    if "team" in df.columns:
+        search_name_tuples = list(zip(df.search_full_name, df.team))
+        players_match_df = players_df[
+            players_df[['search_full_name', 'team']].apply(tuple, axis=1).isin(search_name_tuples)]
+    else:
+        search_name_tuples = list(zip(df.search_full_name, df.position))
+        players_match_df = players_df[
+            players_df[['search_full_name', 'position']].apply(tuple, axis=1).isin(search_name_tuples)]
+
     cols_to_use = players_match_df.columns.difference(df.columns).to_list()
     cols_to_use.append("search_full_name")
     df = pd.merge(df, players_match_df[cols_to_use], how="left", on="search_full_name")
@@ -337,8 +345,6 @@ def get_cheatsheet_data(df, pos="all", hide_drafted=False):
     """
     Cheat Sheet Data for the rows of the tables building
     """
-    import warnings
-
     pos = pos.upper()  # Make pos var CAPS to align with position values "QB, RB, WR TE" and sg element naming format
     # ------ Remove Kickers and Defenses ------- #
     df = df.loc[df["position"].isin(["QB", "RB", "WR", "TE"])]
@@ -357,8 +363,8 @@ def get_cheatsheet_data(df, pos="all", hide_drafted=False):
         cols = ['sleeper_id', 'name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona']
     else:
         df = df.loc[df.position == pos]
-        cols = ['sleeper_id', 'position_tier_ecr', 'cheatsheet_text']
-        df = df.sort_values(by=["position_rank_ecr"], ascending=True, na_position="last")
+        cols = ['sleeper_id', 'position_tier_chen', 'cheatsheet_text']
+        df = df.sort_values(by=["position_rank_chen"], ascending=True, na_position="last")
 
     df = df[cols]
     # df = df.fillna(value="999")
@@ -552,10 +558,80 @@ def get_player_pool(player_count=400, adp_type='2qb'):
     p_pool, draft_order, league_found = load_saved_league(p_pool)
     # ---- Add VBD per position  ----- #
     p_pool = add_vbd(p_pool)
-
+    # ---- Add Chen Tiers ----- #
+    chen_df = get_chen_tiers()
+    p_pool = merge_dfs(p_pool, chen_df, "sleeper_id")
     end_time = time.time()
     print(f"Time to make Player Draft Pool: {end_time - start_time}")
+    cols_to_fill = ['position_rank_vbd', 'vbd_rank', 'position_rank_chen', 'position_tier_chen']
+    p_pool[cols_to_fill] = p_pool[cols_to_fill].fillna(999).astype(int)
     return p_pool, draft_order, league_found
+
+
+def get_chen_tiers():
+    # ---- Declare Paths, URLs, and position list------ #
+    base_save_path = Path('../data/rankings/chen')
+    Path('../data/rankings/chen').mkdir(parents=True, exist_ok=True)
+    positions = ["QB", "RB", "WR", "TE"]
+    scoring_type = "PPR"
+    TODAY = datetime.today().strftime('%Y-%m-%d')
+    chen_json = Path("../data/rankings/chen/chen_tiers.json")
+
+    try:
+        with open(chen_json, "r") as file:
+            chen_dict = json.load(file)
+            chen_date = chen_dict["last_saved"]
+    except FileNotFoundError:
+        chen_date = None
+
+    if chen_date == TODAY:
+        df = pd.DataFrame(chen_dict["players"])
+        return df
+    else:
+        print(f"Updating Chen tiers.")
+        # ---- File doesn't exist, make the CSV calls ----- #
+        # --- Dict to rename columns ---- #
+        col_changes = {"Rank": "position_rank_chen",
+                       "Tier": "position_tier_chen",
+                       "Player.Name": "name",
+                       "Position": "position",
+                       "Best.Rank": "bye",
+                       "Worst.Rank": "worst_rank",
+                       "Avg.Rank": "avg_rank",
+                       "Std.Dev": "std_dev"}
+        cols_for_df = [v for k, v in col_changes.items()]
+        # ----- For Loop to get the cheat sheet for each position ----#
+        pos_df_list = []
+        for p in positions:
+            # ---- Assign the URL for the API call ---- #
+            if p == "QB":
+                url = "https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-QB.csv"
+            else:
+                url = f"https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-{p}-{scoring_type}.csv"
+            # -- Make the request and save the CSV locally ---- #
+            r = requests.get(url)
+            save_path = base_save_path / f"{p}.csv"
+            with open(save_path, 'wb') as file:
+                file.write(r.content)
+            # ---- Make dataframe of CSV ------ #
+            temp_df = pd.read_csv(save_path)
+            # ----- Rename Columns ------ #
+            temp_df.rename(columns=col_changes, inplace=True)
+            # ----- Get Sleeper IDs ------ #
+            temp_df = get_sleeper_ids(temp_df)
+            # ----- Concat to df ----
+            pos_df_list.append(temp_df)
+
+        # ---- Finally, after making the DF nad saving the CSVs, save all as JSON ------ #
+        df = pd.concat(pos_df_list, axis=0)
+        players_list = df.to_dict(orient="records")
+        chen_dict = {"last_saved": TODAY, "scoring_type": scoring_type, "players": players_list}
+        with open(chen_json, "w") as file:
+            json.dump(chen_dict, file, indent=4)
+
+        return df
+
+
 
 
 def load_saved_league(df):
@@ -676,7 +752,7 @@ def add_vbd(df):
         new_df = pd.concat([new_df, temp_df], axis=0)
         # print(new_df)
 
-    new_df = merge_dfs(new_df, df, "sleeper_id", how="outer")
+    new_df = merge_dfs(df, new_df, "sleeper_id", how="outer")
 
     new_df = sort_reset_index(new_df, sort_by=["vbd", "fpts"])
     new_df['vbd_rank'] = new_df.index + 1
