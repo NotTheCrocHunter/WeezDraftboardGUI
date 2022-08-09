@@ -9,7 +9,7 @@ import json
 import PySimpleGUI as sg
 import numpy as np
 from datetime import datetime
-from scrape import scrape_bchen
+from get_pool import make_player_pool, merge_dfs
 
 MAX_ROWS = 17
 MAX_COLS = 12
@@ -66,114 +66,6 @@ def save_keepers(keeper_list):
     pass
 
 
-def get_sleeper_ids(df):
-    # ----- Create the search_names (all lowercase, no spaces) ------ #
-
-    search_names = []
-    remove = ['jr', 'ii', 'sr']
-    for idx, row in df.iterrows():
-        if "team" in row.keys():
-            if ["team"] == "JAC":
-                df.loc[idx, "team"] = "JAX"
-            if row['name'] == "Kyle Rudolph":
-                row["team"] == "TB"
-            if row["team"] == "FA":
-                df.loc[idx, "team"] = None
-        new_name = re.sub(r'\W+', '', row['name']).lower()
-        if new_name[-3:] == "iii":
-            new_name = new_name[:-3]
-        elif new_name[-2:] in remove:
-            new_name = new_name[:-2]
-
-        if new_name == "kennethwalker":
-            new_name = "kenwalker"
-
-        if new_name == "mitchelltrubisky":
-            new_name = "mitchtrubisky"
-
-        if new_name == "williamfullerv":
-            new_name = "williamfuller"
-
-        if new_name == "gabrieldavis":
-            new_name = "gabedavis"
-        search_names.append(new_name)
-
-    df['search_full_name'] = search_names
-    players_df = players.get_players_df()
-    if "team" in df.columns:
-        search_name_tuples = list(zip(df.search_full_name, df.team))
-        players_match_df = players_df[
-            players_df[['search_full_name', 'team']].apply(tuple, axis=1).isin(search_name_tuples)]
-    else:
-        search_name_tuples = list(zip(df.search_full_name, df.position))
-        players_match_df = players_df[
-            players_df[['search_full_name', 'position']].apply(tuple, axis=1).isin(search_name_tuples)]
-
-    cols_to_use = players_match_df.columns.difference(df.columns).to_list()
-    cols_to_use.append("search_full_name")
-    df = pd.merge(df, players_match_df[cols_to_use], how="left", on="search_full_name")
-    for index, row in df.iterrows():
-        if row["position"] == "DEF":
-            df.loc[index, "sleeper_id"] = row["team"]
-        else:
-            df.loc[index, "sleeper_id"] = row["player_id"]
-    match_search_names = df['search_full_name'].to_list()
-    missing_search_names = [n for n in search_names if n not in match_search_names]
-    if missing_search_names:
-        print(f"Missing Search Names: {missing_search_names}")
-    return df
-
-
-def get_adp_df(adp_type="2qb", adp_year=YEAR, teams_count=12, positions="all"):
-    start_time = time.time()
-    adp_type = adp_type.lower()
-    base_url = f"https://fantasyfootballcalculator.com/api/v1/adp/" \
-               f"{adp_type}?teams={teams_count}&{adp_year}&position={positions}"
-    file_path = Path(f'data/adp/adp_{adp_type}.json')
-    try:
-        with open(file_path, "r") as data_file:
-            adp_data = json.load(data_file)
-            adp_end_date = adp_data["meta"]["end_date"]
-    except FileNotFoundError:
-        adp_end_date = None
-        pass
-
-    if adp_end_date == TODAY:
-        print(f"Loading local ADP data from {adp_end_date}")
-    else:
-        print(f"Local ADP data does not match today's date, {TODAY}. Making call to FFCalc.")
-        try:
-            response = requests.get(base_url)
-            adp_data = response.json()
-        except requests.exceptions.RequestException as e:
-            if adp_end_date:
-                print(f"Error {e} when making the remote call.  Using local data from {adp_end_date}")
-                pass
-            else:
-                print("Error reading local copy and error reading remote copy.  Must break. ")
-                pass
-        finally:
-            adp_dir = Path('data/adp')
-            adp_dir.mkdir(parents=True, exist_ok=True)
-            with open(file_path, 'w') as data_file:
-                json.dump(adp_data, data_file, indent=4)
-
-    with open(file_path, 'r') as file:
-        adp_data = json.load(file)
-
-    adp_dict = adp_data["players"]
-
-    adp_df = pd.DataFrame(adp_dict)
-    adp_df.rename(columns={"player_id": "ffcalc_id"}, inplace=True)
-    adp_df["adp_pick"] = adp_df.index + 1
-    adp_df = get_sleeper_ids(adp_df)
-
-    end_time = time.time()
-    print(f"Time to get ADP DF: {end_time - start_time}")
-
-    return adp_df
-
-
 def get_cheatsheet_list(df, pos):
     df = df[df["position"] == pos]  # ['position_tier_ecr', 'cheatsheet_text'].tolist()
     df = df[["position_tier_ecr", 'cheatsheet_text']]
@@ -226,121 +118,6 @@ def DraftIdPopUp():
     pass
 
 
-def get_ecr_rankings(player_count=225):
-    """
-    Return single dataframe with columns for superflex_rank, suplerflex_tier,
-    and pos_rank, pos_tier.  Also modify the self.dfs for projections.
-    self.flex_df, self.rb_df, self.wr_df, self.te_df = self.clean_flex_df()
-    """
-    sf_rank_path = Path("data/fpros/FantasyPros_2022_Draft_SuperFlex_Rankings.csv")
-    ecr_sf_df = pd.read_csv(sf_rank_path)
-    ecr_sf_df.drop(columns="ECR VS. ADP", inplace=True)
-
-    ecr_sf_df.rename(columns={"RK": "superflex_rank_ecr",
-                              "TIERS": "superflex_tier_ecr",
-                              "PLAYER NAME": "name",
-                              "TEAM": "team",
-                              "POS": "pos_rank",
-                              "BYE WEEK": "bye",
-                              "SOS SEASON": "sos_season"}, inplace=True)
-
-    # do positional rankings now, combining them with single ECR DF
-    # create dict to rename positional columns
-    ecr_col_changes = {"RK": "position_rank_ecr", "TIERS": "position_tier_ecr", "PLAYER NAME": "name",
-                       "TEAM": "team",
-                       "POS": "position",
-                       "BYE WEEK": "bye",
-                       "SOS SEASON": "sos_season",
-                       "ECR VS. ADP": "ecr_vs_adp"}
-
-    ecr_qb_df = pd.read_csv("data/fpros/FantasyPros_2022_Draft_QB_Rankings.csv")
-    ecr_rb_df = pd.read_csv("data/fpros/FantasyPros_2022_Draft_RB_Rankings.csv")
-    ecr_wr_df = pd.read_csv("data/fpros/FantasyPros_2022_Draft_WR_Rankings.csv")
-    ecr_te_df = pd.read_csv("data/fpros/FantasyPros_2022_Draft_TE_Rankings.csv")
-    ecr_qb_df["position"] = "QB"
-    ecr_rb_df["position"] = "RB"
-    ecr_wr_df["position"] = "WR"
-    ecr_te_df["position"] = "TE"
-    ecr_df_list = [ecr_qb_df, ecr_rb_df, ecr_wr_df, ecr_te_df]
-    for ecr_df in ecr_df_list:
-        ecr_df.rename(columns=ecr_col_changes, inplace=True)
-    pd.set_option("display.max_column", None)
-    position_ecr_combined_df = pd.concat(ecr_df_list).fillna(0)
-    cols_to_use = position_ecr_combined_df.columns.difference(ecr_sf_df.columns).to_list()
-    cols_to_use.append("name")
-    ecr_sf_df = pd.merge(ecr_sf_df.loc[:player_count], position_ecr_combined_df[cols_to_use], how="left", on="name")
-    # pdb.set_trace()
-    ecr_sf_df = get_sleeper_ids(ecr_sf_df)
-    return ecr_sf_df
-
-
-def clean_qb_df(qb_df):
-    # lower case all column names
-    qb_df.columns = qb_df.columns.str.lower()
-    qb_df.dropna(inplace=True)
-    qb_df.rename(columns={"tds": "pass_td",
-                          "ints": "pass_int",
-                          "att": "pass_att",
-                          "att.1": "rush_att",
-                          "yds": "pass_yd",
-                          "yds.1": "rush_yd",
-                          "tds.1": "rush_td",
-                          "fl": "fum_lost",
-                          "player": "name"}, inplace=True)
-    qb_df["position_rank_projections"] = qb_df.index + 1
-    qb_df["position_rank_projections"].fillna(0, inplace=True)
-    # remove non-numeric (commas) characters from the number fields
-    print(qb_df[pd.to_numeric(qb_df.pass_yd, errors='coerce').isnull()])
-    # qb_df.apply(lambda x: x.str.replace(',', '.'))  # replace(',', '', regex=True, inplace=True)
-    # df.apply(lambda ))
-    qb_df["pass_yd"] = qb_df["pass_yd"].apply(pd.to_numeric, errors='coerce')
-    qb_df["position"] = "QB"
-    qb_df["pos_rank"] = qb_df["position"] + qb_df["position_rank_projections"].astype(str)
-
-
-
-    return qb_df
-
-
-def clean_flex_df(flex_df):
-    """
-    Take the single Flex CSV, clean up the column names, add the position and bonus
-    columns,END.       XXX get custom score, split into positional DataFrames, and add VBD XXXX
-    """
-
-    flex_df.columns = flex_df.columns.str.lower()
-    flex_df["position"] = flex_df["pos"].str[:2]
-    flex_df["position_rank_projections"] = flex_df["pos"].str[2:]
-    flex_df["position_rank_projections"].fillna(0, inplace=True)
-    flex_df["position_rank_projections"] = pd.to_numeric(flex_df["position_rank_projections"], errors="coerce", downcast='integer')
-    flex_df["bonus_rec_te"] = flex_df["rec"].loc[flex_df["position"] == "TE"]
-    flex_df["bonus_rec_te"] = flex_df['bonus_rec_te'].fillna(0)
-    flex_df.rename(columns={"player": "name",
-                            "pos": "pos_rank",
-                            "att": "rush_att",
-                            "tds": "rush_td",
-                            "yds": "rush_yd",
-                            "yds.1": "rec_yd",
-                            "tds.1": "rec_td",
-                            "team": "team",
-                            "fpts": "fpts",
-                            "rec": "rec",
-                            "fl": "fum_lost"}, inplace=True)
-
-    # remove non numeric characters from the number fields
-    flex_df.replace(',', '', regex=True, inplace=True)
-    flex_df["rec_yd"] = flex_df["rec_yd"].apply(pd.to_numeric)
-    flex_df["rush_yd"] = flex_df["rush_yd"].apply(pd.to_numeric)
-
-    # calculate custom score and sort
-    # flex_df["fpts"] = flex_df.apply(self.get_custom_score_row, axis=1)
-    # flex_df.sort_values(by="fpts", inplace=True, ascending=False)
-
-    flex_df.dropna(inplace=True, thresh=5)
-
-    return flex_df
-
-
 def get_cheatsheet_data(df, pos="all", hide_drafted=False):
     """
     Cheat Sheet Data for the rows of the tables building
@@ -363,8 +140,8 @@ def get_cheatsheet_data(df, pos="all", hide_drafted=False):
         cols = ['sleeper_id', 'name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona']
     else:
         df = df.loc[df.position == pos]
-        cols = ['sleeper_id', 'position_tier_chen', 'cheatsheet_text']
-        df = df.sort_values(by=["position_rank_chen"], ascending=True, na_position="last")
+        cols = ['sleeper_id', 'position_tier_chen', 'cheatsheet_text', 'vbd']
+        df = df.sort_values(by=["position_rank_chen", "adp_pick_no"], ascending=[True, True], na_position="last")
 
     df = df[cols]
     # df = df.fillna(value="999")
@@ -407,9 +184,9 @@ def get_bottom_table(df, hide_drafted=False):
 
 def get_cheatsheet_table(df, pos="all", hide_drafted=False):
     table_data = get_cheatsheet_data(df, pos, hide_drafted)
-    table = sg.Table(table_data, headings=['sleeper_id', 'Tier', pos, ],
-                     col_widths=[0, 3, 20],
-                     visible_column_map=[False, True, True],
+    table = sg.Table(table_data, headings=['sleeper_id', 'Tier', pos, 'vbd'],
+                     col_widths=[0, 3, 15, 3],
+                     visible_column_map=[False, True, True, True],
                      auto_size_columns=False,
                      max_col_width=20,
                      sbar_width=2,
@@ -449,63 +226,9 @@ def get_draft_order(league):
     return draft_order
 
 
-
-def get_fpros_projections():
-    # qb_path = Path("../sleeper-api-wrapper/data/fpros/FantasyPros_Fantasy_Football_Projections_QB.csv")
-    # flex_path = Path("../sleeper-api-wrapper/data/fpros/FantasyPros_Fantasy_Football_Projections_FLX.csv")
-    qb_path = Path("data/fpros/FantasyPros_Fantasy_Football_Projections_QB.csv")
-    flex_path = Path("data/fpros/FantasyPros_Fantasy_Football_Projections_FLX.csv")
-    qb_df = pd.read_csv(qb_path, skiprows=[1], thousands=",")
-    flex_df = pd.read_csv(flex_path, skiprows=[1], thousands=",")
-
-    qb_df = clean_qb_df(qb_df)
-    qb_df = get_sleeper_ids(qb_df)
-    flex_df = clean_flex_df(flex_df)
-    flex_df = get_sleeper_ids(flex_df)
-
-    prj_df = pd.concat([qb_df, flex_df]).fillna(0)
-
-    return prj_df
-
-
-def get_fpros_data(player_count=225):
-    ecr_df = get_ecr_rankings(player_count)
-    prj_df = get_fpros_projections()
-    fpros_df = merge_dfs(ecr_df, prj_df, "sleeper_id")
-    fpros_df.fillna({'fpts': 0, 'bonus_rec_te': 0}, inplace=True)
-    return fpros_df
-
-
-def merge_dfs(df1, df2, col_to_match, how="left"):
-    cols_to_use = df2.columns.difference(df1.columns).to_list()
-    cols_to_use.append(col_to_match)
-    df = pd.merge(df1, df2[cols_to_use], how=how, on=col_to_match)
-    return df
-
-
-def get_player_pool(player_count=400, adp_type='2qb'):
+def get_player_pool():
     start_time = time.time()
-    fpros_df = get_fpros_data(player_count)
-    adp_df = get_adp_df(adp_type=adp_type)
-
-    # remove kickers and defenses
-    adp_kd = adp_df.loc[adp_df['position'].isin(["PK", "DEF"])]
-
-    # Fix Defensive Names
-    adp_kd.loc[adp_kd["position"] == "DEF", "last_name"] = adp_kd.name.str.split(' ').str[-1]
-    adp_kd.loc[adp_kd["position"] == "DEF", "first_name"] = adp_kd.name.str.replace(' Defense', '')
-
-    # Get ADP DF of only position groups
-    adp_df = adp_df.loc[adp_df['position'].isin(["QB", "WR", "TE", "RB"])]
-    # merge adp w/out K and D to the fpros dataframe
-    p_pool = merge_dfs(fpros_df, adp_df, "sleeper_id", how="outer")
-    # Now merge kickers and defenses back in
-    p_pool = pd.concat([p_pool, adp_kd])
-
-    # Now time to clean up some ranking columns
-    p_pool.sort_values(by=['adp_pick', 'superflex_rank_ecr'], na_position='last', inplace=True)
-    p_pool.reset_index(drop=True, inplace=True)
-    p_pool['adp_pick'] = p_pool.index + 1
+    p_pool = make_player_pool()
 
     # ----Clean up columns to be INT values and fill NA ------ #
     cols = ['superflex_rank_ecr', 'superflex_tier_ecr', 'position_rank_ecr', 'position_tier_ecr']
@@ -552,15 +275,13 @@ def get_player_pool(player_count=400, adp_type='2qb'):
     # now add the adp_k_pick column
     # p_pool.sort_values(by=['adp_pick'], ascending=True, inplace=True)
 
-    p_pool.dropna(subset=["name", "button_text"], inplace=True)
+    # p_pool.dropna(subset=["name", "button_text"], inplace=True)
 
     # ------Now Detect if league exists and then calc custom score. -----#
     p_pool, draft_order, league_found = load_saved_league(p_pool)
     # ---- Add VBD per position  ----- #
     p_pool = add_vbd(p_pool)
-    # ---- Add Chen Tiers ----- #
-    chen_df = get_chen_tiers()
-    p_pool = merge_dfs(p_pool, chen_df, "sleeper_id")
+
     end_time = time.time()
     print(f"Time to make Player Draft Pool: {end_time - start_time}")
     cols_to_fill = ['position_rank_vbd', 'vbd_rank', 'position_rank_chen', 'position_tier_chen']
@@ -568,71 +289,44 @@ def get_player_pool(player_count=400, adp_type='2qb'):
     return p_pool, draft_order, league_found
 
 
-def get_chen_tiers():
-    # ---- Declare Paths, URLs, and position list------ #
-    base_save_path = Path('../data/rankings/chen')
-    Path('../data/rankings/chen').mkdir(parents=True, exist_ok=True)
-    positions = ["QB", "RB", "WR", "TE"]
-    scoring_type = "PPR"
-    TODAY = datetime.today().strftime('%Y-%m-%d')
-    chen_json = Path("../data/rankings/chen/chen_tiers.json")
-
-    try:
-        with open(chen_json, "r") as file:
-            chen_dict = json.load(file)
-            chen_date = chen_dict["last_saved"]
-    except FileNotFoundError:
-        chen_date = None
-
-    if chen_date == TODAY:
-        df = pd.DataFrame(chen_dict["players"])
-        return df
+def refresh():
+    if live_draft:
+        all_picks = draft.get_all_picks()
+        # --- Get the Drafted IDs ------ #
+        try:
+            drafted_ids = [x['player_id'] for x in all_picks]
+        except TypeError:
+            sg.PopupQuick("Draft Connection Lost")
+            live_draft = False
+            pass
+        # ----- Set those IDs to true in the dataframe ----- #
+        PP.loc[PP['sleeper_id'].isin(drafted_ids), "is_drafted"] = True
+        for pick in all_picks:
+            PP.loc[PP['sleeper_id'] == pick['player_id'], ["round", "draft_slot", "pick_no"]] = [pick["round"],
+                                                                                                 pick["draft_slot"],
+                                                                                                 pick["pick_no"]]
+        # ------ReCreate the DB board ------- #
+        db = get_db_arr(PP, "live")
+        if live_board:
+            # if the main DB is loaded, the picks will update on the board
+            window["-LOAD-DB-"].click()
     else:
-        print(f"Updating Chen tiers.")
-        # ---- File doesn't exist, make the CSV calls ----- #
-        # --- Dict to rename columns ---- #
-        col_changes = {"Rank": "position_rank_chen",
-                       "Tier": "position_tier_chen",
-                       "Player.Name": "name",
-                       "Position": "position",
-                       "Best.Rank": "bye",
-                       "Worst.Rank": "worst_rank",
-                       "Avg.Rank": "avg_rank",
-                       "Std.Dev": "std_dev"}
-        cols_for_df = [v for k, v in col_changes.items()]
-        # ----- For Loop to get the cheat sheet for each position ----#
-        pos_df_list = []
-        for p in positions:
-            # ---- Assign the URL for the API call ---- #
-            if p == "QB":
-                url = "https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-QB.csv"
+        drafted_ids = PP.loc[PP["is_drafted"] == True, "sleeper_id"].tolist()
+    PP.loc[PP["sleeper_id"].isin(drafted_ids), "is_drafted"] = True
+    for t in ["QB", "WR", "TE", "RB", "BOTTOM"]:  # "ALL",
+        table_data = get_cheatsheet_data(PP, pos=t, hide_drafted=window["-HIDE-DRAFTED-"].get())
+        window[f"-{t}-TABLE-"].update(values=table_data)
+    # assign the player to the draftboard array
+    # print(db[r, c])
+    # for loop to set the drafted players as "clicked"
+    for col in range(MAX_COLS):
+        for row in range(MAX_ROWS):
+            cur_id = window[(row, col)].metadata['sleeper_id']
+            if cur_id in drafted_ids:
+                window[(row, col)].metadata["is_clicked"] = True
+                window[(row, col)].update(button_color='white on gray')
             else:
-                url = f"https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-{p}-{scoring_type}.csv"
-            # -- Make the request and save the CSV locally ---- #
-            r = requests.get(url)
-            save_path = base_save_path / f"{p}.csv"
-            with open(save_path, 'wb') as file:
-                file.write(r.content)
-            # ---- Make dataframe of CSV ------ #
-            temp_df = pd.read_csv(save_path)
-            # ----- Rename Columns ------ #
-            temp_df.rename(columns=col_changes, inplace=True)
-            # ----- Get Sleeper IDs ------ #
-            temp_df = get_sleeper_ids(temp_df)
-            # ----- Concat to df ----
-            pos_df_list.append(temp_df)
-
-        # ---- Finally, after making the DF nad saving the CSVs, save all as JSON ------ #
-        df = pd.concat(pos_df_list, axis=0)
-        players_list = df.to_dict(orient="records")
-        chen_dict = {"last_saved": TODAY, "scoring_type": scoring_type, "players": players_list}
-        with open(chen_json, "w") as file:
-            json.dump(chen_dict, file, indent=4)
-
-        return df
-
-
-
+                pass
 
 def load_saved_league(df):
 
@@ -641,7 +335,7 @@ def load_saved_league(df):
     draft_order used to set the buttons for the board columns/teams.
     The league info should change if a new league is loaded.
     """
-    league_id_json = Path('data/league_ids/leagues.json')
+    league_id_json = Path('data/league_ids/league_ids.json')
     try:
         with open(league_id_json, "r") as file:
             league_id_list = json.load(file)
@@ -708,10 +402,6 @@ def clear_all_keepers():
         json.dump(keeper_list, file, indent=4)
     print("keepers.json overwritten, set as []")
 
-"""
-Custom score and VBD info ported from fpros]
-"""
-
 
 def get_custom_score_row(row, scoring_keys):
     score = 0
@@ -724,7 +414,6 @@ def get_custom_score_row(row, scoring_keys):
 
 
 def add_vbd(df):
-
     # or pos in ["QB", "RB", "WR", "TE"]:
     #     p_pool.loc[p_pool["position"] == pos] = add_vbd(p_pool, pos)
     # get thresholds
@@ -765,7 +454,6 @@ def add_vbd(df):
     print(names_not_in)
 
     return new_df
-
 
 
 def sort_reset_index(df, sort_by):

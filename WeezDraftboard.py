@@ -48,6 +48,7 @@ def WeezDraftboard():
 
     # -------Draftboard Arrays--------#
     adp_db = get_db_arr(PP, "adp")
+    pdb.set_trace()
     ecr_db = get_db_arr(PP, "ecr")
     db = get_db_arr(PP, "keepers")
 
@@ -217,36 +218,44 @@ def WeezDraftboard():
             else:
                 draft = Drafts(draft_id)  # create draft object
                 all_picks = draft.get_all_picks()
-                # update the PP dataframe
-                PP["pick_no"] = None
-                PP["adp_pick_no"] = None
-                PP["ecr_pick_no"] = None
-                for pick in all_picks:
-                    r = pick['round']
-                    c = pick['draft_slot']
-                    p_no = pick['pick_no']
-                    sleeper_id = pick['player_id'] # 2449
-                    PP.loc[PP["sleeper_id"] == sleeper_id, ['is_drafted', 'pick_no', 'draft_slot','round',]] = [True, p_no, c, r]
-                db = get_db_arr(PP, "live")
-                adp_db = get_db_arr(PP, "adp", df_loc_col="is_drafted")
-                ecr_db = get_db_arr(PP, "ecr", df_loc_col="is_drafted")
-                live_draft = True  # turn live draft on
+                try:
+                    # update the PP dataframe
+                    PP["pick_no"] = None
+                    PP["adp_pick_no"] = None
+                    PP["ecr_pick_no"] = None
+                    for pick in all_picks:
+                        r = pick['round']
+                        c = pick['draft_slot']
+                        p_no = pick['pick_no']
+                        sleeper_id = pick['player_id'] # 2449
+                        PP.loc[PP["sleeper_id"] == sleeper_id, ['is_drafted', 'pick_no', 'draft_slot','round',]] = [True, p_no, c, r]
+                    db = get_db_arr(PP, "live")
+                    adp_db = get_db_arr(PP, "adp", df_loc_col="is_drafted")
+                    ecr_db = get_db_arr(PP, "ecr", df_loc_col="is_drafted")
+                    live_draft = True  # turn live draft on
+                except TypeError:
+                    sg.popup_quick_message("Error Connecting to Draft")
+                    live_draft = False
+
 
         elif event in ("-Refresh-", sg.TIMEOUT_KEY):
-            # drafted = keeper_list
             if live_draft:
-                all_picks = draft.get_all_picks()
-                # --- Get the Drafted IDs ------ #
-                drafted_ids = [x['player_id'] for x in all_picks]
-                # ----- Set those IDs to true in the dataframe ----- #
-                PP.loc[PP['sleeper_id'].isin(drafted_ids), "is_drafted"] = True
-                for pick in all_picks:
-                    PP.loc[PP['sleeper_id'] == pick['player_id'], ["round", "draft_slot", "pick_no"]] = [pick["round"], pick["draft_slot"], pick["pick_no"]]
-                # ------ReCreate the DB board ------- #
-                db = get_db_arr(PP, "live")
-                if live_board:
-                    # if the main DB is loaded, the picks will update on the board
-                    window["-LOAD-DB-"].click()
+                try:
+                    all_picks = draft.get_all_picks()
+                    # --- Get the Drafted IDs ------ #
+                    drafted_ids = [x['player_id'] for x in all_picks]
+                    # ----- Set those IDs to true in the dataframe ----- #
+                    PP.loc[PP['sleeper_id'].isin(drafted_ids), "is_drafted"] = True
+                    for pick in all_picks:
+                        PP.loc[PP['sleeper_id'] == pick['player_id'], ["round", "draft_slot", "pick_no"]] = [pick["round"], pick["draft_slot"], pick["pick_no"]]
+                    # ------ReCreate the DB board ------- #
+                    db = get_db_arr(PP, "live")
+                    if live_board:
+                        # if the main DB is loaded, the picks will update on the board
+                        window["-LOAD-DB-"].click()
+                except TypeError:
+                    live_draft = False
+                    sg.popup_quick_message("Connection to Draft Lost")
             else:
                 drafted_ids = PP.loc[PP["is_drafted"] == True, "sleeper_id"].tolist()
             PP.loc[PP["sleeper_id"].isin(drafted_ids), "is_drafted"] = True
