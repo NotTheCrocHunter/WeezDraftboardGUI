@@ -36,6 +36,9 @@ def get_sleeper_ids(df):
 
         if new_name == "gabrieldavis":
             new_name = "gabedavis"
+
+        if new_name == "isaihpacheco":
+            new_name = "isiahpacheco"
         search_names.append(new_name)
 
     df['search_full_name'] = search_names

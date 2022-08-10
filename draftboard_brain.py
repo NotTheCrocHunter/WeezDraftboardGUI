@@ -288,7 +288,7 @@ def get_player_pool():
     p_pool[cols_to_fill] = p_pool[cols_to_fill].fillna(999).astype(int)
     return p_pool, draft_order, league_found
 
-
+"""
 def refresh():
     if live_draft:
         all_picks = draft.get_all_picks()
@@ -327,7 +327,7 @@ def refresh():
                 window[(row, col)].update(button_color='white on gray')
             else:
                 pass
-
+"""
 def load_saved_league(df):
 
     """
