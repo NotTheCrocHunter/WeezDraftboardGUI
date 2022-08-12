@@ -12,7 +12,7 @@ from sleeper_ids import get_sleeper_ids
 
 def get_chen_tiers():
     # ---- Declare Paths, URLs, and position list------ #
-    base_save_path = Path('data/rankings/chen')
+    save_path = Path('data/rankings/chen')
     Path('data/rankings/chen').mkdir(parents=True, exist_ok=True)
     positions = ["QB", "RB", "WR", "TE"]
     scoring_type = "PPR"
@@ -52,7 +52,7 @@ def get_chen_tiers():
                 url = f"https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-{p}-{scoring_type}.csv"
             # -- Make the request and save the CSV locally ---- #
             r = requests.get(url)
-            save_path = base_save_path / f"{p}.csv"
+            save_path = save_path / f"{p}.csv"
             with open(save_path, 'wb') as file:
                 file.write(r.content)
             # ---- Make dataframe of CSV ------ #

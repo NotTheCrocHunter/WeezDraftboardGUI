@@ -48,7 +48,6 @@ def WeezDraftboard():
 
     # -------Draftboard Arrays--------#
     adp_db = get_db_arr(PP, "adp")
-    pdb.set_trace()
     ecr_db = get_db_arr(PP, "ecr")
     db = get_db_arr(PP, "keepers")
 
