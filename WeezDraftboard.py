@@ -99,7 +99,7 @@ def WeezDraftboard():
                    [get_cheatsheet_table(PP, pos="WR", hide_drafted=False)],
                    [get_cheatsheet_table(PP, pos="TE", hide_drafted=False)],
                    ]
-    col2 = sg.Column(col2_layout, scrollable=False, grab=True, pad=(1,5), size=(300, 800))
+    col2 = sg.Column(col2_layout, scrollable=False, grab=True, pad=(1,1), size=(320, 800))
     headings = PP.columns.tolist()
     table_data = PP.values.tolist()
     #  table = sg.Table(table_data, headings=headings, vertical_scroll_only=False)

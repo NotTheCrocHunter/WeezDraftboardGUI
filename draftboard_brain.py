@@ -185,7 +185,7 @@ def get_bottom_table(df, hide_drafted=False):
 def get_cheatsheet_table(df, pos="all", hide_drafted=False):
     table_data = get_cheatsheet_data(df, pos, hide_drafted)
     table = sg.Table(table_data, headings=['sleeper_id', 'Tier', pos, 'vbd'],
-                     col_widths=[0, 3, 15, 3],
+                     col_widths=[0, 3, 9, 4],
                      visible_column_map=[False, True, True, True],
                      auto_size_columns=False,
                      max_col_width=20,

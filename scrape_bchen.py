@@ -69,10 +69,12 @@ def get_chen_tiers():
         # ---- Finally, after making the DF nad saving the CSVs, save all as JSON ------ #
         df = pd.concat(pos_df_list, axis=0)
         print(f"Length of whole df = {len(df)}")
+        df = df[["position_rank_chen", "position_tier_chen", "name", "sleeper_id"]]
         players_list = df.to_dict(orient="records")
         chen_dict = {"last_saved": TODAY, "scoring_type": scoring_type, "players": players_list}
         with open(chen_json, "w") as file:
             json.dump(chen_dict, file, indent=4)
+        print(df.columns)
 
         return df
 
