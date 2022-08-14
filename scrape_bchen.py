@@ -52,11 +52,11 @@ def get_chen_tiers():
                 url = f"https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-{p}-{scoring_type}.csv"
             # -- Make the request and save the CSV locally ---- #
             r = requests.get(url)
-            save_path = save_path / f"{p}.csv"
-            with open(save_path, 'wb') as file:
+            temp_save_path = save_path / f"{p}.csv"
+            with open(temp_save_path, 'wb') as file:
                 file.write(r.content)
             # ---- Make dataframe of CSV ------ #
-            temp_df = pd.read_csv(save_path)
+            temp_df = pd.read_csv(temp_save_path)
             print(f"Length of {p} df = {len(temp_df)}")
             # ----- Rename Columns ------ #
             temp_df.rename(columns=col_changes, inplace=True)
