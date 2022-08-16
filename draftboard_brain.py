@@ -9,7 +9,7 @@ import json
 import PySimpleGUI as sg
 import numpy as np
 from datetime import datetime
-from get_pool import make_player_pool, merge_dfs
+from get_pool import merge_dfs, scrape_data # , merge_dfs, get_player_pool
 
 MAX_ROWS = 17
 MAX_COLS = 12
@@ -22,6 +22,69 @@ TODAY = datetime.today().strftime('%Y-%m-%d')
 """
 Funcs for KeeperPopUp
 """
+
+
+def get_player_pool(scoring_type='2qb'):
+    start_time = time.time()
+    p_pool = scrape_data(scoring_type)
+
+    # ----Clean up columns to be INT values and fill NA ------ #
+    cols = ['superflex_rank_ecr', 'superflex_tier_ecr', 'position_rank_ecr', 'position_tier_ecr']
+    p_pool[cols] = p_pool[cols].fillna(value=999).astype(int)
+    for col in cols:
+        p_pool[col] = pd.to_numeric(p_pool[col], errors="coerce", downcast='integer')
+    p_pool['team'] = p_pool['team'].fillna("FA")
+    p_pool['pos_rank'] = p_pool["pos_rank"].fillna("NA999")
+
+    # Now time to add the button_text and cheatsheet_text values
+    # p_pool["cheatsheet_text"] = p_pool['pos_rank'] + ' ' + p_pool['name'] + ' ' + p_pool['team']
+    p_pool["cheatsheet_text"] = p_pool['first_name'].astype(str).str[0] + '. ' + p_pool['last_name'] + ' ' + p_pool['team']
+    p_pool["button_text"] = p_pool['first_name'] + '\n' + p_pool['last_name'] + '\n' + p_pool[
+        'position'] + ' (' + p_pool['team'] + ') ' + p_pool['bye'].astype(str)
+
+    # Add in None values for Keeper columns
+    # board_loc will eventually be the tuple that can be used to place on the draftboard array
+    k_cols = ['is_keeper', 'is_drafted', 'pick_no', 'draft_slot', 'round', 'board_loc']
+
+    for k in k_cols:
+        p_pool[k] = None
+
+    # Open keeper list of dicts so that we can set the keeper value to True
+    keeper_list = open_keepers(get="list")
+
+    # iterate over the keeper list to grab the dict values and assign to the main player_pool dataframe
+    for player_dict in keeper_list:
+        p = player_dict
+        if 'player_id' in p.keys():
+            p['sleeper_id'] = p['player_id']
+        id = p['sleeper_id']
+        is_keeper = p['is_keeper']
+        # initializing the keeper/drafted value as them same.  The values will update while drafting
+        is_drafted = False  # p['is_keeper']
+        pick_no = p['pick_no']
+        slot = p['draft_slot']
+        rd = p['round']
+        board_loc = "hi"
+        try:
+            p_pool.loc[p_pool['sleeper_id'] == id, k_cols] = [is_keeper, is_drafted, pick_no, slot, rd, board_loc]
+        except:
+            print(board_loc)
+            pdb.set_trace()
+    # now add the adp_k_pick column
+    # p_pool.sort_values(by=['adp_pick'], ascending=True, inplace=True)
+
+    # p_pool.dropna(subset=["name", "button_text"], inplace=True)
+
+    # ------Now Detect if league exists and then calc custom score. -----#
+    p_pool, draft_order, league_found = load_saved_league(p_pool)
+    # ---- Add VBD per position  ----- #
+    p_pool = add_vbd(p_pool)
+
+    end_time = time.time()
+    print(f"Time to make Player Draft Pool: {end_time - start_time}")
+    cols_to_fill = ['position_rank_vbd', 'vbd_rank', 'position_rank_chen', 'position_tier_chen']
+    p_pool[cols_to_fill] = p_pool[cols_to_fill].fillna(999).astype(int)
+    return p_pool, draft_order, league_found
 
 
 def make_pick_list():
@@ -80,7 +143,10 @@ def get_db_arr(df, key, df_loc_col="is_keeper"):
     if key in ["adp", "ecr"]:
         sort = keys[key]['sort']
         pick_no = keys[key]['pick_no']
-        non_kept_picks = [n + 1 for n in range(len(df)) if n + 1 not in df['pick_no'].to_list()]
+        try:
+            non_kept_picks = [n + 1 for n in range(len(df)) if n + 1 not in df['pick_no'].to_list()]
+        except:
+            pdb.set_trace()
         df[pick_no] = df["pick_no"]
         df.sort_values(by=sort, ascending=True, inplace=True)
         df.loc[df[df_loc_col] != True, f'{key}_pick_no'] = non_kept_picks
@@ -140,8 +206,8 @@ def get_cheatsheet_data(df, pos="all", hide_drafted=False):
         cols = ['sleeper_id', 'name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona']
     else:
         df = df.loc[df.position == pos]
-        cols = ['sleeper_id', 'position_tier_chen', 'cheatsheet_text', 'vbd']
-        df = df.sort_values(by=["position_rank_chen", "adp_pick_no"], ascending=[True, True], na_position="last")
+        cols = ['sleeper_id', 'position_tier_ecr', 'cheatsheet_text', 'vbd']
+        df = df.sort_values(by=["position_rank_ecr", "adp_pick_no"], ascending=[True, True], na_position="last")
 
     df = df[cols]
     # df = df.fillna(value="999")
@@ -226,67 +292,7 @@ def get_draft_order(league):
     return draft_order
 
 
-def get_player_pool():
-    start_time = time.time()
-    p_pool = make_player_pool()
 
-    # ----Clean up columns to be INT values and fill NA ------ #
-    cols = ['superflex_rank_ecr', 'superflex_tier_ecr', 'position_rank_ecr', 'position_tier_ecr']
-    p_pool[cols] = p_pool[cols].fillna(value=999).astype(int)
-    for col in cols:
-        p_pool[col] = pd.to_numeric(p_pool[col], errors="coerce", downcast='integer')
-    p_pool['team'] = p_pool['team'].fillna("FA")
-    p_pool['pos_rank'] = p_pool["pos_rank"].fillna("NA999")
-
-    # Now time to add the button_text and cheatsheet_text values
-    # p_pool["cheatsheet_text"] = p_pool['pos_rank'] + ' ' + p_pool['name'] + ' ' + p_pool['team']
-    p_pool["cheatsheet_text"] = p_pool['first_name'].astype(str).str[0] + '. ' + p_pool['last_name'] + ' ' + p_pool['team']
-    p_pool["button_text"] = p_pool['first_name'] + '\n' + p_pool['last_name'] + '\n' + p_pool[
-        'position'] + ' (' + p_pool['team'] + ') ' + p_pool['bye'].astype(str)
-
-    # Add in None values for Keeper columns
-    # board_loc will eventually be the tuple that can be used to place on the draftboard array
-    k_cols = ['is_keeper', 'is_drafted', 'pick_no', 'draft_slot', 'round', 'board_loc']
-
-    for k in k_cols:
-        p_pool[k] = None
-
-    # Open keeper list of dicts so that we can set the keeper value to True
-    keeper_list = open_keepers(get="list")
-
-    # iterate over the keeper list to grab the dict values and assign to the main player_pool dataframe
-    for player_dict in keeper_list:
-        p = player_dict
-        if 'player_id' in p.keys():
-            p['sleeper_id'] = p['player_id']
-        id = p['sleeper_id']
-        is_keeper = p['is_keeper']
-        # initializing the keeper/drafted value as them same.  The values will update while drafting
-        is_drafted = False  # p['is_keeper']
-        pick_no = p['pick_no']
-        slot = p['draft_slot']
-        rd = p['round']
-        board_loc = "hi"
-        try:
-            p_pool.loc[p_pool['sleeper_id'] == id, k_cols] = [is_keeper, is_drafted, pick_no, slot, rd, board_loc]
-        except:
-            print(board_loc)
-            pdb.set_trace()
-    # now add the adp_k_pick column
-    # p_pool.sort_values(by=['adp_pick'], ascending=True, inplace=True)
-
-    # p_pool.dropna(subset=["name", "button_text"], inplace=True)
-
-    # ------Now Detect if league exists and then calc custom score. -----#
-    p_pool, draft_order, league_found = load_saved_league(p_pool)
-    # ---- Add VBD per position  ----- #
-    p_pool = add_vbd(p_pool)
-
-    end_time = time.time()
-    print(f"Time to make Player Draft Pool: {end_time - start_time}")
-    cols_to_fill = ['position_rank_vbd', 'vbd_rank', 'position_rank_chen', 'position_tier_chen']
-    p_pool[cols_to_fill] = p_pool[cols_to_fill].fillna(999).astype(int)
-    return p_pool, draft_order, league_found
 
 """
 def refresh():
@@ -420,7 +426,7 @@ def add_vbd(df):
     df = sort_reset_index(df, sort_by="fpts")
 
     vols_cutoff = {"QB": 25, "RB": 25, "WR": 25, "TE": 10}
-    vorp_cutoff = {"QB": 31, "RB": 55, "WR": 63, "TE": 22}
+    vorp_cutoff = {"QB": 30, "RB": 55, "WR": 63, "TE": 18}
     new_df = pd.DataFrame()
     for pos in ["QB", "RB", "WR", "TE"]:
         temp_df = df.loc[df["position"] == pos]
@@ -441,7 +447,7 @@ def add_vbd(df):
         new_df = pd.concat([new_df, temp_df], axis=0)
         # print(new_df)
 
-    new_df = merge_dfs(df, new_df, "sleeper_id", how="outer")
+    new_df = merge_dfs(df, new_df, "sleeper_id", how="left")
 
     new_df = sort_reset_index(new_df, sort_by=["vbd", "fpts"])
     new_df['vbd_rank'] = new_df.index + 1

@@ -1,11 +1,12 @@
 import pandas as pd
-
-# from scrape_fpros import get_fpros_data, merge_dfs
 from scrape_bchen import get_chen_tiers
 from scrape_ffcalc_adp import get_adp_df
 from scrape_fantasy_pros import merge_dfs, scrape_fantasy_pros
+import time
+# from draftboard_brain import open_keepers
 
-def make_player_pool(player_count=400, adp_type='2qb'):
+
+def scrape_data(adp_type="2qb"):
     fdf = scrape_fantasy_pros()
     cdf = get_chen_tiers()
     p_pool = merge_dfs(fdf, cdf, "sleeper_id", how="left")
@@ -27,3 +28,4 @@ def make_player_pool(player_count=400, adp_type='2qb'):
     p_pool = pd.concat([p_pool, adp_kd])
 
     return p_pool
+

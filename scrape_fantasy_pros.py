@@ -16,11 +16,11 @@ def merge_dfs(df1, df2, col_to_match, how="left"):
     return df
 
 
-def scrape_fantasy_pros(score_type="ppr", week="draft"):
+def scrape_fantasy_pros(scoring="ppr", week="draft"):
     save_path = Path('data/fpros')
     save_path.mkdir(parents=True, exist_ok=True)
     TODAY = datetime.today().strftime('%Y-%m-%d')
-    data_file = Path('data/fpros/fpros_data.json')
+    data_file = Path(f'data/fpros/fpros_{scoring}_data.json')
 
     try:
         with open(data_file, "r") as file:
@@ -46,7 +46,7 @@ def scrape_fantasy_pros(score_type="ppr", week="draft"):
         if pos == "QB":
             url = f"https://www.fantasypros.com/nfl/rankings/{pos.lower()}-cheatsheets.php"
         else:
-            url = f"https://www.fantasypros.com/nfl/rankings/{score_type.lower()}-{pos.lower()}-cheatsheets.php"
+            url = f"https://www.fantasypros.com/nfl/rankings/{scoring.lower()}-{pos.lower()}-cheatsheets.php"
         results = requests.get(url).content
         soup = BeautifulSoup(results, "html.parser")
         pattern = re.compile(r"(?<=var ecrData = )[^;]+", re.MULTILINE)
@@ -58,7 +58,7 @@ def scrape_fantasy_pros(score_type="ppr", week="draft"):
         temp_df["position"] = pos
         # rename columns
         rank_df_list.append(temp_df)
-        with open(f'data/fpros/fpros_rank_{pos.lower()}.json', "w") as file:
+        with open(f'data/fpros/fpros_{scoring}_rank_{pos.lower()}.json', "w") as file:
             json.dump(data, file, indent=4)
 
     superflex_df = rank_df_list.pop(-1)
@@ -77,7 +77,7 @@ def scrape_fantasy_pros(score_type="ppr", week="draft"):
         print(f"Getting projections for {pos}")
         if pos == "SuperFlex":
             continue
-        url = f"https://www.fantasypros.com/nfl/projections/{pos.lower()}.php?week={week.lower()}&scoring={score_type.lower()}"
+        url = f"https://www.fantasypros.com/nfl/projections/{pos.lower()}.php?week={week.lower()}&scoring={scoring.lower()}"
         results = requests.get(url).content
         soup = BeautifulSoup(results, "html.parser")
         # get easy df of each page
@@ -120,8 +120,10 @@ def scrape_fantasy_pros(score_type="ppr", week="draft"):
     fp_df = merge_dfs(ecr_rank_df, proj_df, "player_id", "inner")
     fp_df.rename(columns={'player_id': 'fantasy_pros_player_id',
                           'player_name': 'name',
-                          'player_team_id': 'team'}, inplace=True)
+                          'player_team_id': 'team',
+                          'player_bye_week': 'bye'}, inplace=True)
     fp_df.loc[fp_df["team"] == "JAC", "team"] = "JAX"
+
     print("getting sleeper ids")
     fp_df = get_sleeper_ids(fp_df)
 

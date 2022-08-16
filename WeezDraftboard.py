@@ -6,6 +6,7 @@ from LeaguePopUp import LeaguePopUp
 from ViewPlayerPool import ViewPlayerPool
 
 
+
 def WeezDraftboard():
     """
     Display data in a table format
@@ -38,7 +39,7 @@ def WeezDraftboard():
     MAX_ROWS = 17
     MAX_COLS = 12
     BOARD_LENGTH = MAX_ROWS * MAX_COLS
-    PP, draft_order, league_found = get_player_pool()
+    PP, draft_order, league_found = get_player_pool('2qb')
 
     """
     Reading the last used League ID to bring in league settings. 
@@ -87,7 +88,7 @@ def WeezDraftboard():
 
     col1 = sg.Column(col1_layout, scrollable=True, vertical_alignment="bottom", size=(1250, 400),
                      justification="left",
-                     vertical_scroll_only=True,
+                     vertical_scroll_only=False,
                      element_justification="left",
                      sbar_width=2,
                      expand_y=True,
@@ -160,8 +161,10 @@ def WeezDraftboard():
         elif event == 'Edit Me':
             sg.execute_editor(__file__)
         elif event in ['2QB', 'PPR', 'Half-PPR', 'STD']:
-            PP, draft_order, league_found = get_player_pool(adp_type=event.lower())
+            PP, draft_order, league_found = get_player_pool(scoring_type=event.lower())
             adp_db = get_db_arr(PP, "adp")
+            # TODO Map out the ecr_db to not sort by superflex
+            #   Make calls for half-ppr and standard rankings as well.
             window["-LOAD-ADP-"].click()
         elif event == 'Select League':
             league = LeaguePopUp()
@@ -235,8 +238,6 @@ def WeezDraftboard():
                 except TypeError:
                     sg.popup_quick_message("Error Connecting to Draft")
                     live_draft = False
-
-
         elif event in ("-Refresh-", sg.TIMEOUT_KEY):
             if live_draft:
                 try:
@@ -310,10 +311,13 @@ def WeezDraftboard():
             live_board = False
             for c in range(MAX_COLS):
                 for r in range(MAX_ROWS):
-                    window[(r, c)].update(button_color=BG_COLORS[adp_db[r, c]["position"]],
-                                          text=adp_db[r, c]['button_text'], )
-                    window[(r, c)].metadata["button_color"] = BG_COLORS[adp_db[r, c]["position"]]
-                    window[(r, c)].metadata["sleeper_id"] = adp_db[r, c]["sleeper_id"]
+                    try:
+                        window[(r, c)].update(button_color=BG_COLORS[adp_db[r, c]["position"]],
+                                              text=adp_db[r, c]['button_text'], )
+                        window[(r, c)].metadata["button_color"] = BG_COLORS[adp_db[r, c]["position"]]
+                        window[(r, c)].metadata["sleeper_id"] = adp_db[r, c]["sleeper_id"]
+                    except KeyError:
+                        print(f"Error on {adp_db[r, c]}")
         elif event == "-LOAD-ECR-":
             live_board = False
             for c in range(MAX_COLS):
