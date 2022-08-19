@@ -6,7 +6,6 @@ from LeaguePopUp import LeaguePopUp
 from ViewPlayerPool import ViewPlayerPool
 
 
-
 def WeezDraftboard():
     """
     Display data in a table format
@@ -86,14 +85,14 @@ def WeezDraftboard():
                          key=(r, c))
                     for c in range(MAX_COLS)] for r in range(MAX_ROWS)]
 
-    col1 = sg.Column(col1_layout, scrollable=True, vertical_alignment="bottom", size=(1250, 400),
+    col1 = sg.Column([[sg.Column(col1_layout, scrollable=True, vertical_alignment="bottom", size=(1250, 400),
                      justification="left",
                      vertical_scroll_only=False,
                      element_justification="left",
                      sbar_width=2,
                      expand_y=True,
                      expand_x=False,
-                     pad=1)
+                     pad=1)]], expand_x=True, expand_y=True)
     col2_layout = [[sg.T("Cheat Sheets")],
                    [get_cheatsheet_table(PP, pos="QB", hide_drafted=False)],
                    [get_cheatsheet_table(PP, pos="RB", hide_drafted=False)],
@@ -108,8 +107,8 @@ def WeezDraftboard():
     col3_layout = [[table]]
     col3 = sg.Column(col3_layout, size=(1550, 300))
     # wrapping col1 in another column before the pane for scrolling
-    col1_1 = sg.Column([[col1]], expand_x=True, expand_y=True)
-    pane1 = sg.Pane([col1_1, col2],
+    # col1_1 = sg.Column([[col1]], expand_x=True, expand_y=True)
+    pane1 = sg.Pane([col1, col2],
                     orientation="horizontal",
                     handle_size=5,
                     expand_x=True,
@@ -238,6 +237,8 @@ def WeezDraftboard():
                 except TypeError:
                     sg.popup_quick_message("Error Connecting to Draft")
                     live_draft = False
+
+
         elif event in ("-Refresh-", sg.TIMEOUT_KEY):
             if live_draft:
                 try:

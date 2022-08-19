@@ -7,9 +7,10 @@ from pathlib import Path
 import time
 import json
 import PySimpleGUI as sg
+# import PySimpleGUIWeb as sg
 import numpy as np
 from datetime import datetime
-from get_pool import merge_dfs, scrape_data # , merge_dfs, get_player_pool
+from scrape_data import merge_dfs, scrape_data # , merge_dfs, get_player_pool
 
 MAX_ROWS = 17
 MAX_COLS = 12
@@ -203,11 +204,14 @@ def get_cheatsheet_data(df, pos="all", hide_drafted=False):
         cols = ['sleeper_id', 'superflex_tier_ecr', 'cheatsheet_text']
     elif pos == "BOTTOM":
         df = df.sort_values(by=["vbd_rank"], ascending=True, na_position="last")
-        cols = ['sleeper_id', 'name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona']
+        cols = ['sleeper_id', 'name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona',
+                'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
+                'rec', 'rec_td', 'rec_yd',
+                'rush_att', 'rush_yd', 'rush_td', 'bonus_rec_te']
     else:
         df = df.loc[df.position == pos]
-        cols = ['sleeper_id', 'position_tier_ecr', 'cheatsheet_text', 'vbd']
-        df = df.sort_values(by=["position_rank_ecr", "adp_pick_no"], ascending=[True, True], na_position="last")
+        cols = ['sleeper_id', 'position_tier_chen', 'cheatsheet_text', 'vbd']
+        df = df.sort_values(by=["position_rank_chen", "adp_pick_no"], ascending=[True, True], na_position="last")
 
     df = df[cols]
     # df = df.fillna(value="999")
@@ -223,21 +227,24 @@ def get_bottom_table(df, hide_drafted=False):
 
     df = df.sort_values(by=["vbd_rank"], ascending=True, na_position="last")
 
-    cols = ['sleeper_id', 'name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona']
+    cols = ['sleeper_id', 'name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona',
+            'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
+            'rec', 'rec_td', 'rec_yd',
+            'rush_att', 'rush_yd', 'rush_td',
+            'bonus_rec_te']
     df = df[cols]
-    df = df.fillna({'fpts': 0,
-                    'vbd_rank': 0,
-                    'position_rank_projections': 0,
-                    'position_rank_vbd': 0,
-                    'vbd': 0,
-                    'vorp': 0,
-                    'vols': 0,
-                    'vona': 0})
+    fillna_vals = {col: 0 for col in cols if col not in ['sleeper_id', 'name']}
+    df = df.fillna(fillna_vals)
     table_data = df.values.tolist()
-    headings_list = ['sleeper_id', 'Name', 'fpts', 'VBD Rank', 'VBD Pos Rank', 'VBD', 'VORP', 'VOLS', 'VONA']
+    headings_list = ['sleeper_id', 'Name', 'fpts', 'VBD Rank', 'VBD Pos Rank', 'VBD', 'VORP', 'VOLS', 'VONA',
+                     'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
+                     'rec', 'rec_td', 'rec_yd',
+                     'rush_att', 'rush_yd', 'rush_td',
+                     'bonus_rec_te']
     table = sg.Table(table_data, headings=headings_list,
                      # col_widths=[0, 3, 20],
-                     visible_column_map=[False, True, True, True, True, True, True, True, True],
+                     visible_column_map=[False, True, True, True, True, True, True, True, True, True, True, True, True,
+                                         True, True, True, True, True, True, True],
                      auto_size_columns=True,
                      max_col_width=20,
                      sbar_width=2,

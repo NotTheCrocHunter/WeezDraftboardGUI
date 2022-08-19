@@ -72,12 +72,27 @@ def scrape_fantasy_pros(scoring="ppr", week="draft"):
 
     # ----- Now get Projections. Requires BeautifulSoup to scrape the player ids ----- #
     # --- Pandas can read the table directly, and then use the id list from BS to add to the df -- #
+    """
+    projection URLs to test for filtering:
+    https://www.fantasypros.com/nfl/projections/rb.php?filters=11:71&week=draft
+    espn: 71
+    cbs: 11
+    fftoday: 152
+    nfl: 286
+    sports illustrated: 4421
+    numberfire: 73
+    """
+
     proj_df_list = []
     for pos in positions:
         print(f"Getting projections for {pos}")
         if pos == "SuperFlex":
             continue
-        url = f"https://www.fantasypros.com/nfl/projections/{pos.lower()}.php?week={week.lower()}&scoring={scoring.lower()}"
+        if pos == "QB":
+            url = f"https://www.fantasypros.com/nfl/projections/qb.php?filters=11:71&week=draft"
+        else:
+            url = f"https://www.fantasypros.com/nfl/projections/{pos.lower()}.php?filters=71&week={week.lower()}&scoring={scoring.lower()}"
+
         results = requests.get(url).content
         soup = BeautifulSoup(results, "html.parser")
         # get easy df of each page
@@ -117,13 +132,15 @@ def scrape_fantasy_pros(scoring="ppr", week="draft"):
                             'RECEIVING_YDS': 'rec_yd',
                             'RECEIVING_TDS': 'rec_td'}, inplace=True)
     proj_df["player_id"] = proj_df["player_id"].astype(int)
+    # proj_df.loc[""]
     fp_df = merge_dfs(ecr_rank_df, proj_df, "player_id", "inner")
     fp_df.rename(columns={'player_id': 'fantasy_pros_player_id',
                           'player_name': 'name',
                           'player_team_id': 'team',
                           'player_bye_week': 'bye'}, inplace=True)
     fp_df.loc[fp_df["team"] == "JAC", "team"] = "JAX"
-
+    fp_df["bonus_rec_te"] = fp_df["rec"].loc[fp_df["position"] == "TE"]
+    fp_df["bonus_rec_te"] = fp_df['bonus_rec_te'].fillna(0)
     print("getting sleeper ids")
     fp_df = get_sleeper_ids(fp_df)
 
