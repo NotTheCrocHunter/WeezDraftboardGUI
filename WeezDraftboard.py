@@ -14,7 +14,7 @@ def WeezDraftboard():
                            non_blocking=True, font='Default 18')
 
     sg.set_options(element_padding=(1, 1))
-    sg.set_options(font=("Calibri", 11, "normal"))
+    sg.set_options(font=("Calibri", 10, "normal"))
     # --- GUI Definitions ------- #
     menu_def = [['File', ['Open', 'Save', 'Exit']],
                 ['Draft ID', ['Select Draft ID']],
@@ -85,13 +85,13 @@ def WeezDraftboard():
                          key=(r, c))
                     for c in range(MAX_COLS)] for r in range(MAX_ROWS)]
 
-    col1 = sg.Column([[sg.Column(col1_layout, scrollable=True, vertical_alignment="bottom", size=(1250, 400),
+    col_db = sg.Column([[sg.Column(col1_layout, scrollable=True, vertical_alignment="bottom", size=(1000, 700),
                      justification="left",
                      vertical_scroll_only=False,
                      element_justification="left",
                      sbar_width=2,
                      expand_y=True,
-                     expand_x=False,
+                     expand_x=True,
                      pad=1)]], expand_x=True, expand_y=True)
     col2_layout = [[sg.T("Cheat Sheets")],
                    [get_cheatsheet_table(PP, pos="QB", hide_drafted=False)],
@@ -99,26 +99,43 @@ def WeezDraftboard():
                    [get_cheatsheet_table(PP, pos="WR", hide_drafted=False)],
                    [get_cheatsheet_table(PP, pos="TE", hide_drafted=False)],
                    ]
-    col2 = sg.Column(col2_layout, scrollable=False, grab=True, pad=(1,1), size=(320, 800))
+    col_cheatsheets = sg.Column(col2_layout, scrollable=False, grab=True, pad=(1,1), size=(600, 900))
     headings = PP.columns.tolist()
     table_data = PP.values.tolist()
     #  table = sg.Table(table_data, headings=headings, vertical_scroll_only=False)
     table = get_bottom_table(PP)
     col3_layout = [[table]]
-    col3 = sg.Column(col3_layout, size=(1550, 300))
-    # wrapping col1 in another column before the pane for scrolling
-    # col1_1 = sg.Column([[col1]], expand_x=True, expand_y=True)
-    pane1 = sg.Pane([col1, col2],
-                    orientation="horizontal",
-                    handle_size=5,
-                    expand_x=True,
-                    expand_y=True)
-    col4 = sg.Column([[pane1]], expand_y=True, expand_x=True)
-    pane2 = sg.Pane([col4, col3],
+    col_bottom = sg.Column(col3_layout, size=(1000, 200))
+    # wrapping col_db in another column before the pane for scrolling
+    # col1_1 = sg.Column([[col_db]], expand_x=True, expand_y=True)
+    pane1 = sg.Pane([col_db, col_bottom],
                     orientation="vertical",
                     handle_size=5,
                     expand_x=True,
                     expand_y=True)
+
+    col4 = sg.Column([[pane1]], expand_y=True, expand_x=True)
+
+    pane2 = sg.Pane([col4, col_cheatsheets],
+                    orientation="horizontal",
+                    handle_size=5,
+                    expand_x=True,
+                    expand_y=True)
+
+    """  
+    pane1 = sg.Pane([col_db, col_cheatsheets],
+                    orientation="horizontal",
+                    handle_size=5,
+                    expand_x=True,
+                    expand_y=True)
+    """
+
+    """
+    pane2 = sg.Pane([col4, col_bottom],
+                    orientation="vertical",
+                    handle_size=5,
+                    expand_x=True,
+                    expand_y=True)"""
     layout = [[sg.Menu(menu_def)],
               [sg.Text('Weez Draftboard', font='Any 18'),
                sg.Button('Load ECR', key="-LOAD-ECR-"),
@@ -130,7 +147,7 @@ def WeezDraftboard():
                sg.Input(key='-Search-', enable_events=True, focus=True, tooltip="Find Player"),
                sg.Push(),
                sg.Checkbox("Hide Drafted Players", enable_events=True, key="-HIDE-DRAFTED-")],
-              # [col1] + [col2]
+              # [col_db] + [col_cheatsheets]
               [pane2],
               # [sg.Text("bottom?")]
               ]
@@ -139,7 +156,7 @@ def WeezDraftboard():
                        layout,
                        return_keyboard_events=True,
                        resizable=True,
-                       scaling=0,
+                       scaling=1,
                        size=(1600,900)
                        # right_click_menu_tearoff=1
                        )

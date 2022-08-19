@@ -204,14 +204,17 @@ def get_cheatsheet_data(df, pos="all", hide_drafted=False):
         cols = ['sleeper_id', 'superflex_tier_ecr', 'cheatsheet_text']
     elif pos == "BOTTOM":
         df = df.sort_values(by=["vbd_rank"], ascending=True, na_position="last")
-        cols = ['sleeper_id', 'name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona',
+        cols = ['name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona',
                 'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
                 'rec', 'rec_td', 'rec_yd',
-                'rush_att', 'rush_yd', 'rush_td', 'bonus_rec_te']
+                'rush_att', 'rush_yd', 'rush_td',
+                'pass_int', 'fum_lost',
+                'bonus_rec_te',
+                'sleeper_id']
     else:
         df = df.loc[df.position == pos]
-        cols = ['sleeper_id', 'position_tier_chen', 'cheatsheet_text', 'vbd']
-        df = df.sort_values(by=["position_rank_chen", "adp_pick_no"], ascending=[True, True], na_position="last")
+        cols = ['sleeper_id', 'position_tier_ecr', 'cheatsheet_text', 'vbd']
+        df = df.sort_values(by=["position_rank_ecr", "adp_pick_no"], ascending=[True, True], na_position="last")
 
     df = df[cols]
     # df = df.fillna(value="999")
@@ -227,31 +230,36 @@ def get_bottom_table(df, hide_drafted=False):
 
     df = df.sort_values(by=["vbd_rank"], ascending=True, na_position="last")
 
-    cols = ['sleeper_id', 'name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona',
+    cols = ['name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona',
             'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
             'rec', 'rec_td', 'rec_yd',
             'rush_att', 'rush_yd', 'rush_td',
-            'bonus_rec_te']
+            'pass_int', 'fum_lost',
+            'bonus_rec_te',
+            'sleeper_id']
+    vis_col = [True for item in cols]
+    vis_col[-1] = False
     df = df[cols]
     fillna_vals = {col: 0 for col in cols if col not in ['sleeper_id', 'name']}
     df = df.fillna(fillna_vals)
     table_data = df.values.tolist()
-    headings_list = ['sleeper_id', 'Name', 'fpts', 'VBD Rank', 'VBD Pos Rank', 'VBD', 'VORP', 'VOLS', 'VONA',
-                     'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
-                     'rec', 'rec_td', 'rec_yd',
-                     'rush_att', 'rush_yd', 'rush_td',
-                     'bonus_rec_te']
+    headings_list = ['name', 'fpts', 'vbd rank', 'vbd pos rank', 'vbd', 'vorp', 'vols', 'vona',
+            'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
+            'rec', 'rec_td', 'rec_yd',
+            'rush_att', 'rush_yd', 'rush_td',
+            'pass_int', 'fum_lost',
+            'bonus_rec_te',
+            'sleeper_id']
     table = sg.Table(table_data, headings=headings_list,
                      # col_widths=[0, 3, 20],
-                     visible_column_map=[False, True, True, True, True, True, True, True, True, True, True, True, True,
-                                         True, True, True, True, True, True, True],
-                     auto_size_columns=True,
+                     visible_column_map=vis_col,
+                     auto_size_columns=False,
                      max_col_width=20,
                      sbar_width=2,
                      display_row_numbers=False,
                      vertical_scroll_only=False,
                      num_rows=min(50, len(table_data)), row_height=15, justification="left",
-                     key=f"-BOTTOM-TABLE-", expand_x=True, expand_y=True, visible=True)
+                     key=f"-BOTTOM-TABLE-", expand_x=False, expand_y=False, visible=True)
     return table
 
 
@@ -259,7 +267,7 @@ def get_cheatsheet_table(df, pos="all", hide_drafted=False):
     table_data = get_cheatsheet_data(df, pos, hide_drafted)
     table = sg.Table(table_data, headings=['sleeper_id', 'Tier', pos, 'vbd'],
                      col_widths=[0, 3, 9, 4],
-                     visible_column_map=[False, True, True, True],
+                     visible_column_map=[False, True, True, False],
                      auto_size_columns=False,
                      max_col_width=20,
                      sbar_width=2,

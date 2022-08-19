@@ -8,7 +8,7 @@ import time
 
 import pandas as pd
 import numpy as np
-from bs4 import BeautifulSoup, NavigableString
+from bs4 import BeautifulSoup  # , NavigableString
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By

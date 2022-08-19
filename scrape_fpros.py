@@ -6,6 +6,18 @@ from pathlib import Path
 import time
 import pdb
 from sleeper_ids import get_sleeper_ids
+import os
+import logging
+import time
+import numpy as np
+from bs4 import BeautifulSoup  # , NavigableString
+from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 YEAR = datetime.today().strftime('%Y')
 TODAY = datetime.today().strftime('%Y-%m-%d')

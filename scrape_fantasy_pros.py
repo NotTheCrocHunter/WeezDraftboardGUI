@@ -151,4 +151,3 @@ def scrape_fantasy_pros(scoring="ppr", week="draft"):
     print(f"Total time to get Fantasy Pros ECR and Projection data: {end_time - start_time}")
 
     return fp_df
-
