@@ -85,7 +85,7 @@ def WeezDraftboard():
                          key=(r, c))
                     for c in range(MAX_COLS)] for r in range(MAX_ROWS)]
 
-    col_db = sg.Column([[sg.Column(col1_layout, scrollable=True, vertical_alignment="bottom", size=(1000, 700),
+    col_db = sg.Column([[sg.Column(col1_layout, scrollable=True, vertical_alignment="bottom", size=(1000, 600),
                      justification="left",
                      vertical_scroll_only=False,
                      element_justification="left",
@@ -105,14 +105,15 @@ def WeezDraftboard():
     #  table = sg.Table(table_data, headings=headings, vertical_scroll_only=False)
     table = get_bottom_table(PP)
     col3_layout = [[table]]
-    col_bottom = sg.Column(col3_layout, size=(1000, 200))
+    col_bottom = sg.Column(col3_layout, size=(1000, 300))
     # wrapping col_db in another column before the pane for scrolling
     # col1_1 = sg.Column([[col_db]], expand_x=True, expand_y=True)
     pane1 = sg.Pane([col_db, col_bottom],
                     orientation="vertical",
                     handle_size=5,
                     expand_x=True,
-                    expand_y=True)
+                    expand_y=True,
+                    size=(1269, 900))
 
     col4 = sg.Column([[pane1]], expand_y=True, expand_x=True)
 
@@ -194,9 +195,9 @@ def WeezDraftboard():
             else:
                 pass
         elif event == "-HIDE-DRAFTED-":
-            for t in ["QB", "WR", "TE", "RB"]: # "ALL",
-                table_data = get_cheatsheet_data(PP, pos=t, hide_drafted=window["-HIDE-DRAFTED-"].get())
-                window[f"-{t}-TABLE-"].update(values=table_data)
+            for pos in ["QB", "WR", "TE", "RB"]:
+                table_data = get_cheatsheet_data(PP, pos=pos, hide_drafted=window["-HIDE-DRAFTED-"].get())
+                window[f"-{pos}-TABLE-"].update(values=table_data)
         # click on button event
         elif event in [(r, c) for c in range(MAX_COLS) for r in range(MAX_ROWS)]:
             r, c = event

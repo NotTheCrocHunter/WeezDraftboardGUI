@@ -10,7 +10,7 @@ import PySimpleGUI as sg
 # import PySimpleGUIWeb as sg
 import numpy as np
 from datetime import datetime
-from scrape_data import merge_dfs, scrape_data # , merge_dfs, get_player_pool
+from scrape_data import merge_dfs, scrape_data  # , merge_dfs, get_player_pool
 
 MAX_ROWS = 17
 MAX_COLS = 12
@@ -39,7 +39,8 @@ def get_player_pool(scoring_type='2qb'):
 
     # Now time to add the button_text and cheatsheet_text values
     # p_pool["cheatsheet_text"] = p_pool['pos_rank'] + ' ' + p_pool['name'] + ' ' + p_pool['team']
-    p_pool["cheatsheet_text"] = p_pool['first_name'].astype(str).str[0] + '. ' + p_pool['last_name'] + ' ' + p_pool['team']
+    p_pool["cheatsheet_text"] = p_pool['first_name'].astype(str).str[0] + '. ' + p_pool['last_name'] + ' ' + p_pool[
+        'team']
     p_pool["button_text"] = p_pool['first_name'] + '\n' + p_pool['last_name'] + '\n' + p_pool[
         'position'] + ' (' + p_pool['team'] + ') ' + p_pool['bye'].astype(str)
 
@@ -244,12 +245,12 @@ def get_bottom_table(df, hide_drafted=False):
     df = df.fillna(fillna_vals)
     table_data = df.values.tolist()
     headings_list = ['name', 'fpts', 'vbd rank', 'vbd pos rank', 'vbd', 'vorp', 'vols', 'vona',
-            'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
-            'rec', 'rec_td', 'rec_yd',
-            'rush_att', 'rush_yd', 'rush_td',
-            'pass_int', 'fum_lost',
-            'bonus_rec_te',
-            'sleeper_id']
+                     'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
+                     'rec', 'rec_td', 'rec_yd',
+                     'rush_att', 'rush_yd', 'rush_td',
+                     'pass_int', 'fum_lost',
+                     'bonus_rec_te',
+                     'sleeper_id']
     table = sg.Table(table_data, headings=headings_list,
                      # col_widths=[0, 3, 20],
                      visible_column_map=vis_col,
@@ -266,14 +267,14 @@ def get_bottom_table(df, hide_drafted=False):
 def get_cheatsheet_table(df, pos="all", hide_drafted=False):
     table_data = get_cheatsheet_data(df, pos, hide_drafted)
     table = sg.Table(table_data, headings=['sleeper_id', 'Tier', pos, 'vbd'],
-                     col_widths=[0, 3, 9, 4],
+                     col_widths=[0, 4, 15, 4],
                      visible_column_map=[False, True, True, False],
                      auto_size_columns=False,
                      max_col_width=20,
                      sbar_width=2,
                      display_row_numbers=False,
                      num_rows=min(10, len(table_data)), row_height=15, justification="left",
-                     key=f"-{pos}-TABLE-", expand_x=True, expand_y=True, visible=True)
+                     key=f"-{pos}-TABLE-", expand_x=False, expand_y=True, visible=True)
     return table
 
 
@@ -305,8 +306,6 @@ def get_draft_order(league):
         draft_order = [x for x in range(MAX_COLS)]
 
     return draft_order
-
-
 
 
 """
@@ -349,8 +348,9 @@ def refresh():
             else:
                 pass
 """
-def load_saved_league(df):
 
+
+def load_saved_league(df):
     """
     Reading the last used League ID to bring in league settings.
     draft_order used to set the buttons for the board columns/teams.
@@ -371,7 +371,7 @@ def load_saved_league(df):
             df['fpts'].fillna(0)
             league_found = True
             end_time = time.time()
-            print(f"Time to calc custom scores: {end_time-start_time}")
+            print(f"Time to calc custom scores: {end_time - start_time}")
     except FileNotFoundError:
         sg.popup_quick_message("League not found.")
         league_found = False
@@ -496,5 +496,3 @@ def calc_vorp(row, vorp_threshold):
 
 def calc_vbd(row):
     return int(max(0, row['vols'] + row['vorp']))
-
-
