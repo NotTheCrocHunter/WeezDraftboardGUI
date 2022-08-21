@@ -186,11 +186,11 @@ def DraftIdPopUp():
     pass
 
 
-def get_cheatsheet_data(df, pos="all", hide_drafted=False):
+def get_cheatsheet_data(df, table_pos="all", bottom_pos='superflex', hide_drafted=False):
     """
     Cheat Sheet Data for the rows of the tables building
     """
-    pos = pos.upper()  # Make pos var CAPS to align with position values "QB, RB, WR TE" and sg element naming format
+    table_pos = table_pos.upper()  # Make pos var CAPS to align with position values "QB, RB, WR TE" and sg element naming format
     # ------ Remove Kickers and Defenses ------- #
     df = df.loc[df["position"].isin(["QB", "RB", "WR", "TE"])]
 
@@ -200,10 +200,11 @@ def get_cheatsheet_data(df, pos="all", hide_drafted=False):
     else:
         pass
 
-    if pos == "ALL":
+    if table_pos == "ALL":
         df = df.sort_values(by=['superflex_rank_ecr'], ascending=True, na_position='last')
         cols = ['sleeper_id', 'superflex_tier_ecr', 'cheatsheet_text']
-    elif pos == "BOTTOM":
+    elif table_pos == "BOTTOM":
+
         df = df.sort_values(by=["vbd_rank"], ascending=True, na_position="last")
         cols = ['name', 'fpts', 'vbd_rank', 'position_rank_vbd', 'vbd', 'vorp', 'vols', 'vona',
                 'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
@@ -213,7 +214,7 @@ def get_cheatsheet_data(df, pos="all", hide_drafted=False):
                 'bonus_rec_te',
                 'sleeper_id']
     else:
-        df = df.loc[df.position == pos]
+        df = df.loc[df.position == table_pos]
         cols = ['sleeper_id', 'position_tier_ecr', 'cheatsheet_text', 'vbd']
         df = df.sort_values(by=["position_rank_ecr", "adp_pick_no"], ascending=[True, True], na_position="last")
 
@@ -223,11 +224,19 @@ def get_cheatsheet_data(df, pos="all", hide_drafted=False):
     return table_data
 
 
-def get_bottom_table(df, hide_drafted=False):
+def get_bottom_table(df, pos='superflex', hide_drafted=False, data_only=False):
     if hide_drafted:
+        df = df.loc[df["is_keeper"].isin([False, None]), :]
         df = df.loc[df["is_drafted"].isin([False, None]), :]
     else:
         pass
+
+    if pos.lower() == 'superflex':
+        pass
+    elif pos.lower() == 'flex':
+        df = df.loc[df['position'].isin(['RB', 'WR', 'TE'])]
+    else:
+        df = df.loc[df['position'] == pos.upper()]
 
     df = df.sort_values(by=["vbd_rank"], ascending=True, na_position="last")
 
@@ -244,6 +253,7 @@ def get_bottom_table(df, hide_drafted=False):
     fillna_vals = {col: 0 for col in cols if col not in ['sleeper_id', 'name']}
     df = df.fillna(fillna_vals)
     table_data = df.values.tolist()
+
     headings_list = ['name', 'fpts', 'vbd rank', 'vbd pos rank', 'vbd', 'vorp', 'vols', 'vona',
                      'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
                      'rec', 'rec_td', 'rec_yd',
@@ -261,7 +271,10 @@ def get_bottom_table(df, hide_drafted=False):
                      vertical_scroll_only=False,
                      num_rows=min(50, len(table_data)), row_height=15, justification="left",
                      key=f"-BOTTOM-TABLE-", expand_x=False, expand_y=False, visible=True)
-    return table
+    if data_only:
+        return table_data
+    else:
+        return table
 
 
 def get_cheatsheet_table(df, pos="all", hide_drafted=False):
@@ -440,7 +453,7 @@ def add_vbd(df):
     # get thresholds
     df = sort_reset_index(df, sort_by="fpts")
 
-    vols_cutoff = {"QB": 25, "RB": 25, "WR": 25, "TE": 10}
+    vols_cutoff = {"QB": 22, "RB": 25, "WR": 25, "TE": 10}
     vorp_cutoff = {"QB": 30, "RB": 55, "WR": 63, "TE": 18}
     new_df = pd.DataFrame()
     for pos in ["QB", "RB", "WR", "TE"]:
