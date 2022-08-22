@@ -6,13 +6,13 @@ import time
 # from draftboard_brain import open_keepers
 
 
-def scrape_data(adp_type="2qb"):
+def scrape_data(scoring_type="2qb"):
     fdf = scrape_fantasy_pros()
     cdf = get_chen_tiers()
     p_pool = merge_dfs(fdf, cdf, "sleeper_id", how="left")
 
     # ---- Get ADP info, split K and DEF, fix DEF names, Merge adf, concat K and D back into p_pool
-    adf = get_adp_df(adp_type)
+    adf = get_adp_df(scoring_type)
     # remove kickers and defenses
     adp_kd = adf.loc[adf['position'].isin(["PK", "DEF"])]
 

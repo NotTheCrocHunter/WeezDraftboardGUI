@@ -109,7 +109,7 @@ def WeezDraftboard():
     col_cheatsheets = sg.Column(col2_layout, scrollable=False, grab=True, pad=(1, 1), size=(600, 900))
     table = get_bottom_table(PP)
     bot_pos_list = ['SuperFlex', 'QB', 'RB', 'WR', 'TE', 'Flex']
-    col3_layout = [[sg.T("hi"), sg.DropDown(values=bot_pos_list,
+    col3_layout = [[sg.T("View Position: "), sg.DropDown(values=bot_pos_list,
                                             default_value=bot_pos_list[0],
                                             enable_events=True,
                                             key="-BOTTOM-POS-DD-")],
@@ -231,6 +231,7 @@ def WeezDraftboard():
         elif event in ['2QB', 'PPR', 'Half-PPR', 'STD']:
             PP, draft_order, league_found = get_player_pool(scoring_type=event.lower())
             adp_db = get_db_arr(PP, "adp")
+            ecr_db = get_db_arr(PP, "ecr")
             # TODO Map out the ecr_db to not sort by superflex
             #   Make calls for half-ppr and standard rankings as well.
             window["-LOAD-ADP-"].click()
@@ -273,7 +274,7 @@ def WeezDraftboard():
                 window[(r, c)].update(button_color='white on gray')
                 PP.loc[PP["sleeper_id"] == s_id, "is_drafted"] = True
             else:
-                button_reset_color = f"white on {BG_COLORS[db[r, c]['position']]}"
+                button_reset_color = window[(r, c)].metadata['button_color']
                 window[(r, c)].update(button_color=button_reset_color)
                 PP.loc[PP["sleeper_id"] == s_id, "is_drafted"] = False
             # --- Update the Cheatsheets and Bottom Table (Note: these will also update automatically on refresh) --- #
