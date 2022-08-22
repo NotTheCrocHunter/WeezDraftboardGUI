@@ -211,15 +211,7 @@ def WeezDraftboard():
                     PP.loc[PP["sleeper_id"].isin(drafted_ids), "is_drafted"] = True
                     # ---- Update the Cheat Sheets and Bottom Tables ----- #
                     update_all_tables(PP, window)
-                    # ----- UPDATE BUTTONS - for loop to set the drafted players as "clicked" ---- #
-                    for col in range(MAX_COLS):
-                        for row in range(MAX_ROWS):
-                            cur_id = window[(row, col)].metadata['sleeper_id']
-                            if cur_id in drafted_ids:
-                                window[(row, col)].metadata["is_clicked"] = True
-                                window[(row, col)].update(button_color='white on gray')
-                            else:
-                                pass
+
                 except TypeError:
                     live_draft = False
                     sg.popup_quick_message("Connection to Draft Lost")
@@ -227,7 +219,15 @@ def WeezDraftboard():
                     # update_buttons(window, MAX_COLS, MAX_ROWS, BG_COLORS, db_arr=db)
                     if live_board:
                         window["-LOAD-DB-"].click()
-
+                # ----- UPDATE BUTTONS - for loop to set the drafted players as "clicked" ---- #
+                for col in range(MAX_COLS):
+                    for row in range(MAX_ROWS):
+                        cur_id = window[(row, col)].metadata['sleeper_id']
+                        if cur_id in drafted_ids:
+                            window[(row, col)].metadata["is_clicked"] = True
+                            window[(row, col)].update(button_color='white on gray')
+                        else:
+                            pass
         elif event in ['2QB', 'PPR', 'Half-PPR', 'STD']:
             PP, draft_order, league_found = get_player_pool(scoring_type=event.lower())
             adp_db = get_db_arr(PP, "adp")
@@ -247,6 +247,17 @@ def WeezDraftboard():
                 pass
         elif event == "-HIDE-DRAFTED-":
             update_all_tables(PP, window)
+            # --- After updating the tables, if the draft is not live, then update those to gray as "hidden" --- #
+            if live_draft:
+                drafted_ids = PP.loc[PP["is_drafted"] == True, "sleeper_id"].tolist()
+            else:
+                drafted_ids = PP.loc[PP["is_keeper"] == True, "sleeper_id"].tolist()
+            for col in range(MAX_COLS):
+                for row in range(MAX_ROWS):
+                    cur_id = window[(row, col)].metadata['sleeper_id']
+                    if cur_id in drafted_ids:
+                        window[(row, col)].metadata["is_clicked"] = True
+                        window[(row, col)].update(button_color='white on gray')
 
         # Select position dropdown in bottom table
         elif event == '-BOTTOM-POS-DD-':
@@ -262,7 +273,8 @@ def WeezDraftboard():
                 window[(r, c)].update(button_color='white on gray')
                 PP.loc[PP["sleeper_id"] == s_id, "is_drafted"] = True
             else:
-                window[(r, c)].update(button_color=window[(r, c)].metadata["button_color"])
+                button_reset_color = f"white on {BG_COLORS[db[r, c]['position']]}"
+                window[(r, c)].update(button_color=button_reset_color)
                 PP.loc[PP["sleeper_id"] == s_id, "is_drafted"] = False
             # --- Update the Cheatsheets and Bottom Table (Note: these will also update automatically on refresh) --- #
             update_all_tables(PP, window)

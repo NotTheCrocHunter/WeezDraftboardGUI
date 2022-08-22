@@ -18,6 +18,15 @@
         "round": 3
     },
     {
+        "name": "Deebo Samuel",
+        "sleeper_id": "5872",
+        "button_text": "Deebo\nSamuel\nWR (SF) 9",
+        "is_keeper": true,
+        "pick_no": 26,
+        "draft_slot": 2,
+        "round": 3
+    },
+    {
         "name": "David Montgomery",
         "sleeper_id": "5892",
         "button_text": "David\nMontgomery\nRB (CHI) 14",
@@ -45,24 +54,6 @@
         "round": 7
     },
     {
-        "name": "Mike Williams",
-        "sleeper_id": "4068",
-        "button_text": "Mike\nWilliams\nWR (LAC) 8",
-        "is_keeper": true,
-        "pick_no": 74,
-        "draft_slot": 2,
-        "round": 7
-    },
-    {
-        "name": "Gabriel Davis",
-        "sleeper_id": "6943",
-        "button_text": "Gabe\nDavis\nWR (BUF) 7",
-        "is_keeper": true,
-        "pick_no": 182,
-        "draft_slot": 11,
-        "round": 16
-    },
-    {
         "name": "Jaylen Waddle",
         "sleeper_id": "7526",
         "button_text": "Jaylen\nWaddle\nWR (MIA) 11",
@@ -70,15 +61,6 @@
         "pick_no": 89,
         "draft_slot": 8,
         "round": 8
-    },
-    {
-        "name": "Michael Pittman Jr.",
-        "sleeper_id": "6819",
-        "button_text": "Michael\nPittman\nWR (IND) 14",
-        "is_keeper": true,
-        "pick_no": 98,
-        "draft_slot": 2,
-        "round": 9
     },
     {
         "name": "Brandin Cooks",
@@ -168,6 +150,15 @@
         "is_keeper": true,
         "pick_no": 181,
         "draft_slot": 12,
+        "round": 16
+    },
+    {
+        "name": "Gabriel Davis",
+        "sleeper_id": "6943",
+        "button_text": "Gabe\nDavis\nWR (BUF) 7",
+        "is_keeper": true,
+        "pick_no": 182,
+        "draft_slot": 11,
         "round": 16
     },
     {
