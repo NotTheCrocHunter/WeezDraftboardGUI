@@ -16,6 +16,9 @@ TODAY = datetime.today().strftime('%Y-%m-%d')
 def get_adp_df(adp_type="2qb", adp_year=YEAR, teams_count=12, positions="all"):
     start_time = time.time()
     adp_type = adp_type.lower()
+    if adp_type == "non-ppr":
+        adp_type = "standard"
+    standard_url = "https://fantasyfootballcalculator.com/api/v1/adp/standard?teams=12&year=2022&position=all"
     base_url = f"https://fantasyfootballcalculator.com/api/v1/adp/" \
                f"{adp_type}?teams={teams_count}&{adp_year}&position={positions}"
     file_path = Path(f'data/adp/adp_{adp_type}.json')

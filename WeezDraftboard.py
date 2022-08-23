@@ -20,7 +20,7 @@ def WeezDraftboard():
     menu_def = [['File', ['Open', 'Save', 'Exit']],
                 ['Draft ID', ['Select Draft ID']],
                 ['League', ['Select League']],
-                ['ADP', ['2QB', 'PPR', 'Half-PPR', 'Standard']],
+                ['ADP', ['2QB', 'PPR', 'Half-PPR', 'Non-PPR']],
                 ['Player Pool', ['View Player Pool', 'View Projections', 'View Rank Differences']],
                 ['Keepers', ['Set Keepers', 'Clear All Keepers']],
                 ['Theme', ['Change Theme']],
@@ -214,7 +214,8 @@ def WeezDraftboard():
                             window[(row, col)].update(button_color='white on gray')
                         else:
                             pass
-        elif event in ['2QB', 'PPR', 'Half-PPR', 'STD']:
+        # ----- Select ADP Type ----- #
+        elif event in ['2QB', 'PPR', 'Half-PPR', 'Non-PPR']:
             PP, draft_order, league_found = get_player_pool(scoring_type=event.lower())
             adp_db = get_db_arr(PP, "adp")
             ecr_db = get_db_arr(PP, "ecr")
