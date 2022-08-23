@@ -13,9 +13,9 @@ def WeezDraftboard():
     """
     sg.popup_quick_message('Hang on for a moment, this will take a bit to create....', auto_close=True,
                            non_blocking=True, font='Default 18')
-
+    sg.theme()
     sg.set_options(element_padding=(1, 1))
-    sg.set_options(font=("Calibri", 10, "normal"))
+    sg.set_options(font=("Calibri", 12, "normal"))
     # --- GUI Definitions ------- #
     menu_def = [['File', ['Open', 'Save', 'Exit']],
                 ['Draft ID', ['Select Draft ID']],
@@ -23,6 +23,7 @@ def WeezDraftboard():
                 ['ADP', ['2QB', 'PPR', 'Half-PPR', 'Standard']],
                 ['Player Pool', ['View Player Pool', 'View Projections', 'View Rank Differences']],
                 ['Keepers', ['Set Keepers', 'Clear All Keepers']],
+                ['Theme', ['Change Theme']],
                 ['Edit', ['Edit Me', 'Paste', ['Special', 'Normal', ], 'Undo'], ],
                 ['Help', 'About...'], ]
 
@@ -63,12 +64,12 @@ def WeezDraftboard():
                          expand_y=True,
                          border_width=0, p=(1, 1),
                          key=f"TEAM{c}",
-                         size=(13, 0))
+                         size=(11, 0))
                     for c in range(MAX_COLS)]] + \
                   [[sg.T(f"R{str(r + 1)}", size=(3, 1), justification='left')] +
                    [sg.B(button_text=f"{db[r, c]['button_text']}",
                          enable_events=True,
-                         size=(13, 0),
+                         size=(11, 0),
                          p=(1, 1),
                          border_width=0,
                          button_color=BG_COLORS[db[r, c]["position"]],
@@ -82,9 +83,7 @@ def WeezDraftboard():
                          key=(r, c),
                          metadata={"is_clicked": False,  # False,  # Leave this off by default #
                                    "button_color": BG_COLORS[db[r, c]["position"]],
-                                   "sleeper_id": "-",
-                                   },
-                         )
+                                   "sleeper_id": "-"},)
                     for c in range(MAX_COLS)] for r in range(MAX_ROWS)]
 
     col_db = sg.Column([[sg.Column(col1_layout,
@@ -109,20 +108,21 @@ def WeezDraftboard():
     col_cheatsheets = sg.Column(col2_layout, scrollable=False, grab=True, pad=(1, 1), size=(600, 900))
     table = get_bottom_table(PP)
     bot_pos_list = ['SuperFlex', 'QB', 'RB', 'WR', 'TE', 'Flex']
-    col3_layout = [[sg.T("View Position: "), sg.DropDown(values=bot_pos_list,
-                                            default_value=bot_pos_list[0],
-                                            enable_events=True,
-                                            key="-BOTTOM-POS-DD-")],
+    col3_layout = [[sg.T("View Position: "),
+                    sg.DropDown(values=bot_pos_list,
+                                default_value=bot_pos_list[0],
+                                enable_events=True,
+                                key="-BOTTOM-POS-DD-")],
                    [table]]
+
     col_bottom = sg.Column(col3_layout, size=(1000, 300))
-    # wrapping col_db in another column before the pane for scrolling
-    # col1_1 = sg.Column([[col_db]], expand_x=True, expand_y=True)
+
     pane1 = sg.Pane([col_db, col_bottom],
                     orientation="vertical",
                     handle_size=5,
                     expand_x=True,
                     expand_y=True,
-                    size=(1269, 900))
+                    size=(1250, 900))
 
     col4 = sg.Column([[pane1]], expand_y=True, expand_x=True)
 
@@ -132,27 +132,13 @@ def WeezDraftboard():
                     expand_x=True,
                     expand_y=True)
 
-    """  
-    pane1 = sg.Pane([col_db, col_cheatsheets],
-                    orientation="horizontal",
-                    handle_size=5,
-                    expand_x=True,
-                    expand_y=True)
-    """
-
-    """
-    pane2 = sg.Pane([col4, col_bottom],
-                    orientation="vertical",
-                    handle_size=5,
-                    expand_x=True,
-                    expand_y=True)"""
     layout = [[sg.Menu(menu_def)],
               [sg.Text('Weez Draftboard', font='Any 18'),
-               sg.Button('Load ECR', key="-LOAD-ECR-"),
-               sg.Button('Load ADP', key="-LOAD-ADP-"),
-               sg.Button('Load Draftboard', key="-LOAD-DB-"),
-               sg.Button('Refresh', key="-Refresh-"),
-               sg.Button('Connect to Draft', key="-CONNECT-TO-LIVE-DRAFT-"),
+               sg.Button('Load ECR', border_width=0, key="-LOAD-ECR-"),
+               sg.Button('Load ADP', border_width=0, key="-LOAD-ADP-"),
+               sg.Button('Load Draftboard', border_width=0, key="-LOAD-DB-"),
+               sg.Button('Refresh', border_width=0, key="-Refresh-"),
+               sg.Button('Connect to Draft', border_width=0, key="-CONNECT-TO-LIVE-DRAFT-"),
                sg.Text('Status: OFFLINE', key="-STATUS-"),
                sg.Push(),
                sg.Text('Search: '),
@@ -263,7 +249,7 @@ def WeezDraftboard():
         # Select position dropdown in bottom table
         elif event == '-BOTTOM-POS-DD-':
             update_all_tables(PP, window)
-
+        # Change Theme
         # click on button event
         elif event in [(r, c) for c in range(MAX_COLS) for r in range(MAX_ROWS)]:
             r, c = event
