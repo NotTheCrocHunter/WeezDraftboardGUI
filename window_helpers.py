@@ -2,10 +2,10 @@ from draftboard_brain import get_bottom_table, get_cheatsheet_data
 
 
 # ---- Update Window Functions ---- #
-def update_all_tables(PP, window):
+def update_all_tables(PP, window, roster, scoring):
     hide_d = window["-HIDE-DRAFTED-"].get()
     for cheat_sheet_pos in ["QB", "WR", "TE", "RB"]:  # "ALL",
-        cheatsheet_data = get_cheatsheet_data(PP, table_pos=cheat_sheet_pos, hide_drafted=hide_d)
+        cheatsheet_data = get_cheatsheet_data(PP, roster=roster, scoring=scoring, table_pos=cheat_sheet_pos, hide_drafted=hide_d)
         window[f"-{cheat_sheet_pos}-TABLE-"].update(values=cheatsheet_data)
 
     # ----- Update the Bottom Table Data ----- #

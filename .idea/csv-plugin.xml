@@ -17,6 +17,27 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/data/fpros/FantasyPros_Fantasy_Football_Projections_WR-2.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/fpros/FantasyPros_Fantasy_Football_Projections_WR.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/rankings/chen/QB.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/raw/adp/FantasyPros-2022.csv">
           <value>
             <Attribute>

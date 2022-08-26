@@ -67,7 +67,7 @@ def get_adp_df(adp_type="2qb", adp_year=YEAR, teams_count=12, positions="all"):
     return adp_df
 
 
-# df = get_adp_df()
+df = get_adp_df(adp_type='half-ppr')
 
 # print(df[df['sleeper_id'].isnull()])
 

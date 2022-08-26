@@ -3,16 +3,19 @@ from scrape_bchen import get_chen_tiers
 from scrape_ffcalc_adp import get_adp_df
 from scrape_fantasy_pros import merge_dfs, scrape_fantasy_pros
 import time
-# from draftboard_brain import open_keepers
 
 
-def scrape_data(scoring_type="2qb"):
+def scrape_data(scoring="ppr", roster="2qb"):
     fdf = scrape_fantasy_pros()
-    cdf = get_chen_tiers()
+    cdf = get_chen_tiers(scoring.lower())
     p_pool = merge_dfs(fdf, cdf, "sleeper_id", how="left")
 
     # ---- Get ADP info, split K and DEF, fix DEF names, Merge adf, concat K and D back into p_pool
-    adf = get_adp_df(scoring_type)
+    if roster.lower() in ['2qb', 'superflex']:
+        adf = get_adp_df(adp_type='2qb')
+    else:
+        adf = get_adp_df(adp_type=scoring.lower())
+
     # remove kickers and defenses
     adp_kd = adf.loc[adf['position'].isin(["PK", "DEF"])]
 
@@ -29,3 +32,7 @@ def scrape_data(scoring_type="2qb"):
 
     return p_pool
 
+
+# df = get_chen_tiers('non-ppr')
+# df = scrape_data()
+# print(df)
