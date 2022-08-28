@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Tweaked FF Calc ADP scraper to account for standard scoring (non-ppr).  Looks like ADP selection works for all 4 scoring types">
-      <change beforePath="$PROJECT_DIR$/.idea/WeezDraftboard.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/WeezDraftboard.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-plugin.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Major update - redesigned Chen and FPros scrapers; Fleshed out Settings options - scores will recalculate after saving.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/KeeperPopUp.py" beforeDir="false" afterPath="$PROJECT_DIR$/KeeperPopUp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SettingsWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/SettingsWindow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WeezDraftboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/WeezDraftboard.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/adp/adp.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_QB_Rankings.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_RB_Rankings.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_SuperFlex_Rankings.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_TE_Rankings.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_WR_Rankings.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_Fantasy_Football_Projections_FLX.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_Fantasy_Football_Projections_QB.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_data.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_qb.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_rb.json" beforeDir="false" />
@@ -17,18 +19,18 @@
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_te.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_wr.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/keepers/keepers.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/keepers/keepers.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/players/all_players.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/QB.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/RB.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/TE.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/WR.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/chen_tiers.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/draftboard_brain.py" beforeDir="false" afterPath="$PROJECT_DIR$/draftboard_brain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrape_bchen.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_bchen.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrape_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrape_fantasy_pros.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_fantasy_pros.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrape_ffcalc_adp.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_ffcalc_adp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/window_helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/window_helpers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sleeper_ids.py" beforeDir="false" afterPath="$PROJECT_DIR$/sleeper_ids.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,27 +98,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.main">
-    <configuration name="SettingsWindow" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="WeezDraftboard" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/SettingsWindow.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -180,27 +161,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="scrape_fantasy_pros_ranks" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="$PROJECT_DIR$/venv/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scrape_fantasy_pros_ranks.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="scrape_ffcalc_adp" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="WeezDraftboard" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -222,13 +182,55 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="sleeper_id_testing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="WeezDraftboard" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sleeper_id_testing.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="sleeper_ids" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="WeezDraftboard" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sleeper_ids.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.SettingsWindow" />
         <item itemvalue="Python.scrape_data" />
+        <item itemvalue="Python.sleeper_id_testing" />
+        <item itemvalue="Python.sleeper_ids" />
         <item itemvalue="Python.scrape_ffcalc_adp" />
         <item itemvalue="Python.scrape_fantasy_pros" />
-        <item itemvalue="Python.scrape_fantasy_pros_ranks" />
       </list>
     </recent_temporary>
   </component>
@@ -430,7 +432,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661261628064</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Major update - redesigned Chen and FPros scrapers; Fleshed out Settings options - scores will recalculate after saving.">
+      <created>1661482178072</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1661482178072</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -476,7 +485,8 @@
     <MESSAGE value="Tweaked Draftboard module for the hide drafted event" />
     <MESSAGE value="Fixed button click color bug. Added text to bottom table label.  Removed scoring arg from scrape funcs bc it broke.b" />
     <MESSAGE value="Tweaked FF Calc ADP scraper to account for standard scoring (non-ppr).  Looks like ADP selection works for all 4 scoring types" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tweaked FF Calc ADP scraper to account for standard scoring (non-ppr).  Looks like ADP selection works for all 4 scoring types" />
+    <MESSAGE value="Major update - redesigned Chen and FPros scrapers; Fleshed out Settings options - scores will recalculate after saving." />
+    <option name="LAST_COMMIT_MESSAGE" value="Major update - redesigned Chen and FPros scrapers; Fleshed out Settings options - scores will recalculate after saving." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -485,16 +495,6 @@
           <url>file://$PROJECT_DIR$/KeeperPopUp.py</url>
           <line>84</line>
           <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/scrape_ffcalc_adp.py</url>
-          <line>71</line>
-          <option name="timeStamp" value="51" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/scrape_bchen.py</url>
-          <line>99</line>
-          <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/scrape_ff.py</url>
@@ -507,19 +507,34 @@
           <option name="timeStamp" value="119" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/scrape_fantasy_pros.py</url>
-          <line>214</line>
-          <option name="timeStamp" value="238" />
+          <url>file://$PROJECT_DIR$/sleeper_id_testing.py</url>
+          <line>100</line>
+          <option name="timeStamp" value="386" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/WeezDraftboard.py</url>
-          <line>286</line>
-          <option name="timeStamp" value="244" />
+          <url>file://$PROJECT_DIR$/sleeper_id_testing.py</url>
+          <line>84</line>
+          <option name="timeStamp" value="387" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/WeezDraftboard.py</url>
-          <line>447</line>
-          <option name="timeStamp" value="276" />
+          <url>file://$PROJECT_DIR$/sleeper_id_testing.py</url>
+          <line>83</line>
+          <option name="timeStamp" value="388" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/sleeper_id_testing.py</url>
+          <line>69</line>
+          <option name="timeStamp" value="389" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/sleeper_id_testing.py</url>
+          <line>65</line>
+          <option name="timeStamp" value="391" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scrape_data.py</url>
+          <line>51</line>
+          <option name="timeStamp" value="417" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

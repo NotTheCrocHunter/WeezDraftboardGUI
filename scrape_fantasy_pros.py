@@ -1,3 +1,4 @@
+import pdb
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -5,7 +6,6 @@ import json
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
-from sleeper_ids import get_sleeper_ids
 import time
 
 
@@ -17,7 +17,6 @@ def merge_dfs(df1, df2, col_to_match, how="left"):
 
 
 def get_ranks(scoring, pos):
-
     print(f"Getting {scoring} ECR rankings for {pos}")
 
     if pos.lower() == "overall" and scoring == "standard":
@@ -45,24 +44,25 @@ def get_ranks(scoring, pos):
     elif scoring.lower() == "standard":
         scoring = "non_ppr"
 
+    #  'ecr_non_ppr_pos_rank'
     if pos.lower() not in ['overall', 'superflex']:
         ecr_rank_df["position"] = pos.upper()
-        ecr_rank_df.rename(columns={"pos_rank": f"ecr_{scoring}_pos_rank",
-                                 "tier": f"ecr_{scoring}_tier"},
-                        inplace=True)
+
+        ecr_rank_df.rename(columns={"pos_rank": f"ecr_pos_rank_{scoring}",
+                                    "tier": f"ecr_tier_{scoring}"},
+                           inplace=True)
+
     else:
         ecr_rank_df[f"{pos.lower()}_{scoring}_rank"] = ecr_rank_df.index + 1
         ecr_rank_df.rename(columns={"pos_rank": f"{pos.lower()}_{scoring}_pos_rank",
-                                 "tier": f"{pos.lower()}_{scoring}_tier"},
-                        inplace=True)
+                                    "tier": f"{pos.lower()}_{scoring}_tier"},
+                           inplace=True)
 
-    if pos.lower()== 'qb':
-        # Position Ranks
-        ecr_rank_df["ecr_ppr_pos_rank"] = ecr_rank_df["ecr_non_ppr_pos_rank"]
-        ecr_rank_df["ecr_half_ppr_pos_rank"] = ecr_rank_df["ecr_non_ppr_pos_rank"]
-        # Tiers
-        ecr_rank_df["ecr_half_ppr_tier"] = ecr_rank_df["ecr_non_ppr_tier"]
-        ecr_rank_df["ecr_ppr_tier"] = ecr_rank_df["ecr_non_ppr_tier"]
+    if pos.lower() == 'qb':
+        for x in ['ppr', 'half_ppr']:
+            # Position Ranks
+            ecr_rank_df[f'ecr_pos_rank_{x}'] = ecr_rank_df["ecr_pos_rank_non_ppr"]
+            ecr_rank_df[f'ecr_tier_{x}'] = ecr_rank_df["ecr_tier_non_ppr"]
 
     # --- After Each Position has gotten ranks for each score type, Append position DF to rank_df_list ----- #
     return ecr_rank_df
@@ -72,20 +72,20 @@ def scrape_fantasy_pros(scoring="ppr", week="draft"):
     """
     Check Local File and date , If local file not found or date note today, script commences
     """
-    save_path = Path('data/fpros')
+    save_path = Path('data')
     save_path.mkdir(parents=True, exist_ok=True)
     TODAY = datetime.today().strftime('%Y-%m-%d')
-    data_file = Path('data/fpros/fpros_data.json')
+    fpros_json = Path('data/fpros_data.json')
 
     try:
-        with open(data_file, "r") as file:
+        with open(fpros_json, "r") as file:
             fpros_dict = json.load(file)
             fpros_saved_date = datetime.fromisoformat(fpros_dict["accessed"]).strftime('%Y-%m-%d')
     except FileNotFoundError:
         fpros_saved_date = None
 
     if fpros_saved_date == TODAY:
-        print("Loading local fantasy pros data")
+        print("Loading local Fantasy Pros data")
         df = pd.DataFrame(fpros_dict["players"])
         return df
     else:
@@ -125,6 +125,8 @@ def scrape_fantasy_pros(scoring="ppr", week="draft"):
 
     # ----- Now get Projections. Requires BeautifulSoup to scrape the player ids ----- #
     # --- Pandas can read the table directly, and then use the id list from BS to add to the df -- #
+
+
     """
     GETTING PROJECTIONS
     """
@@ -194,22 +196,29 @@ def scrape_fantasy_pros(scoring="ppr", week="draft"):
                           'player_name': 'name',
                           'player_team_id': 'team',
                           'player_bye_week': 'bye'}, inplace=True)
+    fp_df['name_pos'] = fp_df['name'] + " " + fp_df['position']
     fp_df.loc[fp_df["team"] == "JAC", "team"] = "JAX"
-    score_cols = ['rec_yd', 'rec_td', 'rec', 'pass_yd', 'pass_td', 'pass_int', 'pass_att', 'pass_cmp', 'rush_yd', 'rush_td', 'rush_att']
+    score_cols = ['rec_yd', 'rec_td', 'rec', 'pass_yd', 'pass_td', 'pass_int', 'pass_att', 'pass_cmp', 'rush_yd',
+                  'rush_td', 'rush_att']
     fp_df[score_cols] = fp_df[score_cols].fillna(0)  # .update(fp_df[].fillna(0, inplace=True))
     # Fill Bonus Columns
     for pos in ['rb', 'wr', 'te']:
         fp_df[f"bonus_rec_{pos}"] = fp_df["rec"].loc[fp_df["position"] == pos.upper()]
         fp_df[f"bonus_rec_{pos}"] = fp_df[f'bonus_rec_{pos}'].fillna(0)
-    print("getting sleeper ids")
-    fp_df = get_sleeper_ids(fp_df)
+    # print("getting sleeper ids")
+    # fp_df = get_sleeper_ids(fp_df)
     # Drop dupes and NA after the sleeper_id grab  TODO: Work on the Sleeper ID
     fp_df.drop_duplicates(subset=['fantasy_pros_player_id'], keep='last', inplace=True)
-    fp_df.dropna(subset=['sleeper_id'], inplace=True)
+    # fp_df.dropna(subset=['sleeper_id'], inplace=True)
     fpros_dict = {"accessed": TODAY, "players": fp_df.to_dict(orient="records")}
-    with open(data_file, "w") as file:
+    with open(fpros_json, "w") as file:
         json.dump(fpros_dict, file, indent=4)
     end_time = time.time()
     print(f"Total time to get Fantasy Pros ECR and Projection data: {end_time - start_time}")
 
     return fp_df
+"""
+_a = scrape_fantasy_pros()
+
+print(_a)
+"""

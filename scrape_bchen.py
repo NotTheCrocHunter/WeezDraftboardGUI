@@ -9,22 +9,15 @@ from sleeper_ids import get_sleeper_ids
 from scrape_fantasy_pros import merge_dfs
 
 
-def get_chen_tiers(scoring):
+def get_chen_tiers():
     # ---- Declare Paths, URLs, and position list------ #
-    save_path = Path('data/rankings')
+    save_path = Path('data')
     save_path.mkdir(parents=True, exist_ok=True)
     positions = ["QB", "RB", "WR", "TE"]
 
-    if scoring.lower() in ['half-ppr', 'half_ppr']:
-        scoring = 'half'
-
     TODAY = datetime.today().strftime('%Y-%m-%d')
-    if scoring.lower() == 'half':
-        score_path = 'half-ppr'
-    else:
-        score_path = scoring.lower()
 
-    chen_json = Path(f"data/rankings/chen_tiers.json")
+    chen_json = Path(f"data/chen_tiers.json")
 
     try:
         with open(chen_json, "r") as file:
@@ -52,7 +45,7 @@ def get_chen_tiers(scoring):
         # ----- Nested For Loop to get the cheat sheet for each position for each score type ----#
         # Going to Concat each position and then merge the 3 scoring DFs.
         score_df_list = []
-        for s in ['ppr', 'half', 'standard']:
+        for s in ['ppr', 'half_ppr', 'non_ppr']:
             pos_df_list = []
             for p in positions:
                 # ---- Assign the URL for the API call ---- #
@@ -60,9 +53,12 @@ def get_chen_tiers(scoring):
                     url = f"https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-{p}.csv"
                 elif s in ['standard', 'non-ppr', 'non_ppr']:
                     url = f"https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-{p.upper()}.csv"
+                elif s == 'half_ppr':
+                    url = f"https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-{p.upper()}-HALF.csv"
                 else:
-                    url = f"https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-{p.upper()}-{scoring.upper()}.csv"
+                    url = f"https://s3-us-west-1.amazonaws.com/fftiers/out/weekly-{p.upper()}-PPR.csv"
                 temp_df = pd.read_csv(url)
+
                 temp_df.rename(columns={'Rank': f'chen_pos_rank_{s}',
                                         'Tier': f'chen_tier_{s}',
                                         'Player.Name': 'name',
@@ -72,18 +68,15 @@ def get_chen_tiers(scoring):
             pos_df = pd.concat(pos_df_list)
             score_df_list.append(pos_df)
 
-        # Merge the 3 chen dataframes
-        chen_df = merge_dfs(score_df_list[0], score_df_list[1], 'name_pos', how='outer')
-        chen_df = merge_dfs(chen_df, score_df_list[2], 'name_pos', how='left')
+        ppr_df = score_df_list[0]
+        half_df = score_df_list[1]
+        non_df = score_df_list[2]
 
-        # TODO fix the dupe sleeper values. Either merge the Chen df on the FPros on another column, or fix sleeper
-        chen_df = get_sleeper_ids(chen_df)
-
-        # Fill the NA values, recast those columns as integers
-        chen_df.fillna(999, inplace=True)
-        for col in ['standard', 'half', 'ppr']:
-            chen_df[[f'chen_pos_rank_{col}', f'chen_tier_{col}']] = \
-                chen_df[[f'chen_pos_rank_{col}', f'chen_tier_{col}']].astype(int)
+        chen_series = pd.concat([ppr_df['name_pos'], half_df['name_pos'], non_df['name_pos']])
+        chen_series.drop_duplicates(inplace=True)
+        chen_df = pd.DataFrame(chen_series)
+        for x in score_df_list:
+            chen_df = merge_dfs(chen_df, x, 'name_pos', how="left")
 
         # ---- Finally, after making the DF nad saving the CSVs, save all as JSON ------ #
         # df = df[["position_rank_chen", "position_tier_chen", "name", "sleeper_id"]]
@@ -96,4 +89,6 @@ def get_chen_tiers(scoring):
 
 
 # df = get_chen_tiers()
+
+# print("df")
 

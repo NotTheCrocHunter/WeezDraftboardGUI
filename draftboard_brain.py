@@ -21,9 +21,9 @@ YEAR = datetime.today().strftime('%Y')
 TODAY = datetime.today().strftime('%Y-%m-%d')
 
 
-def get_player_pool(roster='2qb', scoring="ppr"):
+def get_player_pool():
     start_time = time.time()
-    p_pool = scrape_data(roster=roster, scoring=scoring)
+    p_pool = scrape_data()
 
     # ----Clean up columns to be INT values and fill NA ------ #
     cols = ["overall_half_ppr_rank",
@@ -32,6 +32,7 @@ def get_player_pool(roster='2qb', scoring="ppr"):
             "superflex_half_ppr_rank",
             "superflex_non_ppr_rank",
             "superflex_ppr_rank"]
+    
     p_pool[cols] = p_pool[cols].fillna(value=999).astype(int)
     for col in cols:
         p_pool[col] = pd.to_numeric(p_pool[col], errors="coerce", downcast='integer')
@@ -62,14 +63,17 @@ def get_cheatsheet_list(df, pos, roster, scoring):
 def get_db_arr(df, key, roster="superflex", scoring="ppr", df_loc_col="is_keeper"):
     print("Array Scoring")
     if scoring.lower() in ['standard', 'non-ppr', 'non_ppr']:
-        ecr_scoring = 'non_ppr'
+        scoring = 'non_ppr'
     elif scoring.lower() in ['half', 'half-ppr', 'half_ppr']:
-        ecr_scoring = 'half_ppr'
+        scoring = 'half_ppr'
     else:
-        ecr_scoring = scoring.lower()
-
-    keys = {"adp": {"sort": "adp_pick", "pick_no": "adp_pick_no"},
-            "ecr": {"sort": f"{roster}_{ecr_scoring}_rank", "pick_no": 'ecr_pick_no'},
+        scoring = scoring.lower()
+    if roster.lower() == 'superflex':
+        adp_sort = roster
+    else:
+        adp_sort = scoring
+    keys = {"adp": {"sort": f"adp_pick_{adp_sort}", "pick_no": "adp_pick_no"},
+            "ecr": {"sort": f"{roster}_{scoring}_rank", "pick_no": 'ecr_pick_no'},
             "keepers": {"sort": "", "pick_no": ""}
             }
     print(f"Array Sorting by key: {key}")
@@ -78,7 +82,6 @@ def get_db_arr(df, key, roster="superflex", scoring="ppr", df_loc_col="is_keeper
         pick_no = keys[key]['pick_no']
 
         non_kept_picks = [n + 1 for n in range(len(df)) if n + 1 not in df['pick_no'].to_list()]
-
 
         df[pick_no] = df["pick_no"]
         df.sort_values(by=sort, ascending=True, inplace=True)
@@ -148,12 +151,12 @@ def get_cheatsheet_data(df, roster, scoring, table_pos="all", hide_drafted=False
         if scoring.lower() in ['half', 'half-ppr', 'half_ppr']:
             scoring = 'half'
         elif scoring.lower() in ['non-ppr', 'non_ppr', 'standard']:
-            scoring = 'standard'
+            scoring = 'non_ppr'
         cols = ['sleeper_id', f'chen_tier_{scoring.lower()}', 'cheatsheet_text', 'vbd']
         df = df.sort_values(by=[f"chen_pos_rank_{scoring.lower()}", "adp_pick_no"], ascending=[True, True], na_position="last")
 
     df = df[cols]
-    # df = df.fillna(value="999")
+    df = df.fillna(value="999")
     table_data = df.values.tolist()
     return table_data
 

@@ -47,7 +47,7 @@ def WeezDraftboard():
 
     scoring_settings, draft_order, league_found = load_saved_league()
 
-    PP = get_player_pool(roster=roster, scoring=scoring)
+    PP = get_player_pool()
     PP = calc_scores(PP, scoring_settings, roster)
 
     """
@@ -76,12 +76,12 @@ def WeezDraftboard():
                          expand_y=True,
                          border_width=0, p=(1, 1),
                          key=f"TEAM{c}",
-                         size=(11, 0))
+                         size=(12, 0))
                     for c in range(MAX_COLS)]] + \
                   [[sg.T(f"R{str(r + 1)}", size=(3, 1), justification='left')] +
                    [sg.B(button_text=f"{db[r, c]['button_text']}",
                          enable_events=True,
-                         size=(11, 0),
+                         size=(12, 0),
                          p=(1, 1),
                          border_width=0,
                          button_color=BG_COLORS[db[r, c]["position"]],
@@ -257,7 +257,7 @@ def WeezDraftboard():
         elif event in ['2QB', 'PPR', 'Half-PPR', 'Non-PPR']:
             # PP, draft_order, league_found = get_player_pool(scoring_type=event.lower())
             # PP = get_player_pool(PP, roster=event,
-            PP = get_player_pool(roster=event)
+            # PP = get_player_pool(roster=event)
             adp_db = get_db_arr(PP, "adp")
             ecr_db = get_db_arr(PP, "ecr")
             # TODO Map out the ecr_db to not sort by superflex
@@ -278,7 +278,7 @@ def WeezDraftboard():
                 scoring = 'Non-PPR'
 
             # --- Get New Player Pool --- # 
-            PP = get_player_pool(roster=roster, scoring=scoring)
+            # PP = get_player_pool(roster=roster, scoring=scoring)
             PP = calc_scores(PP, scoring_settings, roster)
             # -------Draftboard Arrays--------#
             adp_db = get_db_arr(PP, "adp", roster=roster, scoring=scoring)
