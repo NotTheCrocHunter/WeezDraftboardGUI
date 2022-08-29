@@ -4,9 +4,8 @@ from draftboard_brain import *
 from KeeperPopUp import KeeperPopUp
 from LeaguePopUp import LeaguePopUp
 from ViewPlayerPool import ViewPlayerPool
-from SettingsWindow import SettingsWindow
-from window_helpers import update_all_tables, update_buttons
-
+import SettingsWindow
+from window_helpers import *
 
 def WeezDraftboard():
     """
@@ -42,11 +41,12 @@ def WeezDraftboard():
     MAX_ROWS = 17
     MAX_COLS = 12
     BOARD_LENGTH = MAX_ROWS * MAX_COLS
-    roster = "overall"
+    roster = "superflex"
     scoring = "ppr"
 
     scoring_settings, draft_order, league_found = load_saved_league()
-
+    # draft_order = [f'TEAM {x}' for x in range(13)]
+    # scoring_settings = SettingsWindow.get()
     PP = get_player_pool()
     PP = calc_scores(PP, scoring_settings, roster)
 
@@ -76,12 +76,12 @@ def WeezDraftboard():
                          expand_y=True,
                          border_width=0, p=(1, 1),
                          key=f"TEAM{c}",
-                         size=(12, 0))
+                         size=(11, 0))
                     for c in range(MAX_COLS)]] + \
                   [[sg.T(f"R{str(r + 1)}", size=(3, 1), justification='left')] +
                    [sg.B(button_text=f"{db[r, c]['button_text']}",
                          enable_events=True,
-                         size=(12, 0),
+                         size=(11, 0),
                          p=(1, 1),
                          border_width=0,
                          button_color=BG_COLORS[db[r, c]["position"]],
@@ -138,23 +138,21 @@ def WeezDraftboard():
 
     col4 = sg.Column([[pane1]], expand_y=True, expand_x=True)
 
-    pane2 = sg.Pane([col4, col_cheatsheets],
+    pane2 = [sg.Pane([col4, col_cheatsheets],
                     orientation="horizontal",
                     handle_size=5,
                     expand_x=True,
-                    expand_y=True)
+                    expand_y=True)]
 
     options_layout = [[sg.Radio('PPR', "ScoringRadio", default=True, enable_events=True, k='-R1-'),
                        sg.Radio('Half-PPR', "ScoringRadio", default=False, enable_events=True, k='-R2-'),
                        sg.Radio('Non-PPR', "ScoringRadio", default=False, enable_events=True, k='-R3-'),
-                       sg.Checkbox("SuperFlex", default=False, enable_events=True, key="-SUPERFLEX-"),
+                       sg.Checkbox("SuperFlex", default=True, enable_events=True, key="-SUPERFLEX-"),
                        sg.Push(),
                        sg.VerticalSeparator(),
                        sg.Push(),
                        sg.Checkbox("Hide Drafted Players", enable_events=True, key="-HIDE-DRAFTED-")]]
-
-    layout = [[sg.Menu(menu_def)],
-              [sg.Text('Weez Draftboard', font='Any 18'),
+    top_bar_layout = [sg.Text('Weez Draftboard', font='Any 18'),
                sg.Push(),
                sg.VerticalSeparator(),
                sg.Push(),
@@ -175,8 +173,10 @@ def WeezDraftboard():
                sg.Push(),
                sg.Text('Search: '),
                sg.Input(key='-Search-', size=15, enable_events=True, focus=True, tooltip="Find Player"),
-               ],
-              [pane2],
+               ]
+    layout = [[sg.Menu(menu_def)],
+              top_bar_layout,
+              pane2,
               ]
     print('# -------Making Windows-------#')
     window = sg.Window('Weez Draftboard', layout,
@@ -196,16 +196,10 @@ def WeezDraftboard():
         if event in (sg.WIN_CLOSED, 'Exit'):
             break
         elif event == 'Scoring Settings':
-            new_scoring_settings = SettingsWindow()
-            new_scoring_settings = SettingsWindow(silent_mode=True)
-            if new_scoring_settings:
-                PP = calc_scores(PP, new_scoring_settings, roster)
-                update_all_tables(PP, window, roster, scoring)
-                scoring_settings = new_scoring_settings
-            else:
-                print("Scoring Settings Not Changed")
-                print(f"Current scoring settings: {scoring_settings}")
-
+            scoring_settings = SettingsWindow.create()
+            PP = calc_scores(PP, scoring_settings, roster)
+            PP = sort_reset_index(PP, sort_by=["vbd", "fpts"])
+            # update_all_tables(PP, window, roster, scoring)
         # ---- Refresh Window Event ---- #
         elif event in ("-Refresh-", sg.TIMEOUT_KEY):
             """
@@ -218,13 +212,53 @@ def WeezDraftboard():
                 If live_board (main db view), the picks will update on screen, by calling the LOAD-DB button
             Type error to handle a disconnect of the draft. 
             """
-            if not live_draft:
-                drafted_ids = PP.loc[PP["is_keeper"] == True, "sleeper_id"].tolist()
-                window["-STATUS-"].update(value=f"Viewing: {scoring.upper()} scoring.  Status: OFFLINE")
+            # Check the Live Draft status and update the label and drafted_ids
+            if live_draft:
+                drafted_ids = PP.loc[PP["is_drafted"] == True, "sleeper_id"].tolist()
+                window["-STATUS-"].update(value=f"Viewing: {scoring.upper()} scoring.  Status: Connected")
             else:
+                drafted_ids = PP.loc[PP["is_keeper"] == True, "sleeper_id"].tolist()
+                window["-STATUS-"].update(value=f"Viewing: {scoring.upper()} scoring.  Status: Offline")
+
+            # Get the various variables needed from the window
+            hide_d = window["-HIDE-DRAFTED-"].get()
+            # roster_type = window["--"].get()
+            # scoring_type = window['--'].get()
+            # Get Roster and Scoring types
+            if window['-SUPERFLEX-'].get():
+                roster = "superflex"
+            else:
+                roster = "overall"
+            # Get Scoring type
+            if window['-R1-'].get():
+                scoring = 'PPR'
+            elif window['-R2-'].get():
+                scoring = 'Half-PPR'
+            elif window['-R3-'].get():
+                scoring = 'Non-PPR'
+            # ---- Update the Cheat Sheets and Bottom Tables ----- #
+            # update_all_tables(PP, window, roster, scoring)
+            for cheat_sheet_pos in ["QB", "WR", "TE", "RB"]:  # "ALL",
+                cheatsheet_data = get_cheatsheet_data(PP, roster=roster, scoring=scoring,
+                                                      table_pos=cheat_sheet_pos, hide_drafted=hide_d)
+                window[f"-{cheat_sheet_pos}-TABLE-"].update(values=cheatsheet_data)
+            # ----- Update the Bottom Table Data ----- #
+            bottom_position = window['-BOTTOM-POS-DD-'].get()
+            bottom_data = get_bottom_table(PP, pos=bottom_position.lower(), hide_drafted=hide_d, data_only=True)
+            window['-BOTTOM-TABLE-'].update(values=bottom_data)
+            # update_buttons(window, MAX_COLS, MAX_ROWS, BG_COLORS, db_arr=db)
+            # ----- UPDATE BUTTONS - for loop to set the drafted players as "clicked" ---- #
+            for col in range(MAX_COLS):
+                for row in range(MAX_ROWS):
+                    cur_id = window[(row, col)].metadata['sleeper_id']
+                    if cur_id in drafted_ids:
+                        window[(row, col)].metadata["is_clicked"] = True
+                        window[(row, col)].update(button_color='white on gray')
+                    else:
+                        pass
+            if live_draft:
                 try:
                     window["-STATUS-"].update(value=f'Viewing: {scoring.upper()} scoring.  Status: Connected')
-
                     all_picks = draft.get_all_picks()
                     drafted_ids = [x['player_id'] for x in all_picks]
                     PP.loc[PP['sleeper_id'].isin(drafted_ids), "is_drafted"] = True
@@ -234,25 +268,14 @@ def WeezDraftboard():
                     db = get_db_arr(PP, "live")
                     # ---- set the drafted_ids as True ---- #
                     PP.loc[PP["sleeper_id"].isin(drafted_ids), "is_drafted"] = True
-                    # ---- Update the Cheat Sheets and Bottom Tables ----- #
-                    update_all_tables(PP, window, roster, scoring)
 
                 except TypeError:
                     live_draft = False
                     sg.popup_quick_message("Connection to Draft Lost")
                 finally:
-                    # update_buttons(window, MAX_COLS, MAX_ROWS, BG_COLORS, db_arr=db)
                     if live_board:
                         window["-LOAD-DB-"].click()
-                # ----- UPDATE BUTTONS - for loop to set the drafted players as "clicked" ---- #
-                for col in range(MAX_COLS):
-                    for row in range(MAX_ROWS):
-                        cur_id = window[(row, col)].metadata['sleeper_id']
-                        if cur_id in drafted_ids:
-                            window[(row, col)].metadata["is_clicked"] = True
-                            window[(row, col)].update(button_color='white on gray')
-                        else:
-                            pass
+
         # ----- Select ADP Type ----- #
         elif event in ['2QB', 'PPR', 'Half-PPR', 'Non-PPR']:
             # PP, draft_order, league_found = get_player_pool(scoring_type=event.lower())
@@ -276,15 +299,14 @@ def WeezDraftboard():
                 scoring = 'Half-PPR'
             elif window['-R3-'].get():
                 scoring = 'Non-PPR'
-
             # --- Get New Player Pool --- # 
-            # PP = get_player_pool(roster=roster, scoring=scoring)
-            PP = calc_scores(PP, scoring_settings, roster)
+            # PP = get_player_pool()
+            PP = calc_scores(PP, SettingsWindow.get(), roster)
             # -------Draftboard Arrays--------#
             adp_db = get_db_arr(PP, "adp", roster=roster, scoring=scoring)
             ecr_db = get_db_arr(PP, "ecr", roster=roster, scoring=scoring)
 
-            update_all_tables(PP, window, roster, scoring)
+            # update_all_tables(PP, window, roster, scoring)
             # db = get_db_arr(PP, "keepers")
             """
             Reading the last used League ID to bring in league settings. 
@@ -310,7 +332,7 @@ def WeezDraftboard():
             else:
                 pass
         elif event == "-HIDE-DRAFTED-":
-            update_all_tables(PP, window, roster, scoring)
+            # update_all_tables(PP, window, roster, scoring)
             # --- After updating the tables, if the draft is not live, then update those to gray as "hidden" --- #
             if live_draft:
                 drafted_ids = PP.loc[PP["is_drafted"] == True, "sleeper_id"].tolist()
@@ -325,7 +347,8 @@ def WeezDraftboard():
 
         # Select position dropdown in bottom table
         elif event == '-BOTTOM-POS-DD-':
-            update_all_tables(PP, window, roster, scoring)
+            # update_all_tables(PP, window, roster, scoring)
+            pass
         # Change Theme
         # click on button event
         elif event in [(r, c) for c in range(MAX_COLS) for r in range(MAX_ROWS)]:
@@ -341,7 +364,7 @@ def WeezDraftboard():
                 window[(r, c)].update(button_color=button_reset_color)
                 PP.loc[PP["sleeper_id"] == s_id, "is_drafted"] = False
             # --- Update the Cheatsheets and Bottom Table (Note: these will also update automatically on refresh) --- #
-            update_all_tables(PP, window, roster, scoring)
+            # update_all_tables(PP, window, roster, scoring)
 
         elif event == '-Search-':
             search_text = values["-Search-"].lower()

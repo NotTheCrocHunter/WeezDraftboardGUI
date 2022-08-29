@@ -3,26 +3,20 @@ from pathlib import Path
 import json
 
 
-def SettingsWindow(silent_mode=False):
-    """
-    Settings window to capture scoring settings.  
-    Reads/writes to local json file for storage. 
-    Returns scoring dict.
-    """
-    
+def get():
     default_settings = {"pass_yd": 0.04,
                         "pass_td": 4,
-                        "pass_int": -2,                                              
+                        "pass_int": -2,
                         "rec": 1,
                         "rec_yd": 0.1,
                         "rec_td": 6,
                         "rush_yd": 0.1,
-                        "rush_td": 6,  
+                        "rush_td": 6,
                         "fum": -2,
                         "bonus_rec_te": 0,
                         "bonus_rec_rb": 0,
                         "bonus_rec_wr": 0,
-                        }            
+                        }
 
     settings_path = Path('data/settings')
     settings_json = Path('data/settings/scoring_settings.json')
@@ -34,6 +28,20 @@ def SettingsWindow(silent_mode=False):
         scoring_settings = default_settings
         with open(settings_json, "w") as file:
             json.dump(scoring_settings, file, indent=4)
+
+    return scoring_settings
+
+
+def create(silent_mode=False):
+    """
+    Settings window to capture scoring settings.  
+    Reads/writes to local json file for storage. 
+    Returns scoring dict.
+    """
+    settings_path = Path('data/settings')
+    settings_json = Path('data/settings/scoring_settings.json')
+    
+    scoring_settings = get()
 
     if silent_mode:
         return scoring_settings
@@ -72,35 +80,38 @@ def SettingsWindow(silent_mode=False):
     col2 = sg.Column(col2_layout)
     save_button = sg.Button("Save", key="-SAVE-", enable_events=True)
     cancel_button = sg.Button("Cancel", key="-CANCEL-", enable_events=True)
-    window = sg.Window("Settings", layout=[[col1, col2], [save_button, cancel_button]], size=(300, 300))
+    layout = [[col1, col2], [save_button, cancel_button]]
+    settings_window = sg.Window("Settings", layout=layout, size=(300, 300), modal=True)
 
     while True:
-        event, values = window.read()
+        event, values = settings_window.read()
 
         if event in [sg.WINDOW_CLOSED, '-CANCEL-']:
-            sg.popup("Scoring settings not saved.", title="Settings")
+            # sg.popup("Scoring settings not saved.", title="Settings")
+            settings_window.close()
             break
 
         elif event == "-SAVE-":
-            scoring_settings = {"pass_yd": 1/int(window["pass_yd"].get()),
-                                "pass_td": float(window["pass_td"].get()),
-                                "pass_int": float(window["pass_int"].get()),
-                                "rec": float(window["rec"].get()),
-                                "rec_yd": float(1/int(window["rec_yd"].get())),
-                                "rec_td": float(window["rec_td"].get()),
-                                "rush_yd": 1/int(window["rush_yd"].get()),
-                                "rush_td": float(window["rush_td"].get()),
-                                "fum": float(window["fum"].get()),
-                                "bonus_rec_te": float(window["bonus_rec_te"].get()),
-                                "bonus_rec_rb": float(window["bonus_rec_rb"].get()),
-                                "bonus_rec_wr": float(window["bonus_rec_wr"].get()),
+            scoring_settings = {"pass_yd": 1/int(settings_window["pass_yd"].get()),
+                                "pass_td": float(settings_window["pass_td"].get()),
+                                "pass_int": float(settings_window["pass_int"].get()),
+                                "rec": float(settings_window["rec"].get()),
+                                "rec_yd": float(1/int(settings_window["rec_yd"].get())),
+                                "rec_td": float(settings_window["rec_td"].get()),
+                                "rush_yd": 1/int(settings_window["rush_yd"].get()),
+                                "rush_td": float(settings_window["rush_td"].get()),
+                                "fum": float(settings_window["fum"].get()),
+                                "bonus_rec_te": float(settings_window["bonus_rec_te"].get()),
+                                "bonus_rec_rb": float(settings_window["bonus_rec_rb"].get()),
+                                "bonus_rec_wr": float(settings_window["bonus_rec_wr"].get()),
                                 }
             with open(settings_json, "w") as file:
                 json.dump(scoring_settings, file, indent=4)
-            sg.popup("Scoring settings saved.", title="Settings")
+            # sg.popup("Scoring settings saved.", title="Settings")
+            settings_window.close()
             break
     return scoring_settings
-    window.close()
+    settings_window.close()
 """
 sw=SettingsWindow()
 print(sw)

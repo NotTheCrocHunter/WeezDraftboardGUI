@@ -27,15 +27,6 @@
         "round": 4
     },
     {
-        "name": "Cam Akers",
-        "sleeper_id": "6938",
-        "button_text": "Cam\nAkers\nRB (LAR) 7",
-        "is_keeper": true,
-        "pick_no": 184,
-        "draft_slot": 9,
-        "round": 16
-    },
-    {
         "name": "Javonte Williams",
         "sleeper_id": "7588",
         "button_text": "Javonte\nWilliams\nRB (DEN) 9",
@@ -177,6 +168,15 @@
         "is_keeper": true,
         "pick_no": 182,
         "draft_slot": 11,
+        "round": 16
+    },
+    {
+        "name": "Cam Akers",
+        "sleeper_id": "6938",
+        "button_text": "Cam\nAkers\nRB (LAR) 7",
+        "is_keeper": true,
+        "pick_no": 184,
+        "draft_slot": 9,
         "round": 16
     },
     {

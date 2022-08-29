@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Major update - redesigned Chen and FPros scrapers; Fleshed out Settings options - scores will recalculate after saving.">
+    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Major update - finished cleaning up player_pool almost entirely.">
+      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-plugin.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/KeeperPopUp.py" beforeDir="false" afterPath="$PROJECT_DIR$/KeeperPopUp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SettingsWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/SettingsWindow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WeezDraftboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/WeezDraftboard.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/adp/adp.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_QB_Rankings.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_RB_Rankings.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_SuperFlex_Rankings.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_TE_Rankings.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_2022_Draft_WR_Rankings.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_Fantasy_Football_Projections_FLX.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/FantasyPros_Fantasy_Football_Projections_QB.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_data.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_qb.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_rb.json" beforeDir="false" />
@@ -19,18 +15,14 @@
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_te.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_wr.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/keepers/keepers.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/keepers/keepers.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/players/all_players.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/QB.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/RB.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/TE.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/WR.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/chen_tiers.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/draftboard_brain.py" beforeDir="false" afterPath="$PROJECT_DIR$/draftboard_brain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrape_bchen.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_bchen.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrape_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrape_fantasy_pros.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_fantasy_pros.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrape_ffcalc_adp.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_ffcalc_adp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sleeper_ids.py" beforeDir="false" afterPath="$PROJECT_DIR$/sleeper_ids.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/window_helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/window_helpers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -439,7 +431,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661482178072</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Major update - finished cleaning up player_pool almost entirely.">
+      <created>1661664885930</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1661664885930</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -486,14 +485,15 @@
     <MESSAGE value="Fixed button click color bug. Added text to bottom table label.  Removed scoring arg from scrape funcs bc it broke.b" />
     <MESSAGE value="Tweaked FF Calc ADP scraper to account for standard scoring (non-ppr).  Looks like ADP selection works for all 4 scoring types" />
     <MESSAGE value="Major update - redesigned Chen and FPros scrapers; Fleshed out Settings options - scores will recalculate after saving." />
-    <option name="LAST_COMMIT_MESSAGE" value="Major update - redesigned Chen and FPros scrapers; Fleshed out Settings options - scores will recalculate after saving." />
+    <MESSAGE value="Major update - finished cleaning up player_pool almost entirely." />
+    <option name="LAST_COMMIT_MESSAGE" value="Major update - finished cleaning up player_pool almost entirely." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/KeeperPopUp.py</url>
-          <line>84</line>
+          <line>85</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -532,9 +532,9 @@
           <option name="timeStamp" value="391" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/scrape_data.py</url>
-          <line>51</line>
-          <option name="timeStamp" value="417" />
+          <url>file://$PROJECT_DIR$/draftboard_brain.py</url>
+          <line>227</line>
+          <option name="timeStamp" value="455" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

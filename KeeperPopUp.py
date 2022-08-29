@@ -36,16 +36,17 @@ def KeeperPopUp(df):
             [sg.DropDown(pick_list, key='-KEEPER-PICK-', default_value=pick_list[0])],
             [sg.OK()]]
     col6 = [[sg.Listbox(keeper_list, key='-KEEPER-LIST-', size=(20, 15), auto_size_text=True)]]
-    window = sg.Window("Set Keepers", [[sg.Column(col4)] + [sg.Column(col5)] + [sg.Column(col6)]])
+    keeper_window = sg.Window("Set Keepers", [[sg.Column(col4)] + [sg.Column(col5)] + [sg.Column(col6)]])
     while True:
-        event, values = window.read()
+        event, values = keeper_window.read()
         if event in (sg.WINDOW_CLOSED, "OK"):
             save_keepers(df.loc[df["is_keeper"] == True].to_dict('records'))
+            keeper_window.close()
             break
         elif event == "-FILTER-":
 
             new_list = [i for i in not_kept_list if values['-FILTER-'].lower() in i.lower()]
-            window['-DRAFT-POOL-'].update(new_list)
+            keeper_window['-DRAFT-POOL-'].update(new_list)
         elif event == "-ADD-KEEPER-":
             rd, slot = values["-KEEPER-PICK-"].split('.')
             rd, slot = int(rd), int(slot)
@@ -67,9 +68,9 @@ def KeeperPopUp(df):
             #
 
             # UPDATE ALL 3 Values
-            window["-KEEPER-PICK-"].update(values=pick_list, set_to_index=0)
-            window["-KEEPER-LIST-"].update(values=keeper_list)
-            window["-DRAFT-POOL-"].update(values=not_kept_list)
+            keeper_window["-KEEPER-PICK-"].update(values=pick_list, set_to_index=0)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list)
+            keeper_window["-DRAFT-POOL-"].update(values=not_kept_list)
             pass
         elif event == "-REMOVE-KEEPER-":
             k_cols = ["is_keeper", "is_drafted", "round", "draft_slot", "pick_no"]
@@ -85,9 +86,9 @@ def KeeperPopUp(df):
             keeper_list = df.loc[df["is_keeper"] == True, 'name'].to_list()
             not_kept_list = df.loc[df["is_keeper"] != True, 'name'].to_list()
 
-            window["-KEEPER-PICK-"].update(values=pick_list, set_to_index=0)
-            window["-KEEPER-LIST-"].update(values=keeper_list)
-            window["-DRAFT-POOL-"].update(values=not_kept_list)
+            keeper_window["-KEEPER-PICK-"].update(values=pick_list, set_to_index=0)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list)
+            keeper_window["-DRAFT-POOL-"].update(values=not_kept_list)
             pass
         elif event == "-SET-KEEPER-":
             # split the keeper-pick value for round, slot and calc for pick_no
@@ -112,7 +113,7 @@ def KeeperPopUp(df):
 
             # get new keeper list text for text box
             keeper_list_text = open_keepers(get="text")
-            window["-KEEPER-LIST-"].update(values=keeper_list_text)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list_text)
             # pdb.set_trace()
             """
             'round': 15, 'roster_id': None, 'player_id': '7606', 'picked_by': '339134645083856896', 'pick_no': 171, 'is_keeper': None, 'draft_slot': 3
@@ -120,7 +121,7 @@ def KeeperPopUp(df):
         elif event == "-CLEAR-KEEPERS-":
             df = reset_keepers(df)  # resets the keeper values in the json and the dataframe
             keeper_list_text = open_keepers(get="text")  # This opens empty list
-            window["-KEEPER-LIST-"].update(values=keeper_list_text)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list_text)
         elif event == "-LOAD-MOCK-KEEPERS-":
             # df Switch the keeper values on/off
             df = reset_keepers(df)  # resets the keeper values in the json and the dataframe
@@ -148,13 +149,13 @@ def KeeperPopUp(df):
                 rd = p['round']
                 df.loc[df['sleeper_id'] == id, k_cols] = [is_keeper, pick_no, slot, rd]  # is_drafted
 
-            window["-KEEPER-LIST-"].update(values=keeper_list_text)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list_text)
             # print(mock_keepers)
         print(event)
         print(values)
         print(keeper_list)
     return df
-    window.close()
+    keeper_window.close()
     
 
 def make_pick_list():
