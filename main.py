@@ -29,35 +29,31 @@ if __name__ == '__main__':
     roster = "superflex"
     scoring = "ppr"
 
-    scoring_settings, draft_order, league_found = load_saved_league()
-    # draft_order = [f'TEAM {x}' for x in range(13)]
-    # scoring_settings = SettingsWindow.get()
-    PP = get_player_pool()
-    PP = calc_scores(PP, scoring_settings, roster)
-
     """
     Reading the last used League ID to bring in league settings. 
     draft_order used to set the buttons for the board columns/teams.
     The league info should change if a new league is loaded. 
     """
+    scoring_settings, draft_order, league_found = load_saved_league()
+    # draft_order = [f'TEAM {x}' for x in range(13)]
+    # scoring_settings = SettingsWindow.get()
+    PP = get_player_pool()
+    PP = calc_scores(PP, scoring_settings, roster)
+    drafted_ids = PP.loc[PP["is_drafted"] == True, "sleeper_id"].tolist()
 
-    print('# -------Draftboard Arrays--------#')
-    print("ADP Array")
     adp_db = get_db_arr(PP, "adp", roster=roster, scoring=scoring)
-    print("ECR Array")
     ecr_db = get_db_arr(PP, "ecr", roster=roster, scoring=scoring)
-    print("Empty Draftboard Array")
     db = get_db_arr(PP, "keepers")
-
-    """
-        WHILE LOOP
-        create and turn live_draft off
-        """
     sleeper_live_draft = False
     yahoo_live_draft = False
     # This is for the DB array/view.  This should turn off when loading the ADP/ECR boards.
     # If both live_board and live_draft, refresh will update the live board
     live_board = True
+    """
+        WHILE LOOP
+        create and turn live_draft off
+        """
+
 
     window = WeezDraftboard.get()
     while True:
