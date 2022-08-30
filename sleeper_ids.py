@@ -41,33 +41,6 @@ def strip_names(df, key):
 
 def get_sleeper_ids(df, players_df):
     # ----- Create the search_names (all lowercase, no spaces) ------ #
-    # players = Players()
-    # players_df = players.get_players_df()
-    """
-    # Create name_team_pos fields to perform matching
-    p['key'] = p['first_name'].str.lower() + p['last_name'].str.lower() + p['team'].str.lower() + p['position'].str.lower()
-    p['name_team'] = p['first_name'].str.lower() + p['last_name'].str.lower() + p['team'].str.lower()
-    p['name_pos'] = p['first_name'].str.lower() + p['last_name'].str.lower() + p['position'].str.lower()
-    # p['key'].replace(r'\W+', '')
-    df['key'] = df['name'].str.lower() + df['team'].str.lower() + df['position'].str.lower()
-    df['name_team'] = df['name'].str.lower() + df['team'].str.lower()
-    df['name_pos'] = df['name'].str.lower() + df['position'].str.lower()
-    df1 = strip_names(df, 'key')
-    df2 = strip_names(df, 'key')
-    # df['key'].replace(r'\W+', '')
-    df1 = df
-    df2 = p
-    # fuzzy_merge(df2, df1, 'key', 'key', threshold=80)
-    df2 = df2.loc[df2['key'].isna() == False]
-    # df1['key'] = df1['key'].apply(lambda x: difflib.get_close_matches(x, df2['key'])[0])
-
-    # mf = df.index.map(lambda x: difflib)
-    # mf.index = df2.index.map(lambda x: difflib.get_close_matches(x, df.index)[0])
-    # df.join(mf)
-    
-    # mf = fuzzy_merge(df1, df2, 'key', 'key', threshold=90, limit=2)
-    df2['key'] = df2['key'].apply(lambda x: difflib.get_close_matches(x, df1['key'])[-1])
-    df1.merge(df2)"""
     search_names = []
     remove = ['jr', 'ii', 'sr']
     for idx, row in df.iterrows():

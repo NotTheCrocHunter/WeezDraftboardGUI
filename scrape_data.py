@@ -5,9 +5,33 @@ from scrape_fantasy_pros import merge_dfs, scrape_fantasy_pros
 import time
 from sleeper_ids import get_sleeper_ids
 from sleeper_wrapper import Players
-
+from datetime import datetime
+from pathlib import Path
+import json
 
 def scrape_data():
+    """
+    Check Local File and date , If local file not found or date note today, script commences
+    """
+    save_path = Path('data')
+    save_path.mkdir(parents=True, exist_ok=True)
+    TODAY = datetime.today().strftime('%Y-%m-%d')
+    p_pool_json = Path('data/player_pool_data.json')
+    try:
+        with open(p_pool_json, "r") as file:
+            player_pool_dict = json.load(file)
+            p_pool_saved_date = datetime.fromisoformat(player_pool_dict["accessed"]).strftime('%Y-%m-%d')
+    except FileNotFoundError:
+        p_pool_saved_date = None
+
+    if p_pool_saved_date == TODAY:
+        print("Loading local Fantasy Pros data")
+        df = pd.DataFrame(player_pool_dict["players"])
+        return df
+    else:
+        print("Updating data the Player Pool. This may take a moment")
+        pass
+    
     # Get all the dataframes
     # Fix Chen and FPro Tiers and ranks to be: ecr_tier_ppr, chen_tier_half_ppr, etc. 
     players = Players()
@@ -16,7 +40,7 @@ def scrape_data():
     cdf = get_chen_tiers()
     p_pool = merge_dfs(fdf, cdf, "name_pos", how="left")
     p_pool = get_sleeper_ids(p_pool, ply)
-    p_pool.loc[p_pool['player_yahoo_id'] == '33996', 'sleeper_id'] = '8151'  #  = p_pool['sleeper_id']8151
+    p_pool.loc[p_pool['player_yahoo_id'] == '33996', 'sleeper_id'] = '8151'  # = p_pool['sleeper_id']8151
     p_pool.loc[p_pool['fantasy_pros_player_id'] == '12091', 'sleeper_id'] = '1895'  # = p_pool['sleeper_id']8151
 
     adf = get_adp_df()
@@ -31,7 +55,8 @@ def scrape_data():
     # Fix Defensive Names
     adp_kd.loc[adp_kd["position"] == "DEF", "last_name"] = adp_kd.name.str.split(' ').str[-1]
     adp_kd.loc[adp_kd["position"] == "DEF", "first_name"] = adp_kd.name.str.replace(' Defense', '')
-    
+    # adp_kd.loc[adp_kd["position"] == "PK", "position"] = "K"
+    adp_kd = get_sleeper_ids(adp_kd, ply)
     # Get ADP DF of only position groups
     adf = adf.loc[adf['position'].isin(["QB", "WR", "TE", "RB"])]
     
@@ -46,6 +71,10 @@ def scrape_data():
     for s in ['ppr', 'non_ppr', 'half_ppr']:
         p_pool[f'chen_tier_{s}'].fillna(p_pool[f'chen_tier_{s}'].max() + 1, inplace=True) # .astype(int) #  == True,  'ecr_tier_ppr']
         p_pool[f'chen_tier_{s}'] = p_pool[f'chen_tier_{s}'].astype("Int64")
+    
+    player_pool_dict = {"accessed": TODAY, "players": p_pool.to_dict(orient="records")}
+    with open(p_pool_json, "w") as file:
+        json.dump(player_pool_dict, file, indent=4)
     return p_pool
 
 

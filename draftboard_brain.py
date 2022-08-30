@@ -108,9 +108,17 @@ def get_db_arr(df, key, roster="superflex", scoring="ppr", df_loc_col="is_keeper
         # Placing keepers on the empty draft board
         drafted_pool = df.loc[df["is_drafted"] == True].to_dict("records")
         for p in drafted_pool:
-            loc = (p["round"] - 1, p["draft_slot"] - 1)
-            arr[loc] = {"button_text": p["button_text"], "position": p["position"], "sleeper_id": p["sleeper_id"]}
+            try:
+                loc = (int(p["round"]) - 1, int(p["draft_slot"]) - 1)
+                arr[loc] = {"button_text": p["button_text"], "position": p["position"], "sleeper_id": p["sleeper_id"]}
+            except:
+                loc = (int(p["round"]) - 1, int(p["draft_slot"]) - 1)
+                arr[loc] = {"button_text": p["button_text"], "position": p["position"]}
+                # arr[loc] = {"button_text": p["button_text"], "position": p["position"]}
+                # pdb.set_trace()
+                pass
         pass
+
 
     return arr
 

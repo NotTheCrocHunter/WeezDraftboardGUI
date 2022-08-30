@@ -21,7 +21,7 @@ def get_ranks(scoring, pos):
 
     if pos.lower() == "overall" and scoring == "standard":
         url = "https://www.fantasypros.com/nfl/rankings/consensus-cheatsheets.php"
-    elif scoring == "standard" or pos.lower() == "qb":
+    elif scoring == "standard" or pos.lower() in ["qb", "k", "dst"]:
         url = f"https://www.fantasypros.com/nfl/rankings/{pos.lower()}-cheatsheets.php"
     elif pos.lower() == "overall" and scoring != "standard":
         url = f"https://www.fantasypros.com/nfl/rankings/{scoring.lower()}-cheatsheets.php"
@@ -58,12 +58,12 @@ def get_ranks(scoring, pos):
                                     "tier": f"{pos.lower()}_{scoring}_tier"},
                            inplace=True)
 
-    if pos.lower() == 'qb':
+    if pos.lower() in ['qb', "k", "dst"]:
         for x in ['ppr', 'half_ppr']:
             # Position Ranks
             ecr_rank_df[f'ecr_pos_rank_{x}'] = ecr_rank_df["ecr_pos_rank_non_ppr"]
             ecr_rank_df[f'ecr_tier_{x}'] = ecr_rank_df["ecr_tier_non_ppr"]
-
+    ecr_rank_df.loc[ecr_rank_df["player_position_id"] == "K"] = "PK"
     # --- After Each Position has gotten ranks for each score type, Append position DF to rank_df_list ----- #
     return ecr_rank_df
 
@@ -96,7 +96,9 @@ def scrape_fantasy_pros(scoring="ppr", week="draft"):
     print("Getting Positional Ranks")
     start_time = time.time()
     ecr_ranks = get_ranks(scoring="standard", pos="qb")
-
+    k_ranks = get_ranks(scoring="standard", pos="k")
+    d_ranks = get_ranks(scoring="standard", pos="dst")
+    ecr_ranks = pd.concat([ecr_ranks, k_ranks, d_ranks])
     for pos in ['rb', 'wr', 'te', 'superflex', 'overall']:
         # get the scoring DFs
         ppr = get_ranks(scoring="ppr", pos=pos)
