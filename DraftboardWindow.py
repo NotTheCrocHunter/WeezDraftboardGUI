@@ -1,13 +1,8 @@
 # !/usr/bin/env python
 import pdb
 from draftboard_brain import *
-from KeeperPopUp import KeeperPopUp
-from LeaguePopUp import LeaguePopUp
-from ViewPlayerPool import ViewPlayerPool
-import SettingsWindow
 from window_helpers import *
-from yahoo_oauth import OAuth2
-import yahoo_fantasy_api as yfa
+
 
 
 def get():

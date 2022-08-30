@@ -1,4 +1,4 @@
-import WeezDraftboard
+import DraftboardWindow
 import pdb
 from draftboard_brain import *
 from KeeperPopUp import KeeperPopUp
@@ -9,6 +9,8 @@ from window_helpers import *
 from yahoo_oauth import OAuth2
 import yahoo_fantasy_api as yfa
 import os
+
+
 if __name__ == '__main__':
     RELIEF_ = "flat"  # "groove" "raised" "sunken" "solid" "ridge"
     BG_COLORS = {"WR": "white on DodgerBlue",
@@ -50,12 +52,10 @@ if __name__ == '__main__':
     # If both live_board and live_draft, refresh will update the live board
     live_board = True
     """
-        WHILE LOOP
-        create and turn live_draft off
-        """
-
-
-    window = WeezDraftboard.get()
+    WHILE LOOP
+    create and turn live_draft off
+    """
+    window = DraftboardWindow.get()
     while True:
         event, values = window.read(timeout=1000)
         # --- Break While Loop --- #
