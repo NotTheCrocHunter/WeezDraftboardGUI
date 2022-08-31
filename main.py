@@ -149,7 +149,9 @@ if __name__ == '__main__':
 
             if yahoo_live_draft:
                 window["-STATUS-"].update(value=f'Status: Connected to Yahoo Draft {id_text}')
+
                 all_picks = yahoo_league.draft_results()
+
                 drafted_ids = [x['player_id'] for x in all_picks]
                 PP.loc[PP['yahoo_id'].isin(drafted_ids), "is_drafted"] = True
                 for pick in all_picks:
@@ -169,28 +171,7 @@ if __name__ == '__main__':
                 # finally:
                 #     if live_board:
                 #         window["-LOAD-DB-"].click()
-            # ---- Update the Cheat Sheets and Bottom Tables ----- #
-            # cupdate_all_tables(PP, window, roster_format, scoring_format)
-            # update_buttons(window, MAX_COLS, MAX_ROWS, BG_COLORS, db_arr=db)
-            # ----- UPDATE BUTTONS - for loop to set the drafted players as "clicked" ---- #
-            """
-            for col in range(MAX_COLS):
-                for row in range(MAX_ROWS):
-                    sleeper_id = window[(row, col)].metadata["sleeper_id"]
-                    yahoo_id = window[(row, col)].metadata["yahoo_id"]
-                    if yahoo_live_draft:
-                        if yahoo_id in drafted_ids:
-                            window[(row, col)].metadata["is_clicked"] = True
-                            window[(row, col)].update(button_color='white on gray')
-                        else:
-                            pass
-                    else:
-                        if sleeper_id in drafted_ids:
-                            window[(row, col)].metadata["is_clicked"] = True
-                            window[(row, col)].update(button_color='white on gray')
-                        else:
-                            pass
-        """
+
         elif event == "Connect to Yahoo Draft":
             """
                         Get Draft ID
@@ -227,14 +208,15 @@ if __name__ == '__main__':
                 with open('data/draft_ids.json', "w") as file:
                     json.dump(id_list, file, indent=4)
                 id_text = draft_id
-                draft_id = "414.l." + draft_id[-7:]
+                draft_id = "l." + draft_id[-7:]
+                # draft_id = "414.l." + draft_id[-7:]
+                # draft_id = 9881550
+                # draft_id = "414.l." + "9882969"
                 yahoo_league = yfa.league.League(OAUTH, draft_id)
-                try:
-                    all_picks = yahoo_league.draft_results()
-                    print(f"First Call: Length of Yahoo all_picks = {len(all_picks)}")
-                except:
-                    print("Error Getting Draft")
-                    continue
+
+                all_picks = yahoo_league.draft_results()
+                print(f"First Call: Length of Yahoo all_picks = {len(all_picks)}")
+
                 # Reset the PP dataframe
                 PP["pick_no"] = None
                 PP["adp_pick_no"] = None
@@ -273,16 +255,34 @@ if __name__ == '__main__':
             Turn live_draft on 
             drafted_ids = [x['player_id'] for x in all_picks]
             """
-            draft_id = sg.PopupGetText("Enter the Sleeper Draft ID or URL.")
-            print(draft_id)
+            # draft_id = sg.PopupGetText("Enter the Sleeper Draft ID or URL.")
+            # print(draft_id)
+
+            with open('data/draft_ids.json', "r") as file:
+                id_list = json.load(file)
+                sleeper_ids = id_list["sleeper_ids"]
+                league_id_list = list(set(sleeper_ids))
+                new_file = False
+            if len(league_id_list) == 0:
+                default_text = "Enter Sleeper ID"
+                league_id_list.append(default_text)
+            else:
+                default_text = league_id_list[0]
+            draft_id = PopUpDropDown("Enter Sleeper ID", "Enter the 18 Digit Sleeper Draft ID", league_id_list)
             draft_id = draft_id[-18:]
             if not draft_id:
                 sg.PopupQuick("No ID Entered")
                 sleeper_live_draft = False
                 pass
             else:
+                league_id_list.append(draft_id)
+                id_list["sleeper_ids"] = [new_id for new_id in league_id_list if new_id != "Enter Sleeper ID"]
+                sleeper_live_draft = True
+                with open('data/draft_ids.json', "w") as file:
+                    json.dump(id_list, file, indent=4)
                 draft = Drafts(draft_id)  # create draft object
                 id_text = draft_id
+
                 all_picks = draft.get_all_picks()
                 try:
                     # update the PP dataframe
@@ -303,6 +303,7 @@ if __name__ == '__main__':
                 except TypeError:
                     sg.popup_quick_message("Error Connecting to Draft")
                     sleeper_live_draft = False
+
         # ----- Select ADP Type ----- #
         elif event in ['2QB', 'PPR', 'Half-PPR', 'Non-PPR']:
             if event == "2QB":

@@ -1,6 +1,6 @@
 {
-    "roster_format": "overall",
-    "scoring_format": "half_ppr",
+    "roster_format": "superflex",
+    "scoring_format": "ppr",
     "scoring_settings": {
         "pass_yd": 0.04,
         "pass_td": 4.0,

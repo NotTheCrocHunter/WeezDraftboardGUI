@@ -76,7 +76,7 @@ def create(silent_mode=False):
     save_button = sg.Button("Save", key="-SAVE-", enable_events=True)
     cancel_button = sg.Button("Cancel", key="-CANCEL-", enable_events=True)
     layout = [[col1, col2], [save_button, cancel_button]]
-    settings_window = sg.Window("Settings", layout=layout, size=(300, 300), modal=True)
+    settings_window = sg.Window("Settings", layout=layout, modal=True)
 
     while True:
         event, values = settings_window.read()

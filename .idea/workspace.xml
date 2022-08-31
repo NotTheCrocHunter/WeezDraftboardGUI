@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Working on the main loop and the yahoo connectivity.  Added themes!">
+    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Tweaked the popup dropdown for sleeper drafts">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/adp/adp.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_data.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_qb.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_rb.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_superflex.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_te.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_wr.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/QB.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/RB.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/TE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/WR.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/chen_tiers.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/draft_ids.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/draft_ids.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/yahoo/oauth2.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/yahoo/oauth2.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +29,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GithubDefaultAccount">
-    <option name="defaultAccountId" value="8bd9a93c-0e20-45af-b5db-3e86a11adc3f" />
+    <option name="defaultAccountId" value="de7fd2ce-44ff-4a28-8d03-0699f161d468" />
   </component>
   <component name="GithubProjectSettings">
     <option name="branchProtectionPatterns">
@@ -55,20 +47,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;last_opened_file_path&quot;: &quot;/Users/sirwin/PycharmProjects/WeezDraftboard/dist/main.app/Contents/Resources/data&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PythonContentEntriesConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "last_opened_file_path": "/Users/sirwin/PycharmProjects/WeezDraftboard/dist/main.app/Contents/Resources/data",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/Change Language&quot;: [
-      &quot;Python&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/Change Language": [
+      "Python"
     ],
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;JSON&quot;
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "JSON"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/dist/main.app/Contents/Resources/data" />
@@ -104,6 +96,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="WeezDraftboard" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="WeezDraftboard" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -113,9 +126,9 @@
         <env name="YAHOO_CONSUMER_KEY" value="dj0yJmk9R21JN0J0RGxPVGNJJmQ9WVdrOWRXWmpkM1Z6UVhFbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PThi" />
         <env name="YAHOO_CONSUMER_SECRET" value="1790d3c912407ba9c26063319bf07fa745e8b731" />
       </envs>
-      <option name="SDK_HOME" value="$PROJECT_DIR$/venv/bin/python" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
@@ -209,6 +222,67 @@
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
       <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <module name="WeezDraftboard" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docs" factoryName="Docutils task">
+      <module name="WeezDraftboard" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="docutils_input_file" value="" />
+      <option name="docutils_output_file" value="" />
+      <option name="docutils_params" value="" />
+      <option name="docutils_task" value="" />
+      <option name="docutils_open_in_browser" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docs" factoryName="Sphinx task">
+      <module name="WeezDraftboard" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="docutils_input_file" value="" />
+      <option name="docutils_output_file" value="" />
+      <option name="docutils_params" value="" />
+      <option name="docutils_task" value="" />
+      <option name="docutils_open_in_browser" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <module name="WeezDraftboard" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
       <method v="2" />
     </configuration>
     <list>
@@ -476,7 +550,21 @@
       <option name="project" value="LOCAL" />
       <updated>1661965098168</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Commit after getting it up and running on the pc.">
+      <created>1661966925386</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1661966925386</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Tweaked the popup dropdown for sleeper drafts">
+      <created>1661969192228</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1661969192228</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -503,8 +591,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Initial commit pt 2." />
-    <MESSAGE value="Migrated everything from original repository.  Cleaned up the function to connect to live draft." />
     <MESSAGE value="Worked on fixing the league pop up when the league ID JSON is empty or new." />
     <MESSAGE value="Cleaning up the KeeperPopUp and the loading of mock keepers." />
     <MESSAGE value="Removed the tabs for the cheatsheets.  Still working on getting the tier to display as an int and not float.  The issue arises in _brain when merging new_df and df" />
@@ -528,7 +614,9 @@
     <MESSAGE value="Moved some variables to before the while loop." />
     <MESSAGE value="added the oauth file." />
     <MESSAGE value="Working on the main loop and the yahoo connectivity.  Added themes!" />
-    <option name="LAST_COMMIT_MESSAGE" value="Working on the main loop and the yahoo connectivity.  Added themes!" />
+    <MESSAGE value="Commit after getting it up and running on the pc." />
+    <MESSAGE value="Tweaked the popup dropdown for sleeper drafts" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tweaked the popup dropdown for sleeper drafts" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -572,11 +660,6 @@
           <url>file://$PROJECT_DIR$/sleeper_id_testing.py</url>
           <line>65</line>
           <option name="timeStamp" value="391" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/SettingsWindow.py</url>
-          <line>80</line>
-          <option name="timeStamp" value="443" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SettingsWindow.py</url>

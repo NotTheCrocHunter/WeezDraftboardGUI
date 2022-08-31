@@ -15,13 +15,24 @@ def PopUpDropDown(title, text, values):
     pop_drop_window = sg.Window(title,
         [[sg.Text(text)],
         [sg.DropDown(values, key='-DROP-', default_value=values[0])],
-        [sg.OK(), sg.Cancel()]
+        [sg.OK(key="-OK-"), sg.Cancel(key="-CANCEL-")]
     ])
-    event, values = pop_drop_window.read()
-    return None if event != 'OK' else values['-DROP-']
-
+    while True:
+        event, values = pop_drop_window.read()
+        if event in [sg.WINDOW_CLOSED, '-CANCEL-']:
+            pop_drop_window.close()
+            draft_id = None
+            break
+        elif event == "-OK-":
+            print("hello")
+            draft_id = values["-DROP-"]
+            pop_drop_window.close()
+            break
+    return draft_id
+    pop_drop_window.close()
+    #
 def LeaguePopUp():
-    id_json = Path('data/league_ids.json')
+    id_json = Path('data/draft_ids.json')
     try:
         with open(id_json, "r") as file:
             id_list = json.load(file)
