@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="added the oauth file.">
-      <change afterPath="$PROJECT_DIR$/make_setup_file.py" afterDir="false" />
+    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Working on the main loop and the yahoo connectivity.  Added themes!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DraftboardWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/DraftboardWindow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeaguePopUp.py" beforeDir="false" afterPath="$PROJECT_DIR$/LeaguePopUp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SettingsWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/SettingsWindow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/adp/adp.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_data.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_qb.json" beforeDir="false" />
@@ -14,21 +10,11 @@
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_superflex.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_te.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_wr.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/keepers/keepers.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/keepers/keepers.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/QB.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/RB.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/TE.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/WR.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/rankings/chen/chen_tiers.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/yahoo/oauth2.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/yahoo/oauth2.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/draftboard_brain.py" beforeDir="false" afterPath="$PROJECT_DIR$/draftboard_brain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrape_bchen.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_bchen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrape_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrape_fantasy_pros.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_fantasy_pros.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sleeper_wrapper/league.py" beforeDir="false" afterPath="$PROJECT_DIR$/sleeper_wrapper/league.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sleeper_wrapper/stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/sleeper_wrapper/stats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/window_helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/window_helpers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -483,7 +469,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661823488214</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Working on the main loop and the yahoo connectivity.  Added themes!">
+      <created>1661965098167</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1661965098168</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -510,7 +503,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Initial commit." />
     <MESSAGE value="Initial commit pt 2." />
     <MESSAGE value="Migrated everything from original repository.  Cleaned up the function to connect to live draft." />
     <MESSAGE value="Worked on fixing the league pop up when the league ID JSON is empty or new." />
@@ -535,7 +527,8 @@
     <MESSAGE value="Worked on the yahoo connection, as well as moving the while True loop to main." />
     <MESSAGE value="Moved some variables to before the while loop." />
     <MESSAGE value="added the oauth file." />
-    <option name="LAST_COMMIT_MESSAGE" value="added the oauth file." />
+    <MESSAGE value="Working on the main loop and the yahoo connectivity.  Added themes!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working on the main loop and the yahoo connectivity.  Added themes!" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
