@@ -1,0 +1,924 @@
+{
+    "last_saved": "2022-08-22",
+    "scoring": "PPR",
+    "players": [
+        {
+            "position_rank_chen": 1,
+            "position_tier_chen": 1,
+            "name": "Josh Allen",
+            "sleeper_id": "4984"
+        },
+        {
+            "position_rank_chen": 2,
+            "position_tier_chen": 1,
+            "name": "Justin Herbert",
+            "sleeper_id": "6797"
+        },
+        {
+            "position_rank_chen": 3,
+            "position_tier_chen": 1,
+            "name": "Patrick Mahomes II",
+            "sleeper_id": "4046"
+        },
+        {
+            "position_rank_chen": 4,
+            "position_tier_chen": 2,
+            "name": "Lamar Jackson",
+            "sleeper_id": "4881"
+        },
+        {
+            "position_rank_chen": 5,
+            "position_tier_chen": 2,
+            "name": "Kyler Murray",
+            "sleeper_id": "5849"
+        },
+        {
+            "position_rank_chen": 6,
+            "position_tier_chen": 2,
+            "name": "Jalen Hurts",
+            "sleeper_id": "6904"
+        },
+        {
+            "position_rank_chen": 7,
+            "position_tier_chen": 3,
+            "name": "Joe Burrow",
+            "sleeper_id": "6770"
+        },
+        {
+            "position_rank_chen": 8,
+            "position_tier_chen": 3,
+            "name": "Tom Brady",
+            "sleeper_id": "167"
+        },
+        {
+            "position_rank_chen": 9,
+            "position_tier_chen": 3,
+            "name": "Russell Wilson",
+            "sleeper_id": "1234"
+        },
+        {
+            "position_rank_chen": 10,
+            "position_tier_chen": 3,
+            "name": "Dak Prescott",
+            "sleeper_id": "3294"
+        },
+        {
+            "position_rank_chen": 11,
+            "position_tier_chen": 4,
+            "name": "Trey Lance",
+            "sleeper_id": "7610"
+        },
+        {
+            "position_rank_chen": 12,
+            "position_tier_chen": 4,
+            "name": "Matthew Stafford",
+            "sleeper_id": "421"
+        },
+        {
+            "position_rank_chen": 13,
+            "position_tier_chen": 4,
+            "name": "Aaron Rodgers",
+            "sleeper_id": "96"
+        },
+        {
+            "position_rank_chen": 14,
+            "position_tier_chen": 5,
+            "name": "Kirk Cousins",
+            "sleeper_id": "1166"
+        },
+        {
+            "position_rank_chen": 15,
+            "position_tier_chen": 5,
+            "name": "Derek Carr",
+            "sleeper_id": "2028"
+        },
+        {
+            "position_rank_chen": 16,
+            "position_tier_chen": 6,
+            "name": "Tua Tagovailoa",
+            "sleeper_id": "6768"
+        },
+        {
+            "position_rank_chen": 17,
+            "position_tier_chen": 6,
+            "name": "Justin Fields",
+            "sleeper_id": "7591"
+        },
+        {
+            "position_rank_chen": 18,
+            "position_tier_chen": 6,
+            "name": "Trevor Lawrence",
+            "sleeper_id": "7523"
+        },
+        {
+            "position_rank_chen": 19,
+            "position_tier_chen": 7,
+            "name": "Jameis Winston",
+            "sleeper_id": "2306"
+        },
+        {
+            "position_rank_chen": 20,
+            "position_tier_chen": 7,
+            "name": "Matt Ryan",
+            "sleeper_id": "24"
+        },
+        {
+            "position_rank_chen": 21,
+            "position_tier_chen": 7,
+            "name": "Ryan Tannehill",
+            "sleeper_id": "1049"
+        },
+        {
+            "position_rank_chen": 22,
+            "position_tier_chen": 8,
+            "name": "Mac Jones",
+            "sleeper_id": "7527"
+        },
+        {
+            "position_rank_chen": 23,
+            "position_tier_chen": 8,
+            "name": "Daniel Jones",
+            "sleeper_id": "5870"
+        },
+        {
+            "position_rank_chen": 24,
+            "position_tier_chen": 8,
+            "name": "Carson Wentz",
+            "sleeper_id": "3161"
+        },
+        {
+            "position_rank_chen": 25,
+            "position_tier_chen": 8,
+            "name": "Zach Wilson",
+            "sleeper_id": "7538"
+        },
+        {
+            "position_rank_chen": 26,
+            "position_tier_chen": 8,
+            "name": "Jared Goff",
+            "sleeper_id": "3163"
+        },
+        {
+            "position_rank_chen": 1,
+            "position_tier_chen": 1,
+            "name": "Christian McCaffrey",
+            "sleeper_id": "4034"
+        },
+        {
+            "position_rank_chen": 2,
+            "position_tier_chen": 1,
+            "name": "Jonathan Taylor",
+            "sleeper_id": "6813"
+        },
+        {
+            "position_rank_chen": 3,
+            "position_tier_chen": 1,
+            "name": "Austin Ekeler",
+            "sleeper_id": "4663"
+        },
+        {
+            "position_rank_chen": 4,
+            "position_tier_chen": 2,
+            "name": "Dalvin Cook",
+            "sleeper_id": "4029"
+        },
+        {
+            "position_rank_chen": 5,
+            "position_tier_chen": 2,
+            "name": "Najee Harris",
+            "sleeper_id": "4510"
+        },
+        {
+            "position_rank_chen": 5,
+            "position_tier_chen": 2,
+            "name": "Najee Harris",
+            "sleeper_id": "7528"
+        },
+        {
+            "position_rank_chen": 6,
+            "position_tier_chen": 2,
+            "name": "Derrick Henry",
+            "sleeper_id": "3198"
+        },
+        {
+            "position_rank_chen": 7,
+            "position_tier_chen": 2,
+            "name": "D'Andre Swift",
+            "sleeper_id": "6790"
+        },
+        {
+            "position_rank_chen": 8,
+            "position_tier_chen": 2,
+            "name": "Joe Mixon",
+            "sleeper_id": "4018"
+        },
+        {
+            "position_rank_chen": 9,
+            "position_tier_chen": 3,
+            "name": "Aaron Jones",
+            "sleeper_id": "4199"
+        },
+        {
+            "position_rank_chen": 10,
+            "position_tier_chen": 3,
+            "name": "Saquon Barkley",
+            "sleeper_id": "4866"
+        },
+        {
+            "position_rank_chen": 11,
+            "position_tier_chen": 3,
+            "name": "Alvin Kamara",
+            "sleeper_id": "4035"
+        },
+        {
+            "position_rank_chen": 12,
+            "position_tier_chen": 3,
+            "name": "Leonard Fournette",
+            "sleeper_id": "3969"
+        },
+        {
+            "position_rank_chen": 13,
+            "position_tier_chen": 4,
+            "name": "Javonte Williams",
+            "sleeper_id": "7588"
+        },
+        {
+            "position_rank_chen": 14,
+            "position_tier_chen": 4,
+            "name": "Nick Chubb",
+            "sleeper_id": "4988"
+        },
+        {
+            "position_rank_chen": 15,
+            "position_tier_chen": 4,
+            "name": "James Conner",
+            "sleeper_id": "4137"
+        },
+        {
+            "position_rank_chen": 16,
+            "position_tier_chen": 4,
+            "name": "Ezekiel Elliott",
+            "sleeper_id": "3164"
+        },
+        {
+            "position_rank_chen": 17,
+            "position_tier_chen": 5,
+            "name": "Travis Etienne Jr.",
+            "sleeper_id": "7543"
+        },
+        {
+            "position_rank_chen": 18,
+            "position_tier_chen": 5,
+            "name": "Breece Hall",
+            "sleeper_id": "8155"
+        },
+        {
+            "position_rank_chen": 19,
+            "position_tier_chen": 5,
+            "name": "David Montgomery",
+            "sleeper_id": "5892"
+        },
+        {
+            "position_rank_chen": 20,
+            "position_tier_chen": 5,
+            "name": "Cam Akers",
+            "sleeper_id": "6938"
+        },
+        {
+            "position_rank_chen": 21,
+            "position_tier_chen": 6,
+            "name": "J.K. Dobbins",
+            "sleeper_id": "6806"
+        },
+        {
+            "position_rank_chen": 22,
+            "position_tier_chen": 6,
+            "name": "Josh Jacobs",
+            "sleeper_id": "5850"
+        },
+        {
+            "position_rank_chen": 23,
+            "position_tier_chen": 6,
+            "name": "AJ Dillon",
+            "sleeper_id": "6828"
+        },
+        {
+            "position_rank_chen": 24,
+            "position_tier_chen": 6,
+            "name": "Elijah Mitchell",
+            "sleeper_id": "7561"
+        },
+        {
+            "position_rank_chen": 25,
+            "position_tier_chen": 7,
+            "name": "Antonio Gibson",
+            "sleeper_id": "6945"
+        },
+        {
+            "position_rank_chen": 26,
+            "position_tier_chen": 7,
+            "name": "Chase Edmonds",
+            "sleeper_id": "5000"
+        },
+        {
+            "position_rank_chen": 27,
+            "position_tier_chen": 7,
+            "name": "Clyde Edwards-Helaire",
+            "sleeper_id": "6820"
+        },
+        {
+            "position_rank_chen": 28,
+            "position_tier_chen": 7,
+            "name": "Kareem Hunt",
+            "sleeper_id": "4098"
+        },
+        {
+            "position_rank_chen": 29,
+            "position_tier_chen": 7,
+            "name": "Miles Sanders",
+            "sleeper_id": "6151"
+        },
+        {
+            "position_rank_chen": 30,
+            "position_tier_chen": 8,
+            "name": "Tony Pollard",
+            "sleeper_id": "5967"
+        },
+        {
+            "position_rank_chen": 31,
+            "position_tier_chen": 8,
+            "name": "Damien Harris",
+            "sleeper_id": "5890"
+        },
+        {
+            "position_rank_chen": 32,
+            "position_tier_chen": 9,
+            "name": "Rashaad Penny",
+            "sleeper_id": "4985"
+        },
+        {
+            "position_rank_chen": 33,
+            "position_tier_chen": 9,
+            "name": "Devin Singletary",
+            "sleeper_id": "6130"
+        },
+        {
+            "position_rank_chen": 34,
+            "position_tier_chen": 9,
+            "name": "Cordarrelle Patterson",
+            "sleeper_id": "1535"
+        },
+        {
+            "position_rank_chen": 35,
+            "position_tier_chen": 9,
+            "name": "Rhamondre Stevenson",
+            "sleeper_id": "7611"
+        },
+        {
+            "position_rank_chen": 36,
+            "position_tier_chen": 9,
+            "name": "Melvin Gordon III",
+            "sleeper_id": "2320"
+        },
+        {
+            "position_rank_chen": 37,
+            "position_tier_chen": 10,
+            "name": "Ken Walker III",
+            "sleeper_id": "8151"
+        },
+        {
+            "position_rank_chen": 38,
+            "position_tier_chen": 10,
+            "name": "James Cook",
+            "sleeper_id": "8138"
+        },
+        {
+            "position_rank_chen": 39,
+            "position_tier_chen": 10,
+            "name": "Dameon Pierce",
+            "sleeper_id": "8129"
+        },
+        {
+            "position_rank_chen": 40,
+            "position_tier_chen": 10,
+            "name": "Michael Carter",
+            "sleeper_id": "7607"
+        },
+        {
+            "position_rank_chen": 1,
+            "position_tier_chen": 1,
+            "name": "Justin Jefferson",
+            "sleeper_id": "6794"
+        },
+        {
+            "position_rank_chen": 2,
+            "position_tier_chen": 1,
+            "name": "Cooper Kupp",
+            "sleeper_id": "4039"
+        },
+        {
+            "position_rank_chen": 3,
+            "position_tier_chen": 1,
+            "name": "Ja'Marr Chase",
+            "sleeper_id": "7564"
+        },
+        {
+            "position_rank_chen": 4,
+            "position_tier_chen": 1,
+            "name": "Stefon Diggs",
+            "sleeper_id": "2449"
+        },
+        {
+            "position_rank_chen": 5,
+            "position_tier_chen": 1,
+            "name": "Davante Adams",
+            "sleeper_id": "2133"
+        },
+        {
+            "position_rank_chen": 6,
+            "position_tier_chen": 1,
+            "name": "CeeDee Lamb",
+            "sleeper_id": "6786"
+        },
+        {
+            "position_rank_chen": 7,
+            "position_tier_chen": 2,
+            "name": "Mike Evans",
+            "sleeper_id": "2216"
+        },
+        {
+            "position_rank_chen": 8,
+            "position_tier_chen": 2,
+            "name": "Tyreek Hill",
+            "sleeper_id": "3321"
+        },
+        {
+            "position_rank_chen": 9,
+            "position_tier_chen": 2,
+            "name": "Keenan Allen",
+            "sleeper_id": "1479"
+        },
+        {
+            "position_rank_chen": 10,
+            "position_tier_chen": 2,
+            "name": "Deebo Samuel",
+            "sleeper_id": "5872"
+        },
+        {
+            "position_rank_chen": 11,
+            "position_tier_chen": 2,
+            "name": "Michael Pittman Jr.",
+            "sleeper_id": "6819"
+        },
+        {
+            "position_rank_chen": 12,
+            "position_tier_chen": 2,
+            "name": "A.J. Brown",
+            "sleeper_id": "5859"
+        },
+        {
+            "position_rank_chen": 13,
+            "position_tier_chen": 2,
+            "name": "Tee Higgins",
+            "sleeper_id": "6801"
+        },
+        {
+            "position_rank_chen": 14,
+            "position_tier_chen": 3,
+            "name": "DJ Moore",
+            "sleeper_id": "4983"
+        },
+        {
+            "position_rank_chen": 15,
+            "position_tier_chen": 3,
+            "name": "Diontae Johnson",
+            "sleeper_id": "5937"
+        },
+        {
+            "position_rank_chen": 16,
+            "position_tier_chen": 4,
+            "name": "Jaylen Waddle",
+            "sleeper_id": "7526"
+        },
+        {
+            "position_rank_chen": 17,
+            "position_tier_chen": 4,
+            "name": "Terry McLaurin",
+            "sleeper_id": "5927"
+        },
+        {
+            "position_rank_chen": 18,
+            "position_tier_chen": 4,
+            "name": "Mike Williams",
+            "sleeper_id": "748"
+        },
+        {
+            "position_rank_chen": 18,
+            "position_tier_chen": 4,
+            "name": "Mike Williams",
+            "sleeper_id": "4068"
+        },
+        {
+            "position_rank_chen": 19,
+            "position_tier_chen": 4,
+            "name": "Brandin Cooks",
+            "sleeper_id": "2197"
+        },
+        {
+            "position_rank_chen": 20,
+            "position_tier_chen": 4,
+            "name": "Courtland Sutton",
+            "sleeper_id": "5045"
+        },
+        {
+            "position_rank_chen": 21,
+            "position_tier_chen": 5,
+            "name": "Allen Robinson II",
+            "sleeper_id": "1992"
+        },
+        {
+            "position_rank_chen": 22,
+            "position_tier_chen": 5,
+            "name": "DK Metcalf",
+            "sleeper_id": "5846"
+        },
+        {
+            "position_rank_chen": 23,
+            "position_tier_chen": 5,
+            "name": "Michael Thomas",
+            "sleeper_id": "3199"
+        },
+        {
+            "position_rank_chen": 24,
+            "position_tier_chen": 6,
+            "name": "Marquise Brown",
+            "sleeper_id": "5848"
+        },
+        {
+            "position_rank_chen": 25,
+            "position_tier_chen": 6,
+            "name": "Darnell Mooney",
+            "sleeper_id": "7090"
+        },
+        {
+            "position_rank_chen": 26,
+            "position_tier_chen": 6,
+            "name": "Jerry Jeudy",
+            "sleeper_id": "6783"
+        },
+        {
+            "position_rank_chen": 27,
+            "position_tier_chen": 6,
+            "name": "Amon-Ra St. Brown",
+            "sleeper_id": "7547"
+        },
+        {
+            "position_rank_chen": 28,
+            "position_tier_chen": 6,
+            "name": "Rashod Bateman",
+            "sleeper_id": "7571"
+        },
+        {
+            "position_rank_chen": 29,
+            "position_tier_chen": 6,
+            "name": "Chris Godwin",
+            "sleeper_id": "4037"
+        },
+        {
+            "position_rank_chen": 30,
+            "position_tier_chen": 6,
+            "name": "Amari Cooper",
+            "sleeper_id": "2309"
+        },
+        {
+            "position_rank_chen": 31,
+            "position_tier_chen": 6,
+            "name": "JuJu Smith-Schuster",
+            "sleeper_id": "4040"
+        },
+        {
+            "position_rank_chen": 32,
+            "position_tier_chen": 7,
+            "name": "Elijah Moore",
+            "sleeper_id": "7596"
+        },
+        {
+            "position_rank_chen": 33,
+            "position_tier_chen": 7,
+            "name": "Adam Thielen",
+            "sleeper_id": "1689"
+        },
+        {
+            "position_rank_chen": 34,
+            "position_tier_chen": 7,
+            "name": "Gabriel Davis",
+            "sleeper_id": "6943"
+        },
+        {
+            "position_rank_chen": 35,
+            "position_tier_chen": 8,
+            "name": "DeVonta Smith",
+            "sleeper_id": "7525"
+        },
+        {
+            "position_rank_chen": 36,
+            "position_tier_chen": 8,
+            "name": "Hunter Renfrow",
+            "sleeper_id": "5955"
+        },
+        {
+            "position_rank_chen": 37,
+            "position_tier_chen": 8,
+            "name": "Brandon Aiyuk",
+            "sleeper_id": "6803"
+        },
+        {
+            "position_rank_chen": 38,
+            "position_tier_chen": 8,
+            "name": "Drake London",
+            "sleeper_id": "8112"
+        },
+        {
+            "position_rank_chen": 39,
+            "position_tier_chen": 9,
+            "name": "Tyler Lockett",
+            "sleeper_id": "2374"
+        },
+        {
+            "position_rank_chen": 40,
+            "position_tier_chen": 9,
+            "name": "Christian Kirk",
+            "sleeper_id": "4950"
+        },
+        {
+            "position_rank_chen": 41,
+            "position_tier_chen": 9,
+            "name": "Allen Lazard",
+            "sleeper_id": "5185"
+        },
+        {
+            "position_rank_chen": 42,
+            "position_tier_chen": 9,
+            "name": "DeAndre Hopkins",
+            "sleeper_id": "1426"
+        },
+        {
+            "position_rank_chen": 43,
+            "position_tier_chen": 9,
+            "name": "Robert Woods",
+            "sleeper_id": "1352"
+        },
+        {
+            "position_rank_chen": 44,
+            "position_tier_chen": 9,
+            "name": "Kadarius Toney",
+            "sleeper_id": "7606"
+        },
+        {
+            "position_rank_chen": 45,
+            "position_tier_chen": 10,
+            "name": "Treylon Burks",
+            "sleeper_id": "8135"
+        },
+        {
+            "position_rank_chen": 46,
+            "position_tier_chen": 10,
+            "name": "Chase Claypool",
+            "sleeper_id": "6886"
+        },
+        {
+            "position_rank_chen": 47,
+            "position_tier_chen": 10,
+            "name": "Chris Olave",
+            "sleeper_id": "8144"
+        },
+        {
+            "position_rank_chen": 48,
+            "position_tier_chen": 10,
+            "name": "Tyler Boyd",
+            "sleeper_id": "3225"
+        },
+        {
+            "position_rank_chen": 49,
+            "position_tier_chen": 10,
+            "name": "Russell Gage",
+            "sleeper_id": "5110"
+        },
+        {
+            "position_rank_chen": 50,
+            "position_tier_chen": 10,
+            "name": "Jakobi Meyers",
+            "sleeper_id": "5947"
+        },
+        {
+            "position_rank_chen": 51,
+            "position_tier_chen": 10,
+            "name": "Garrett Wilson",
+            "sleeper_id": "8146"
+        },
+        {
+            "position_rank_chen": 52,
+            "position_tier_chen": 10,
+            "name": "Skyy Moore",
+            "sleeper_id": "8168"
+        },
+        {
+            "position_rank_chen": 53,
+            "position_tier_chen": 11,
+            "name": "DeVante Parker",
+            "sleeper_id": "2319"
+        },
+        {
+            "position_rank_chen": 54,
+            "position_tier_chen": 11,
+            "name": "Jarvis Landry",
+            "sleeper_id": "1825"
+        },
+        {
+            "position_rank_chen": 55,
+            "position_tier_chen": 12,
+            "name": "Marquez Valdes-Scantling",
+            "sleeper_id": "5086"
+        },
+        {
+            "position_rank_chen": 56,
+            "position_tier_chen": 12,
+            "name": "Rondale Moore",
+            "sleeper_id": "7601"
+        },
+        {
+            "position_rank_chen": 57,
+            "position_tier_chen": 12,
+            "name": "Michael Gallup",
+            "sleeper_id": "5038"
+        },
+        {
+            "position_rank_chen": 58,
+            "position_tier_chen": 12,
+            "name": "Kenny Golladay",
+            "sleeper_id": "4131"
+        },
+        {
+            "position_rank_chen": 59,
+            "position_tier_chen": 12,
+            "name": "DJ Chark Jr.",
+            "sleeper_id": "4951"
+        },
+        {
+            "position_rank_chen": 60,
+            "position_tier_chen": 12,
+            "name": "George Pickens",
+            "sleeper_id": "8137"
+        },
+        {
+            "position_rank_chen": 1,
+            "position_tier_chen": 1,
+            "name": "Travis Kelce",
+            "sleeper_id": "1466"
+        },
+        {
+            "position_rank_chen": 2,
+            "position_tier_chen": 1,
+            "name": "Mark Andrews",
+            "sleeper_id": "5012"
+        },
+        {
+            "position_rank_chen": 3,
+            "position_tier_chen": 1,
+            "name": "Kyle Pitts",
+            "sleeper_id": "7553"
+        },
+        {
+            "position_rank_chen": 4,
+            "position_tier_chen": 2,
+            "name": "George Kittle",
+            "sleeper_id": "4217"
+        },
+        {
+            "position_rank_chen": 5,
+            "position_tier_chen": 2,
+            "name": "Darren Waller",
+            "sleeper_id": "2505"
+        },
+        {
+            "position_rank_chen": 6,
+            "position_tier_chen": 2,
+            "name": "Dalton Schultz",
+            "sleeper_id": "5001"
+        },
+        {
+            "position_rank_chen": 7,
+            "position_tier_chen": 3,
+            "name": "T.J. Hockenson",
+            "sleeper_id": "5844"
+        },
+        {
+            "position_rank_chen": 8,
+            "position_tier_chen": 3,
+            "name": "Dallas Goedert",
+            "sleeper_id": "5022"
+        },
+        {
+            "position_rank_chen": 9,
+            "position_tier_chen": 3,
+            "name": "Zach Ertz",
+            "sleeper_id": "1339"
+        },
+        {
+            "position_rank_chen": 10,
+            "position_tier_chen": 4,
+            "name": "Pat Freiermuth",
+            "sleeper_id": "7600"
+        },
+        {
+            "position_rank_chen": 11,
+            "position_tier_chen": 4,
+            "name": "Cole Kmet",
+            "sleeper_id": "6826"
+        },
+        {
+            "position_rank_chen": 12,
+            "position_tier_chen": 4,
+            "name": "Dawson Knox",
+            "sleeper_id": "5906"
+        },
+        {
+            "position_rank_chen": 13,
+            "position_tier_chen": 5,
+            "name": "Mike Gesicki",
+            "sleeper_id": "4993"
+        },
+        {
+            "position_rank_chen": 14,
+            "position_tier_chen": 5,
+            "name": "Hunter Henry",
+            "sleeper_id": "3214"
+        },
+        {
+            "position_rank_chen": 15,
+            "position_tier_chen": 6,
+            "name": "Irv Smith Jr.",
+            "sleeper_id": "6126"
+        },
+        {
+            "position_rank_chen": 16,
+            "position_tier_chen": 6,
+            "name": "Noah Fant",
+            "sleeper_id": "5857"
+        },
+        {
+            "position_rank_chen": 17,
+            "position_tier_chen": 6,
+            "name": "Albert Okwuegbunam",
+            "sleeper_id": "6843"
+        },
+        {
+            "position_rank_chen": 18,
+            "position_tier_chen": 7,
+            "name": "Gerald Everett",
+            "sleeper_id": "4089"
+        },
+        {
+            "position_rank_chen": 19,
+            "position_tier_chen": 7,
+            "name": "Tyler Higbee",
+            "sleeper_id": "3271"
+        },
+        {
+            "position_rank_chen": 20,
+            "position_tier_chen": 7,
+            "name": "Robert Tonyan",
+            "sleeper_id": "4602"
+        },
+        {
+            "position_rank_chen": 21,
+            "position_tier_chen": 6,
+            "name": "David Njoku",
+            "sleeper_id": "4033"
+        },
+        {
+            "position_rank_chen": 22,
+            "position_tier_chen": 7,
+            "name": "Evan Engram",
+            "sleeper_id": "4066"
+        },
+        {
+            "position_rank_chen": 23,
+            "position_tier_chen": 7,
+            "name": "Austin Hooper",
+            "sleeper_id": "3202"
+        },
+        {
+            "position_rank_chen": 24,
+            "position_tier_chen": 8,
+            "name": "Logan Thomas",
+            "sleeper_id": "2251"
+        },
+        {
+            "position_rank_chen": 25,
+            "position_tier_chen": 8,
+            "name": "Hayden Hurst",
+            "sleeper_id": "4973"
+        }
+    ]
+}

@@ -2,6 +2,10 @@ import PySimpleGUI as sg
 from draftboard_brain import *
 import pdb
 
+MAX_ROWS = 17
+MAX_COLS = 12
+
+
 def KeeperPopUp(df):
     df['name'].fillna("NA", inplace=True)
     print(df["sleeper_id"].loc[df["name"] == "NA"])
@@ -14,11 +18,9 @@ def KeeperPopUp(df):
     kept_picks = df["pick_no"].loc[df["is_keeper"] == True].to_list()
     kept_picks.sort(reverse=True)
     print(kept_picks)
-    try:
-        for pick in kept_picks:
-            pick_list.pop(pick - 1)
-    except:
-        pdb.set_trace()
+
+    for pick in kept_picks:
+        pick_list.pop(pick - 1)
 
     filter_tooltip = "Find Player"
 
@@ -34,16 +36,17 @@ def KeeperPopUp(df):
             [sg.DropDown(pick_list, key='-KEEPER-PICK-', default_value=pick_list[0])],
             [sg.OK()]]
     col6 = [[sg.Listbox(keeper_list, key='-KEEPER-LIST-', size=(20, 15), auto_size_text=True)]]
-    window = sg.Window("Set Keepers", [[sg.Column(col4)] + [sg.Column(col5)] + [sg.Column(col6)]])
+    keeper_window = sg.Window("Set Keepers", [[sg.Column(col4)] + [sg.Column(col5)] + [sg.Column(col6)]])
     while True:
-        event, values = window.read()
+        event, values = keeper_window.read()
         if event in (sg.WINDOW_CLOSED, "OK"):
             save_keepers(df.loc[df["is_keeper"] == True].to_dict('records'))
+            keeper_window.close()
             break
         elif event == "-FILTER-":
 
             new_list = [i for i in not_kept_list if values['-FILTER-'].lower() in i.lower()]
-            window['-DRAFT-POOL-'].update(new_list)
+            keeper_window['-DRAFT-POOL-'].update(new_list)
         elif event == "-ADD-KEEPER-":
             rd, slot = values["-KEEPER-PICK-"].split('.')
             rd, slot = int(rd), int(slot)
@@ -65,9 +68,9 @@ def KeeperPopUp(df):
             #
 
             # UPDATE ALL 3 Values
-            window["-KEEPER-PICK-"].update(values=pick_list, set_to_index=0)
-            window["-KEEPER-LIST-"].update(values=keeper_list)
-            window["-DRAFT-POOL-"].update(values=not_kept_list)
+            keeper_window["-KEEPER-PICK-"].update(values=pick_list, set_to_index=0)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list)
+            keeper_window["-DRAFT-POOL-"].update(values=not_kept_list)
             pass
         elif event == "-REMOVE-KEEPER-":
             k_cols = ["is_keeper", "is_drafted", "round", "draft_slot", "pick_no"]
@@ -83,9 +86,9 @@ def KeeperPopUp(df):
             keeper_list = df.loc[df["is_keeper"] == True, 'name'].to_list()
             not_kept_list = df.loc[df["is_keeper"] != True, 'name'].to_list()
 
-            window["-KEEPER-PICK-"].update(values=pick_list, set_to_index=0)
-            window["-KEEPER-LIST-"].update(values=keeper_list)
-            window["-DRAFT-POOL-"].update(values=not_kept_list)
+            keeper_window["-KEEPER-PICK-"].update(values=pick_list, set_to_index=0)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list)
+            keeper_window["-DRAFT-POOL-"].update(values=not_kept_list)
             pass
         elif event == "-SET-KEEPER-":
             # split the keeper-pick value for round, slot and calc for pick_no
@@ -110,7 +113,7 @@ def KeeperPopUp(df):
 
             # get new keeper list text for text box
             keeper_list_text = open_keepers(get="text")
-            window["-KEEPER-LIST-"].update(values=keeper_list_text)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list_text)
             # pdb.set_trace()
             """
             'round': 15, 'roster_id': None, 'player_id': '7606', 'picked_by': '339134645083856896', 'pick_no': 171, 'is_keeper': None, 'draft_slot': 3
@@ -118,7 +121,7 @@ def KeeperPopUp(df):
         elif event == "-CLEAR-KEEPERS-":
             df = reset_keepers(df)  # resets the keeper values in the json and the dataframe
             keeper_list_text = open_keepers(get="text")  # This opens empty list
-            window["-KEEPER-LIST-"].update(values=keeper_list_text)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list_text)
         elif event == "-LOAD-MOCK-KEEPERS-":
             # df Switch the keeper values on/off
             df = reset_keepers(df)  # resets the keeper values in the json and the dataframe
@@ -146,11 +149,124 @@ def KeeperPopUp(df):
                 rd = p['round']
                 df.loc[df['sleeper_id'] == id, k_cols] = [is_keeper, pick_no, slot, rd]  # is_drafted
 
-            window["-KEEPER-LIST-"].update(values=keeper_list_text)
+            keeper_window["-KEEPER-LIST-"].update(values=keeper_list_text)
             # print(mock_keepers)
         print(event)
         print(values)
         print(keeper_list)
-
-    window.close()
     return df
+    keeper_window.close()
+    
+
+def make_pick_list():
+    """
+    This func reorders  the picks to be in snake-draft format.
+    """
+    pl = [f"{r + 1}.{c + 1}" for r in range(MAX_ROWS) for c in range(MAX_COLS)]
+    pl = np.array(pl)
+    pl = np.reshape(pl, (MAX_ROWS, MAX_COLS))
+    pl[1::2, :] = pl[1::2, ::-1]
+    pl = pl.flatten()
+
+    return pl.tolist()
+
+
+def sort_keepers(df):
+    # Add in None values for Keeper columns
+    k_cols = ['is_keeper', 'is_drafted', 'pick_no', 'draft_slot', 'round']
+
+    for k in k_cols:
+        df[k] = None
+
+    # Open keeper list of dicts so that we can set the keeper value to True
+    keeper_list = open_keepers(get="list")
+
+    # iterate over the keeper list to grab the dict values and assign to the main player_pool dataframe
+    for player_dict in keeper_list:
+        p = player_dict
+        if 'player_id' in p.keys():
+            p['sleeper_id'] = p['player_id']
+        id = p['sleeper_id']
+        is_keeper = p['is_keeper']
+        # initializing the keeper/drafted value as them same.  The values will update while drafting
+        is_drafted = False  # p['is_keeper']
+        pick_no = p['pick_no']
+        slot = p['draft_slot']
+        rd = p['round']
+
+        df.loc[df['sleeper_id'] == id, k_cols] = [is_keeper, is_drafted, pick_no, slot, rd]
+
+    return df
+
+
+
+def reorder_keepers(key, p_pool):
+    p_pool.sort_values(by=[key], ascending=True, inplace=True)
+    return
+
+
+def open_keepers(get=None):
+    keeper_json_path = Path('data/keepers/keepers.json')
+    try:
+        with open(keeper_json_path, "r") as data:
+            keeper_list = json.load(data)
+            print(f"Total Keepers Found: {len(keeper_list)}")
+            keeper_list_text = [f"{k['round']}.{k['draft_slot']}" for k in keeper_list]
+            # keeper_list_text = [f"{k['name']} {k['round']}.{k['draft_slot']}" for k in keeper_list]
+    except KeyError:
+        with open(keeper_json_path, "r") as data:
+            keeper_list = json.load(data)
+            print(f"Opened Keeper List: {keeper_list}")
+            keeper_list_text = [f"{k['round']}.{k['draft_slot']}" for k in keeper_list]
+            # keeper_list_text = [f"{k['name']} {k['round']}.{k['draft_slot']}" for k in keeper_list]
+    except FileNotFoundError:
+        keeper_list = []
+        keeper_list_text = []
+
+    if not get:
+        return keeper_list, keeper_list_text
+    elif get == "list":
+        return keeper_list
+    elif get == "text":
+        return keeper_list_text
+    else:
+        print("Can only accept 'list' or 'text'")
+        return None
+
+
+def clear_all_keepers():
+    keeper_list = []
+    Path('data/keepers').mkdir(exist_ok=True, parents=True)
+    with open('data/keepers/keepers.json', 'w') as file:
+        json.dump(keeper_list, file, indent=4)
+    print("keepers.json overwritten, set as []")
+
+
+def get_mock_keepers(mock_id):
+    try:
+        mock_draft = Drafts(mock_id)
+        return mock_draft.get_all_picks()
+    except:
+        sg.popup_quick_message("Error getting mock keepers")
+
+
+def reset_keepers(df):
+    clear_all_keepers()  # this clears the keeper_list as [] and overwrites the keepers.json with empty list
+    # this resets the columns in the PP DataFrame
+    k_cols = ['is_keeper', 'is_drafted', 'pick_no', 'draft_slot', 'round']
+    for k in k_cols:
+        df[k] = None
+    return df
+
+
+def save_keepers(keeper_list):
+    cols = ["name", "sleeper_id", 'is_keeper', 'pick_no', 'draft_slot', 'round', 'button_text']
+    keeper_list = [{k: v for k, v in keeper.items() if k in cols} for keeper in keeper_list]
+    # keeper_path = Path('../sleeper-api-wrapper/data/keepers/keepers.json')
+    keeper_path = Path('data/keepers/keepers.json')
+    print(f"Saving {len(keeper_list)} keepers to {keeper_path}")
+
+    with open(keeper_path, 'w') as file:
+        json.dump(keeper_list, file, indent=4)
+    pass
+

@@ -1,14 +1,46 @@
 from sleeper_wrapper import Players
 import re
 import pandas as pd
+# from scrape_fantasy_pros import scrape_fantasy_pros, merge_dfs
+# from scrape_ffcalc_adp import get_adp_df
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+import pdb
+import difflib
 
-players = Players()
-players_df = players.get_players_df()
+
+def fuzzy_merge(df_1, df_2, key1, key2, threshold=90, limit=2):
+    """
+    :param df_1: the left table to join
+    :param df_2: the right table to join
+    :param key1: key column of the left table
+    :param key2: key column of the right table
+    :param threshold: how close the matches should be to return a match, based on Levenshtein distance
+    :param limit: the amount of matches that will get returned, these are sorted high to low
+    :return: dataframe with boths keys and matches
+    """
+    s = df_2[key2].tolist()
+
+    m = df_1[key1].apply(lambda x: process.extract(x, s, limit=limit))
+    df_1['matches'] = m
+
+    m2 = df_1['matches'].apply(lambda x: ', '.join([i[0] for i in x if i[1] >= threshold]))
+    df_1['matches'] = m2
+
+    return df_1
 
 
-def get_sleeper_ids(df):
+def strip_names(df, key):
+    try:
+        df[key] = df[key].str.replace(r'[^\w\s]+', '')
+    except KeyError:
+        df[key] = df[key].str.replace(r'[^\w\s]+', '')
+        df.rename(columns={'Name': 'name'}, inplace=True)
+    return df
+
+
+def get_sleeper_ids(df, players_df):
     # ----- Create the search_names (all lowercase, no spaces) ------ #
-
     search_names = []
     remove = ['jr', 'ii', 'sr']
     for idx, row in df.iterrows():
@@ -25,8 +57,8 @@ def get_sleeper_ids(df):
         elif new_name[-2:] in remove:
             new_name = new_name[:-2]
 
-        if new_name == "kennethwalker":
-            new_name = "kenwalker"
+        if new_name == "kenwalker":
+            new_name = "kennethwalker"
 
         if new_name == "mitchelltrubisky":
             new_name = "mitchtrubisky"
@@ -66,3 +98,12 @@ def get_sleeper_ids(df):
         print(f"Missing Search Names: {missing_search_names}")
     return df
 
+
+"""
+a = get_adp_df()
+
+a = get_sleeper_ids(a)
+
+print(a)
+
+"""

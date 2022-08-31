@@ -191,7 +191,7 @@ class Stats(BaseApi):
         #  loop through positions because weekly stats don't have the position or overall rankings like the yearly stats
         for scoring_type in SCORING_TYPES:
             self.stats_list = sorted(self.stats_list, key=lambda i: i[f"pts_{scoring_type}"], reverse=True)
-            rank_counter = 1  # this will be the total overall rank for the scoring of all players in the position_list
+            rank_counter = 1  # this will be the total overall rank for the scoring_format of all players in the position_list
             for player in self.stats_list:
                 player[f"rank_{scoring_type}"] = rank_counter
                 rank_counter += 1
@@ -273,7 +273,7 @@ class Stats(BaseApi):
         self.stats_list = [values for player, values in self.stats.items()]
 
     def get_custom_score(self):
-        # method to calculate customized score from league scoring settings
+        # method to calculate customized score from league scoring_format settings
         if self.scoring_settings:
             for player in self.stats:
                 score = 0.0
