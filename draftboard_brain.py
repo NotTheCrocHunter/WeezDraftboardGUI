@@ -60,18 +60,24 @@ def get_cheatsheet_list(df, pos, roster, scoring):
     return df.values.tolist()
 
 
-def get_db_arr(df, key, roster="superflex", scoring="ppr", df_loc_col="is_keeper"):
-    print("Array Scoring")
+def get_db_arr(df, key, roster, scoring):
+    if key == "empty":
+        arr = np.empty([MAX_ROWS, MAX_COLS])
+        arr = np.reshape(arr, (MAX_ROWS, MAX_COLS))
+        arr[1::2, :] = arr[1::2, ::-1]
+        return arr
+
     if scoring.lower() in ['standard', 'non-ppr', 'non_ppr']:
         scoring = 'non_ppr'
     elif scoring.lower() in ['half', 'half-ppr', 'half_ppr']:
         scoring = 'half_ppr'
-    else:
-        scoring = scoring.lower()
+    # else:
+    #     scoring = scoring.lower()
     if roster.lower() == 'superflex':
-        adp_sort = roster
+        adp_sort = roster.lower()
     else:
-        adp_sort = scoring
+        adp_sort = scoring.lower()
+
     keys = {"adp": {"sort": f"adp_pick_{adp_sort}", "pick_no": "adp_pick_no"},
             "ecr": {"sort": f"{roster}_{scoring}_rank", "pick_no": 'ecr_pick_no'},
             "keepers": {"sort": "", "pick_no": ""}
@@ -82,10 +88,9 @@ def get_db_arr(df, key, roster="superflex", scoring="ppr", df_loc_col="is_keeper
         pick_no = keys[key]['pick_no']
 
         non_kept_picks = [n + 1 for n in range(len(df)) if n + 1 not in df['pick_no'].to_list()]
-
         df[pick_no] = df["pick_no"]
-        df.sort_values(by=sort, ascending=True, inplace=True)
-        df.loc[df[df_loc_col] != True, f'{key}_pick_no'] = non_kept_picks
+        df.sort_values(by=sort.lower(), ascending=True, inplace=True, na_position="last")
+        df.loc[df['is_drafted'] != True, f'{key}_pick_no'] = non_kept_picks
         df.sort_values(by=pick_no, ascending=True, inplace=True)
         arr = np.array(df[:MAX_ROWS * MAX_COLS].to_dict("records"))
         arr = np.reshape(arr, (MAX_ROWS, MAX_COLS))
@@ -94,41 +99,37 @@ def get_db_arr(df, key, roster="superflex", scoring="ppr", df_loc_col="is_keeper
         arr = np.empty([MAX_ROWS, MAX_COLS])
         arr = np.reshape(arr, (MAX_ROWS, MAX_COLS))
         arr[1::2, :] = arr[1::2, ::-1]
-        arr = np.full((MAX_ROWS, MAX_COLS), {"button_text": "\n\n", "position": "-", "sleeper_id": "-"})
+        arr = np.full((MAX_ROWS, MAX_COLS), {"button_text": "\n\n", "position": "-", "sleeper_id": "-", "yahoo_id": "-"})
         # Placing keepers on the empty draft board
         keeper_pool = df.loc[df["is_keeper"] == True].to_dict("records")
         for p in keeper_pool:
             loc = (p["round"] - 1, p["draft_slot"] - 1)
-            arr[loc] = {"button_text": p["button_text"], "position": p["position"], "sleeper_id": p["sleeper_id"]}
+            arr[loc] = {"button_text": p["button_text"], "position": p["position"],
+                        "sleeper_id": p["sleeper_id"],
+                        "yahoo_id": p["yahoo_id"]}
     elif key == "live":
         arr = np.empty([MAX_ROWS, MAX_COLS])
         arr = np.reshape(arr, (MAX_ROWS, MAX_COLS))
         arr[1::2, :] = arr[1::2, ::-1]
-        arr = np.full((MAX_ROWS, MAX_COLS), {"button_text": "\n\n", "position": "-", "sleeper_id": "-"})
+        arr = np.full((MAX_ROWS, MAX_COLS), {"button_text": "\n\n", "position": "-", "sleeper_id": "-", "yahoo_id": "-"})
         # Placing keepers on the empty draft board
         drafted_pool = df.loc[df["is_drafted"] == True].to_dict("records")
+
         for p in drafted_pool:
             try:
                 loc = (int(p["round"]) - 1, int(p["draft_slot"]) - 1)
-                arr[loc] = {"button_text": p["button_text"], "position": p["position"], "sleeper_id": p["sleeper_id"]}
-            except:
-                loc = (int(p["round"]) - 1, int(p["draft_slot"]) - 1)
-                arr[loc] = {"button_text": p["button_text"], "position": p["position"]}
-                # arr[loc] = {"button_text": p["button_text"], "position": p["position"]}
-                # pdb.set_trace()
-                pass
-        pass
-
-
+                arr[loc] = {"button_text": p["button_text"],
+                            "position": p["position"],
+                            "sleeper_id": p["sleeper_id"],
+                            "yahoo_id": p["yahoo_id"]}
+            except TypeError:
+                print("TypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'")
     return arr
 
 
 def DraftIdPopUp():
     sg.PopupScrolled('Select Draft ID')
     pass
-
-
-
 
 
 def get_draft_order(league):
@@ -159,18 +160,6 @@ def get_draft_order(league):
         draft_order = [x for x in range(MAX_COLS)]
 
     return draft_order
-
-
-def update_buttons(window, MAX_COLS, MAX_ROWS, BG_COLORS, db_arr):
-    for c in range(MAX_COLS):
-        for r in range(MAX_ROWS):
-            try:
-                window[(r, c)].update(button_color=BG_COLORS[db_arr[r, c]["position"]],
-                                      text=db_arr[r, c]['button_text'], )
-                window[(r, c)].metadata["button_color"] = BG_COLORS[db_arr[r, c]["position"]]
-                window[(r, c)].metadata["sleeper_id"] = db_arr[r, c]["sleeper_id"]
-            except KeyError:
-                print(f"Error on {db_arr[r, c]}")
 
 
 #################

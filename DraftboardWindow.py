@@ -3,15 +3,34 @@ import pdb
 from draftboard_brain import *
 from window_helpers import *
 
+SEC1_KEY = '-SECTION1-'
+SEC2_KEY = '-SECTION2-'
 
 
-def get():
+def Collapsible(layout, key, title='', arrows=(sg.SYMBOL_DOWN, sg.SYMBOL_UP), collapsed=False):
+    """
+    User Defined Element
+    A "collapsable section" element. Like a container element that can be collapsed and brought back
+    :param layout:Tuple[List[sg.Element]]: The layout for the section
+    :param key:Any: Key used to make this section visible / invisible
+    :param title:str: Title to show next to arrow
+    :param arrows:Tuple[str, str]: The strings to use to show the section is (Open, Closed).
+    :param collapsed:bool: If True, then the section begins in a collapsed state
+    :return:sg.Column: Column including the arrows, title and the layout that is pinned
+    """
+    return sg.Column([[sg.T((arrows[1] if collapsed else arrows[0]), enable_events=True, k=key+'-BUTTON-'),
+                       sg.T(title, enable_events=True, key=key+'-TITLE-')],
+                      [sg.pin(sg.Column(layout, key=key, visible=not collapsed, metadata=arrows))]], pad=(0,0))
+
+
+def get(settings, theme):
     """
     Display data in a table format
     """
     sg.popup_quick_message('Hang on for a moment, this will take a bit to create....', auto_close=True,
                            non_blocking=True, font='Default 18')
-    sg.theme()
+    if theme:
+        sg.theme(theme)
     sg.set_options(element_padding=(1, 1))
     sg.set_options(font=("Calibri", 12, "normal"))
     # --- GUI Definitions ------- #
@@ -35,19 +54,31 @@ def get():
                  "DEF": "white on sienna",
                  ".": "white",
                  "-": "wheat"}
-
+    BG_COLORS = {"WR": "DodgerBlue",
+                 "QB": "DeepPink",
+                 "RB": "LimeGreen",
+                 "TE": "coral",
+                 "PK": "purple",
+                 "DEF": "sienna",
+                 ".": "white",
+                 "-": "wheat"}
     MAX_ROWS = 17
     MAX_COLS = 12
     BOARD_LENGTH = MAX_ROWS * MAX_COLS
-    roster = "superflex"
+    roster = settings["roster_format"]
+    scoring = settings["scoring_format"]
+    scoring_settings = settings["scoring_settings"]
+    """
+    roster = "overall"
     scoring = "ppr"
-
-    scoring_settings, draft_order, league_found = load_saved_league()
+    """
+    leauge_scoring_settings, draft_order, league_found = load_saved_league()
     # draft_order = [f'TEAM {x}' for x in range(13)]
     # scoring_settings = SettingsWindow.get()
     PP = get_player_pool()
     PP = calc_scores(PP, scoring_settings, roster)
-
+    PP.loc[PP["is_keeper"] == True, 'is_drafted'] = True
+    drafted_ids = PP.loc[PP["is_drafted"] == True, "sleeper_id"].tolist()
     # Reading the last used League ID to bring in league settings.
     # draft_order used to set the buttons for the board columns/teams.
     # The league info should change if a new league is loaded.
@@ -58,7 +89,7 @@ def get():
     print("ECR Array")
     ecr_db = get_db_arr(PP, "ecr", roster=roster, scoring=scoring)
     print("Empty Draftboard Array")
-    db = get_db_arr(PP, "keepers")
+    db = get_db_arr(PP, "keepers", roster=roster, scoring=scoring)
 
     """
     # Column and Tab Layouts
@@ -91,8 +122,10 @@ def get():
                          key=(r, c),
                          metadata={"is_clicked": False,  # False,  # Leave this off by default #
                                    "button_color": BG_COLORS[db[r, c]["position"]],
-                                   "sleeper_id": "-"}, )
+                                   "sleeper_id": db[r, c]["sleeper_id"],
+                                   "yahoo_id": db[r, c]["yahoo_id"]}, )
                     for c in range(MAX_COLS)] for r in range(MAX_ROWS)]
+    # section1 = col1_layout
 
     col_db = sg.Column([[sg.Column(col1_layout,
                                    scrollable=True,
@@ -107,6 +140,7 @@ def get():
                                    pad=1)]],
                        expand_x=True,
                        expand_y=True)
+
     col2_layout = [[sg.T("Cheat Sheets")],
                    [get_cheatsheet_table(PP, roster=roster, scoring=scoring, pos="QB", hide_drafted=False)],
                    [get_cheatsheet_table(PP, roster=roster, scoring=scoring, pos="RB", hide_drafted=False)],
@@ -114,36 +148,39 @@ def get():
                    [get_cheatsheet_table(PP, roster=roster, scoring=scoring, pos="TE", hide_drafted=False)],
                    ]
     col_cheatsheets = sg.Column(col2_layout, scrollable=False, grab=True, pad=(1, 1), size=(600, 900))
-    table = get_bottom_table(PP)
+    bottom_table = get_bottom_table(PP)
     bot_pos_list = ['All', 'QB', 'RB', 'WR', 'TE', 'Flex']
     col3_layout = [[sg.T("View Position: "),
                     sg.DropDown(values=bot_pos_list,
                                 default_value=bot_pos_list[0],
                                 enable_events=True,
                                 key="-BOTTOM-POS-DD-")],
-                   [table]]
+                   [bottom_table]]
+    # section2 = col3_layout
 
     col_bottom = sg.Column(col3_layout, size=(1000, 300))
-
+   
     pane1 = sg.Pane([col_db, col_bottom],
                     orientation="vertical",
                     handle_size=5,
                     expand_x=True,
                     expand_y=True,
                     size=(1250, 900))
+    
+    col_db_bottom_pane = sg.Column([[pane1]], expand_y=True, expand_x=True)
 
-    col4 = sg.Column([[pane1]], expand_y=True, expand_x=True)
 
-    pane2 = [sg.Pane([col4, col_cheatsheets],
+    pane2 = [sg.Pane([col_db_bottom_pane, col_cheatsheets],
                      orientation="horizontal",
                      handle_size=5,
                      expand_x=True,
                      expand_y=True)]
 
-    options_layout = [[sg.Radio('PPR', "ScoringRadio", default=True, enable_events=True, k='-R1-'),
-                       sg.Radio('Half-PPR', "ScoringRadio", default=False, enable_events=True, k='-R2-'),
-                       sg.Radio('Non-PPR', "ScoringRadio", default=False, enable_events=True, k='-R3-'),
-                       sg.Checkbox("SuperFlex", default=True, enable_events=True, key="-SUPERFLEX-"),
+    options_layout = [[sg.Radio('PPR', "ScoringRadio", default=scoring == "ppr", enable_events=True, k='-R1-'),
+                       sg.Radio('Half-PPR', "ScoringRadio", default=scoring == "half_ppr", enable_events=True,
+                                k='-R2-'),
+                       sg.Radio('Non-PPR', "ScoringRadio", default=scoring == "non_ppr", enable_events=True, k='-R3-'),
+                       sg.Checkbox("SuperFlex", default=roster == "superflex", enable_events=True, key="-SUPERFLEX-"),
                        sg.Push(),
                        sg.VerticalSeparator(),
                        sg.Push(),
@@ -171,47 +208,29 @@ def get():
                       sg.Text('Search: '),
                       sg.Input(key='-Search-', size=15, enable_events=True, focus=True, tooltip="Find Player"),
                       ]
+
     layout = [[sg.Menu(menu_def)],
               top_bar_layout,
-              pane2,
+              pane2]
+
+    """
+    layout = [[sg.Menu(menu_def)],
+              top_bar_layout,
+              [Collapsible(section1, SEC1_KEY, 'Section 1', collapsed=False)],
+              #### Section 2 part ####
+              [Collapsible(section2, SEC2_KEY, 'Section 2', collapsed=False,
+                           arrows=(sg.SYMBOL_TITLEBAR_MINIMIZE, sg.SYMBOL_TITLEBAR_MAXIMIZE))],
               ]
+    """
     print('# -------Making Windows-------#')
     return sg.Window('Weez Draftboard', layout,
-                     return_keyboard_events=True, resizable=True, scaling=1, size=(1600, 900))
+                     return_keyboard_events=True,
+                     resizable=True,
+                     scaling=1,
+                     size=(1600, 900))
 
 
 """
 # WeezDraftboard()
 
-
-      
-        elif event == 'Open':
-            filename = sg.popup_get_file(
-                'filename to open', no_window=True, file_types=(("CSV Files", "*.csv"),))
-            # --- populate table with file contents --- #
-            if filename is not None:
-                with open(filename, "r") as infile:
-                    reader = csv.reader(infile)
-                    try:
-                        # read everything else into a list of rows
-                        data = list(reader)
-                    except:
-                        sg.popup_error('Error reading file')
-                        continue
-                # clear the table
-                [window[(i, j)].update('') for j in range(MAX_COLS)
-                 for i in range(MAX_ROWS)]
-
-                for i, row in enumerate(data):
-                    for j, item in enumerate(row):
-                        location = (i, j)
-                        try:  # try the best we can at reading and filling the table
-                            target_element = window[location]
-                            new_value = item
-                            if target_element is not None and new_value != '':
-                                target_element.update(new_value)
-                        except:
-                            pass
-        
-        
 """

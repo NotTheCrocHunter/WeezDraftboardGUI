@@ -10,23 +10,33 @@ Select the League
 Display League Info
 Calculate Custom Score 
 """
-def LeaguePopUp():
 
-    id_path = Path('data/league_ids')
-    id_json = Path('data/league_ids/league_ids.json')
+def PopUpDropDown(title, text, values):
+    pop_drop_window = sg.Window(title,
+        [[sg.Text(text)],
+        [sg.DropDown(values, key='-DROP-', default_value=values[0])],
+        [sg.OK(), sg.Cancel()]
+    ])
+    event, values = pop_drop_window.read()
+    return None if event != 'OK' else values['-DROP-']
+
+def LeaguePopUp():
+    id_json = Path('data/league_ids.json')
     try:
         with open(id_json, "r") as file:
-            league_id_list = json.load(file)
-            league_id_list = list(set(league_id_list))
+            id_list = json.load(file)
+            sleeper_ids = id_list["sleeper_ids"]
+            league_id_list = list(set(sleeper_ids))
             new_file = False
     except FileNotFoundError:
         new_file = True  # This will clear out the "Enter League ID text" when saving the first time
-        id_path.mkdir(parents=True, exist_ok=True)
+        # id_path.mkdir(parents=True, exist_ok=True)
         league_id_list = ["Enter League ID"]
     except json.decoder.JSONDecodeError:
         new_file = True  # This will clear out the "Enter League ID text" when saving the first time
-        id_path.mkdir(parents=True, exist_ok=True)
+        # id_path.mkdir(parents=True, exist_ok=True)
         league_id_list = ["Enter League ID"]
+
     col1_layout = [[sg.DropDown(values=league_id_list,
                                 default_value=league_id_list[0],
                                 size=(20, 1),

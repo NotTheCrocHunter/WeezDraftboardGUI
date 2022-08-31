@@ -27,7 +27,7 @@ class Roster(Players):
         self.metadata = roster_dict["metadata"]
         self.co_owners = roster_dict["co_owners"]
         self.players = players.make_player_objects(self.player_id_list)
-        self.roster = {"team_name": self.team_name, "roster": [str(player) for player in self.players]}
+        self.roster = {"team_name": self.team_name, "roster_format": [str(player) for player in self.players]}
 
     def __str__(self):
         return f"{self.team_name}, {[str(player) for player in self.players]}"
@@ -71,14 +71,14 @@ class League(BaseApi):
             roster['team_name'] = user_map[roster["owner_id"]]
             roster['player_dicts'] = [{k: v for k, v in all_players[player_id].items() if k in cols}
                                       for player_id in roster['players']]
-            # new_roster = roster['team_name'], roster['players']}
+            # new_roster = roster_format['team_name'], roster_format['players']}
             new_roster = Roster(roster)
 
             roster_list.append(roster)
         return roster_list
 
     def get_rosters_trim(self):
-        return [{"team_name": r["team_name"], "roster": r['player_dicts']} for r in self.rosters_full]
+        return [{"team_name": r["team_name"], "roster_format": r['player_dicts']} for r in self.rosters_full]
 
     def get_users(self):
         return self._call("{}/{}".format(self._base_url, "users"))

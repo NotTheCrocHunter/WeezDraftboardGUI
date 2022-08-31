@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 import json
 
+
 def scrape_data():
     """
     Check Local File and date , If local file not found or date note today, script commences
@@ -40,7 +41,7 @@ def scrape_data():
     cdf = get_chen_tiers()
     p_pool = merge_dfs(fdf, cdf, "name_pos", how="left")
     p_pool = get_sleeper_ids(p_pool, ply)
-    p_pool.loc[p_pool['player_yahoo_id'] == '33996', 'sleeper_id'] = '8151'  # = p_pool['sleeper_id']8151
+    p_pool.loc[p_pool['yahoo_id'] == '33996', 'sleeper_id'] = '8151'  # = p_pool['sleeper_id']8151
     p_pool.loc[p_pool['fantasy_pros_player_id'] == '12091', 'sleeper_id'] = '1895'  # = p_pool['sleeper_id']8151
 
     adf = get_adp_df()

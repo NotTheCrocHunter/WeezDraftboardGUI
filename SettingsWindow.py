@@ -18,30 +18,25 @@ def get():
                         "bonus_rec_wr": 0,
                         }
 
-    settings_path = Path('data/settings')
-    settings_json = Path('data/settings/scoring_settings.json')
-    try:
-        with open(settings_json, "r") as file:
-            scoring_settings = json.load(file)
-    except FileNotFoundError:
-        settings_path.mkdir(parents=True, exist_ok=True)
-        scoring_settings = default_settings
-        with open(settings_json, "w") as file:
-            json.dump(scoring_settings, file, indent=4)
+    settings_path = Path('data/settings.json')
 
-    return scoring_settings
+    with open(settings_path, "r") as file:
+        settings = json.load(file)
+
+    return settings
 
 
 def create(silent_mode=False):
     """
-    Settings window to capture scoring settings.  
+    Settings window to capture scoring_format settings.
     Reads/writes to local json file for storage. 
-    Returns scoring dict.
+    Returns scoring_format dict.
     """
-    settings_path = Path('data/settings')
-    settings_json = Path('data/settings/scoring_settings.json')
+    settings_path = Path('data/settings.json')
+    # settings_json = Path('data/settings/scoring_settings.json')
     
-    scoring_settings = get()
+    settings = get()
+    scoring_settings = settings["scoring_settings"]
 
     if silent_mode:
         return scoring_settings
@@ -65,15 +60,15 @@ def create(silent_mode=False):
     col2_layout = [[sg.Input(default_text=int(1/s["pass_yd"]), size=5, key="pass_yd")],
                    [sg.Input(default_text=int(s["pass_td"]), size=5, key="pass_td")],
                    [sg.Input(default_text=int(s["pass_int"]), size=5, key="pass_int")],
-                   [sg.Input(default_text=int(s["rec"]), size=5, key="rec")],
+                   [sg.Input(default_text=s["rec"], size=5, key="rec")],
                    [sg.Input(default_text=int(1/s["rec_yd"]/1), size=5, key="rec_yd")],
                    [sg.Input(default_text=int(s["rec_td"]), size=5, key="rec_td")],
                    [sg.Input(default_text=int(1/s["rush_yd"]/1), size=5, key="rush_yd")],
                    [sg.Input(default_text=int(s["rush_td"]), size=5, key="rush_td")],
                    [sg.Input(default_text=int(s["fum"]), size=5, key="fum")],
-                   [sg.Input(default_text=float(s["bonus_rec_te"]), size=5, key="bonus_rec_te")],
-                   [sg.Input(default_text=int(s["bonus_rec_rb"]), size=5, key="bonus_rec_rb")],
-                   [sg.Input(default_text=int(s["bonus_rec_wr"]), size=5, key="bonus_rec_wr")],
+                   [sg.Input(default_text=s["bonus_rec_te"], size=5, key="bonus_rec_te")],
+                   [sg.Input(default_text=s["bonus_rec_rb"], size=5, key="bonus_rec_rb")],
+                   [sg.Input(default_text=s["bonus_rec_wr"], size=5, key="bonus_rec_wr")],
                    ]
     
     col1 = sg.Column(col1_layout)
@@ -105,8 +100,9 @@ def create(silent_mode=False):
                                 "bonus_rec_rb": float(settings_window["bonus_rec_rb"].get()),
                                 "bonus_rec_wr": float(settings_window["bonus_rec_wr"].get()),
                                 }
-            with open(settings_json, "w") as file:
-                json.dump(scoring_settings, file, indent=4)
+            settings["scoring_settings"] = scoring_settings
+            with open(settings_path, "w") as file:
+                json.dump(settings, file, indent=4)
             # sg.popup("Scoring settings saved.", title="Settings")
             settings_window.close()
             break

@@ -100,7 +100,7 @@ def scrape_fantasy_pros(scoring="ppr", week="draft"):
     d_ranks = get_ranks(scoring="standard", pos="dst")
     ecr_ranks = pd.concat([ecr_ranks, k_ranks, d_ranks])
     for pos in ['rb', 'wr', 'te', 'superflex', 'overall']:
-        # get the scoring DFs
+        # get the scoring_format DFs
         ppr = get_ranks(scoring="ppr", pos=pos)
         std = get_ranks(scoring="standard", pos=pos)
         half = get_ranks(scoring="half-point-ppr", pos=pos)
@@ -115,12 +115,16 @@ def scrape_fantasy_pros(scoring="ppr", week="draft"):
         else:
             ecr_ranks = merge_dfs(ecr_ranks, pos_df, "player_id", how="left")
 
-    # Drop dupes and Fill NA rank columns
+    # Drop dupes and Fill NA rank columns, rename yahoo column
+    ecr_ranks.rename(columns={"player_yahoo_id": "yahoo_id"}, inplace=True)
     ecr_ranks.drop_duplicates(subset=['player_id'], keep='last', inplace=True)  # Dropping the dupes because Taysom Hill
     for rank in ["superflex", "overall"]:
         for s in ["ppr", "half_ppr", "non_ppr"]:
             ecr_ranks[f'{rank}_{s}_rank'].fillna(999, inplace=True)
-            ecr_ranks.astype({f'{rank}_{s}_rank': int})
+            try:
+                ecr_ranks.astype({f'{rank}_{s}_rank': int})
+            except:
+                pass
 
     end_time = time.time()
     print(f"Total time to scrape Fantasy Pros ranks: {end_time - start_time}")

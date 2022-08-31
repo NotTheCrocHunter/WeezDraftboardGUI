@@ -43,7 +43,7 @@ def get_chen_tiers():
         cols_for_df = [v for k, v in col_changes.items()]
 
         # ----- Nested For Loop to get the cheat sheet for each position for each score type ----#
-        # Going to Concat each position and then merge the 3 scoring DFs.
+        # Going to Concat each position and then merge the 3 scoring_format DFs.
         score_df_list = []
         for s in ['ppr', 'half_ppr', 'non_ppr']:
             pos_df_list = []
