@@ -3,18 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Working on the main loop and the yahoo connectivity.  Added themes!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/adp/adp.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_data.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_qb.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_rb.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_superflex.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_te.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros/fpros_ppr_rank_wr.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/QB.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/RB.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/TE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/WR.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rankings/chen/chen_tiers.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/draft_ids.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/draft_ids.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/draftboard_brain.py" beforeDir="false" afterPath="$PROJECT_DIR$/draftboard_brain.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,9 +103,9 @@
         <env name="YAHOO_CONSUMER_KEY" value="dj0yJmk9R21JN0J0RGxPVGNJJmQ9WVdrOWRXWmpkM1Z6UVhFbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PThi" />
         <env name="YAHOO_CONSUMER_SECRET" value="1790d3c912407ba9c26063319bf07fa745e8b731" />
       </envs>
-      <option name="SDK_HOME" value="$PROJECT_DIR$/venv/bin/python" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />

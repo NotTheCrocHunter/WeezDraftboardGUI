@@ -90,7 +90,10 @@ def get_db_arr(df, key, roster, scoring):
         non_kept_picks = [n + 1 for n in range(len(df)) if n + 1 not in df['pick_no'].to_list()]
         df[pick_no] = df["pick_no"]
         df.sort_values(by=sort.lower(), ascending=True, inplace=True, na_position="last")
-        df.loc[df['is_drafted'] != True, f'{key}_pick_no'] = non_kept_picks
+        try:
+            df.loc[df['is_drafted'] != True, f'{key}_pick_no'] = non_kept_picks
+        except ValueError:
+            df.loc[df['is_keeper'] != True, f'{key}_pick_no'] = non_kept_picks
         df.sort_values(by=pick_no, ascending=True, inplace=True)
         arr = np.array(df[:MAX_ROWS * MAX_COLS].to_dict("records"))
         arr = np.reshape(arr, (MAX_ROWS, MAX_COLS))
