@@ -212,8 +212,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.main" />
       <item itemvalue="Python.DraftboardWindow" />
+      <item itemvalue="Python.main" />
       <item itemvalue="Python.make_setup_file" />
       <item itemvalue="Python.setup" />
       <item itemvalue="Python.yahoo_draft_reader" />
