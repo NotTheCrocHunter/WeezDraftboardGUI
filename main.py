@@ -167,7 +167,8 @@ if __name__ == '__main__':
                 # ---- set the drafted_ids as True ---- #
                 PP.loc[PP["yahoo_id"].isin(drafted_ids), "is_drafted"] = True
 
-
+            #update_buttons(window, MAX_COLS, MAX_ROWS, BG_COLORS, db_arr=db)
+            update_all_tables(PP, window, roster_format, scoring_format)
                 # finally:
                 #     if live_board:
                 #         window["-LOAD-DB-"].click()
@@ -208,7 +209,7 @@ if __name__ == '__main__':
                 with open('data/draft_ids.json', "w") as file:
                     json.dump(id_list, file, indent=4)
                 id_text = draft_id
-                draft_id = "l." + draft_id[-7:]
+                draft_id = "414.l." + draft_id[-7:]
                 # draft_id = "414.l." + draft_id[-7:]
                 # draft_id = 9881550
                 # draft_id = "414.l." + "9882969"
@@ -450,9 +451,9 @@ if __name__ == '__main__':
         elif event == 'Set Keepers':
             PP = KeeperPopUp(PP)
             # Refresh Arrays after Keeper Pop Up
-            adp_db = get_db_arr(PP, "adp")
-            ecr_db = get_db_arr(PP, "ecr")
-            db = get_db_arr(PP, "keepers")
+            adp_db = get_db_arr(PP, "adp", roster_format, scoring_format)
+            ecr_db = get_db_arr(PP, "ecr", roster_format, scoring_format)
+            db = get_db_arr(PP, "keepers", roster_format, scoring_format)
 
             # Placing keepers on the empty draft board
             keeper_pool = PP.loc[PP["is_keeper"] == True].to_dict("records")

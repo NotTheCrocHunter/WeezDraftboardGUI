@@ -9,7 +9,13 @@ from datetime import datetime
 from pathlib import Path
 import json
 
+players = Players()
+ply = players.get_players_df()
+fdf = scrape_fantasy_pros()
+cdf = get_chen_tiers()
+adf = get_adp_df()
 
+print("hi")
 def scrape_data():
     """
     Check Local File and date , If local file not found or date note today, script commences
@@ -80,5 +86,5 @@ def scrape_data():
 
 
 # df = get_chen_tiers('non-ppr')
-# df = scrape_data()
-# print(df)
+df = scrape_data()
+print(df)

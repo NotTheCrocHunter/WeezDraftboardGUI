@@ -5,13 +5,13 @@
         "pass_yd": 0.04,
         "pass_td": 4.0,
         "pass_int": -2.0,
-        "rec": 0.5,
+        "rec": 1.0,
         "rec_yd": 0.1,
         "rec_td": 6.0,
         "rush_yd": 0.1,
         "rush_td": 6.0,
         "fum": -2.0,
-        "bonus_rec_te": 0.0,
+        "bonus_rec_te": 0.5,
         "bonus_rec_rb": 0.0,
         "bonus_rec_wr": 0.0
     }

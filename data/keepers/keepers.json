@@ -45,13 +45,13 @@
         "round": 5
     },
     {
-        "name": "AJ Dillon",
-        "sleeper_id": "6828",
-        "button_text": "AJ\nDillon\nRB (GB) 14",
+        "name": "Gabriel Davis",
+        "sleeper_id": "6943",
+        "button_text": "Gabe\nDavis\nWR (BUF) 7",
         "is_keeper": true,
-        "pick_no": 83,
+        "pick_no": 182,
         "draft_slot": 11,
-        "round": 7
+        "round": 16
     },
     {
         "name": "Jaylen Waddle",
@@ -144,6 +144,15 @@
         "round": 14
     },
     {
+        "name": "Pat Freiermuth",
+        "sleeper_id": "7600",
+        "button_text": "Pat\nFreiermuth\nTE (PIT) 9",
+        "is_keeper": true,
+        "pick_no": 179,
+        "draft_slot": 11,
+        "round": 15
+    },
+    {
         "name": "Cordarrelle Patterson",
         "sleeper_id": "1535",
         "button_text": "Cordarrelle\nPatterson\nRB (ATL) 14",
@@ -159,15 +168,6 @@
         "is_keeper": true,
         "pick_no": 181,
         "draft_slot": 12,
-        "round": 16
-    },
-    {
-        "name": "Gabriel Davis",
-        "sleeper_id": "6943",
-        "button_text": "Gabe\nDavis\nWR (BUF) 7",
-        "is_keeper": true,
-        "pick_no": 182,
-        "draft_slot": 11,
         "round": 16
     },
     {
