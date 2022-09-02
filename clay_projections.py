@@ -3,7 +3,7 @@ import tabula
 import os
 import pandas as pd
 # import sleeper_ids as si
-# from sleeper_wrapper import Players
+from sleeper_wrapper import Players
 import requests
 from datetime import datetime
 from pathlib import Path
@@ -119,12 +119,21 @@ def get_clay_projections():
     with open(clay_json, "w") as file:
         json.dump(clay_dict, file, indent=4)
     end_time = time.time()
-    print(f"Total time to get Clay Projectios: {end_time - start_time}")
+    print(f"Total time to get Clay Projections: {end_time - start_time}")
     return clay_df
 
-clay_df = get_clay_projections()
 
+clay_df = get_clay_projections()
+sleeper = Players().get_players_df(["QB"])
+sleeper = sleeper.loc[sleeper["team"].isna() == False]
+sleeper = sleeper.loc[sleeper["depth_chart_order"].isna() == False]
+s_cols = ['full_name', 'player_id', 'team', 'search_full_name', 'first_name', 'last_name']
+s = sleeper[s_cols]
+c = clay_df.loc[clay_df["position"] == "QB"]
+c["search_full_name"] = c["name"]
+#b s_df = sleeper.get_players_df(["QB"])
 print(clay_df.head())
+
 
 
 

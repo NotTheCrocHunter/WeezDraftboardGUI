@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Tweaked the popup dropdown for sleeper drafts">
-      <change afterPath="$PROJECT_DIR$/clay_projections.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/clay_projections.pdf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/yahoo_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-plugin.xml" afterDir="false" />
+    <list default="true" id="513c7a90-8ed9-4f48-9131-38a68ccba696" name="Changes" comment="Added clay projections.  Just need to add sleeper_ids to them.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/adp_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/adp_data.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/chen_tiers.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/chen_tiers.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/draft_ids.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/draft_ids.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/fpros_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/fpros_data.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/keepers/keepers.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/keepers/keepers.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/player_pool_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/player_pool_data.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/yahoo/oauth2.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/yahoo/oauth2.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrape_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrape_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clay_projections.py" beforeDir="false" afterPath="$PROJECT_DIR$/clay_projections.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sleeper_ids.py" beforeDir="false" afterPath="$PROJECT_DIR$/sleeper_ids.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sleeper_wrapper/league.py" beforeDir="false" afterPath="$PROJECT_DIR$/sleeper_wrapper/league.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sleeper_wrapper/players.py" beforeDir="false" afterPath="$PROJECT_DIR$/sleeper_wrapper/players.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -495,7 +485,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661969192228</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Added clay projections.  Just need to add sleeper_ids to them.">
+      <created>1662060671028</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1662060671028</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -522,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Worked on fixing the league pop up when the league ID JSON is empty or new." />
     <MESSAGE value="Cleaning up the KeeperPopUp and the loading of mock keepers." />
     <MESSAGE value="Removed the tabs for the cheatsheets.  Still working on getting the tier to display as an int and not float.  The issue arises in _brain when merging new_df and df" />
     <MESSAGE value="Added function to draftboard_brain to scrape the ranking tiers from BChen.  Originally was in its own file (&quot;scrape_bchen.py&quot;), however, I wasn't able to get the sleeper ids to match." />
@@ -547,7 +543,8 @@
     <MESSAGE value="Working on the main loop and the yahoo connectivity.  Added themes!" />
     <MESSAGE value="Commit after getting it up and running on the pc." />
     <MESSAGE value="Tweaked the popup dropdown for sleeper drafts" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tweaked the popup dropdown for sleeper drafts" />
+    <MESSAGE value="Added clay projections.  Just need to add sleeper_ids to them." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added clay projections.  Just need to add sleeper_ids to them." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -604,8 +601,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/clay_projections.py</url>
-          <line>122</line>
-          <option name="timeStamp" value="477" />
+          <line>134</line>
+          <option name="timeStamp" value="478" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

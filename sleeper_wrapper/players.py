@@ -35,11 +35,11 @@ class Players(BaseApi):
     def __init__(self):
         self.dir_path = Path('data/players')
         self.file_path = Path('data/players/all_players.json')
-        self.all_players = self.get_all_players()
+        # self.all_players = self.get_all_players()
         self.players_df = self.get_players_df()
 
     def get_players_df(self, position_list=['QB', 'RB', 'WR', 'TE', 'K', 'DEF']):
-        df = pd.DataFrame.from_dict(self.all_players, orient="index")
+        df = pd.DataFrame.from_dict(self.get_all_players(), orient="index")
 
         return df[df.position.isin(position_list)]
 

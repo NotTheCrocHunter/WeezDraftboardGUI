@@ -4,8 +4,8 @@ from .base_api import BaseApi
 from .stats import Stats
 from .players import Players
 
-players = Players()
-all_players = players.all_players
+# players = Players()
+# all_players = players.all_players
 
 
 # pdb.set_trace()
