@@ -8,6 +8,8 @@ from sleeper_wrapper import Players
 from datetime import datetime
 from pathlib import Path
 import json
+from clay_projections import get_clay_projections
+
 
 players = Players()
 ply = players.get_players_df()
@@ -71,6 +73,26 @@ def scrape_data():
     p_pool = merge_dfs(p_pool, adf, "sleeper_id", how="left")
     p_pool = p_pool.loc[p_pool['sleeper_id'].isna() == False]
     p_pool = pd.concat([p_pool, adp_kd])
+
+    """
+    DROP SCORING COLUMNS AND MERGE CLAY PROJECTIONS
+    
+    """
+    # removes empty sleeper_id columns from p_pool
+    p_pool.drop(p_pool.columns[[-1, -2, -3]], axis=1, inplace=True)
+    # remove ecr_projection columns for now
+    p_pool.drop(['fpts', 'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
+                       'pass_int', 'rush_yd', 'rush_td', 'rec',
+               'rec_yd', 'rec_td'], axis=1, inplace=True)
+    clay_df = get_clay_projections()
+    clay_df.rename(columns={'carry': 'rush_att'}, inplace=True)
+    clay_cols = ['clay_pos_rank', 'fpts', 'games', 'pass_att', 'pass_cmp', 'pass_yd', 'pass_td', 'pass_int', 'sk',
+                 'rush_att', 'rush_yd', 'rush_td', 'targets', 'rec', 'rec_yd', 'rec_td', 'car% ', 'targ%']
+    clay_df.fillna(0, inplace=True)
+    clay_df[clay_cols] = clay_df[clay_cols].apply(pd.to_numeric, errors='coerce', axis=1)
+    #    = clay_df[clay_cols].
+    p_pool = merge_dfs(p_pool, clay_df, 'sleeper_id', how="left")
+    print(clay_df.columns)
 
     """
     Fix Nan Columns

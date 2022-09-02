@@ -2,14 +2,14 @@ import camelot
 import tabula
 import os
 import pandas as pd
-# import sleeper_ids as si
+from sleeper_ids import *
 from sleeper_wrapper import Players
 import requests
 from datetime import datetime
 from pathlib import Path
 import json
 import time
-
+import re
 
 def download_clay_pdf():
     clay_url = 'https://g.espncdn.com/s/ffldraftkit/22/NFLDK2022_CS_ClayProjections2022.pdf'
@@ -62,12 +62,14 @@ def get_clay_projections():
     qb_tables.export('data/clay/clay_qb.csv', f='csv')
     clay_qb = qb_tables[0].df
     clay_qb.drop(labels=[0, 1], inplace=True)
-    clay_qb.columns = ['name', 'team', 'clay_pos_rank', 'fpts', 'games', 'pass_att', 'pass_comp', 'pass_yd', 'pass_td', 'pass_int', 'sk', 'carry', 'rush_yd', 'rush_td']
+    clay_qb.columns = ['name', 'team', 'clay_pos_rank', 'fpts', 'games', 'pass_att', 'pass_cmp', 'pass_yd', 'pass_td',
+                       'pass_int', 'sk', 'carry', 'rush_yd', 'rush_td']
     clay_qb.loc[:, 'position'] = "QB"
     clay_qb = rename_teams(clay_qb)
 
     print("Reading RB Tables")
-    rb_cols = ['name', 'team', 'clay_pos_rank', 'fpts', 'games', 'carry', 'rush_yd', 'rush_td', 'targets', 'rec', 'rec_yd', 'rec_td', 'car% ', 'targ%']
+    rb_cols = ['name', 'team', 'clay_pos_rank', 'fpts', 'games', 'carry', 'rush_yd', 'rush_td', 'targets', 'rec',
+               'rec_yd', 'rec_td', 'car% ', 'targ%']
     rb_tables = camelot.read_pdf(file, pages='36,37,38', flavor="stream")
     rb_tables.export('data/clay/clay_rb.csv', f='csv')
     rb_df_list = []
@@ -111,8 +113,26 @@ def get_clay_projections():
 
     clay_te = pd.concat(te_df_list)
 
+    # Combine positional columns and create the search_full_name column for matching
     clay_df = pd.concat([clay_qb, clay_rb, clay_wr, clay_te])
     clay_df.fillna(value=0, inplace=True)
+    clay_df.loc[:, "search_full_name"] = clay_df["name"].str.lower().replace(r'[^a-zA-Z]', '').str.\
+        replace(r'(?:iii|ii|iv|jr|Jr)','', regex=True).str.replace(" ", "").str.replace("-", "").str.replace(".", "")
+    clay_df.loc[clay_df["name"] == "Michael A. Thomas"] = "Michael Thomas"
+
+    # iterate through the positions to grab the sleeper ids
+    clay_sl_list = []
+    for pos in ["QB", "WR", "RB", "TE"]:
+        sleeper = Players().get_players_df([pos])
+        sleeper = sleeper.loc[sleeper["team"].isna() == False]
+        s_cols = ['full_name', 'player_id', 'team', 'search_full_name', 'first_name', 'last_name']
+        sleeper = sleeper[s_cols]
+        clay = clay_df.loc[clay_df["position"] == pos]
+        clay = get_sleeper_ids(clay, sleeper)
+        clay_sl_list.append(clay)
+
+    clay_df = pd.concat(clay_sl_list)
+
     clay_df.to_csv('data/clay/clay_projections.csv', index=False)
     clay_dict = {"accessed": TODAY, "players": clay_df.to_dict(orient="records")}
 
@@ -121,20 +141,6 @@ def get_clay_projections():
     end_time = time.time()
     print(f"Total time to get Clay Projections: {end_time - start_time}")
     return clay_df
-
-
-clay_df = get_clay_projections()
-sleeper = Players().get_players_df(["QB"])
-sleeper = sleeper.loc[sleeper["team"].isna() == False]
-sleeper = sleeper.loc[sleeper["depth_chart_order"].isna() == False]
-s_cols = ['full_name', 'player_id', 'team', 'search_full_name', 'first_name', 'last_name']
-s = sleeper[s_cols]
-c = clay_df.loc[clay_df["position"] == "QB"]
-c["search_full_name"] = c["name"]
-#b s_df = sleeper.get_players_df(["QB"])
-print(clay_df.head())
-
-
 
 
 """
