@@ -14,6 +14,7 @@ import os
 
 if __name__ == '__main__':
     RELIEF_ = "flat"  # "groove" "raised" "sunken" "solid" "ridge"
+
     BG_COLORS = {"WR": "white on DodgerBlue",
                  "QB": "white on DeepPink",
                  "RB": "white on LimeGreen",
@@ -22,6 +23,16 @@ if __name__ == '__main__':
                  "DEF": "white on sienna",
                  ".": "white",
                  "-": "wheat"}
+    """
+    BG_COLORS = {"WR": "DodgerBlue",
+                 "QB": "DeepPink",
+                 "RB": "LimeGreen",
+                 "TE": "coral",
+                 "PK": "purple",
+                 "DEF": "sienna",
+                 ".": "white",
+                 "-": "wheat"}
+    """
     SETTINGS_PATH = Path('data/settings.json')
     MAX_ROWS = 17
     MAX_COLS = 12
@@ -195,7 +206,7 @@ if __name__ == '__main__':
                 default_text = "Enter Yahoo ID"
             else:
                 default_text = league_id_list[0]
-            draft_id = PopUpDropDown("Enter Yahoo ID", "Enter the 7 Digit Yahoo League or Draft ID", league_id_list)
+            draft_id = PopUpDropDown("Enter Yahoo ID", "Enter the 7 or 8 Digit Yahoo League ID", league_id_list)
             # draft_id = sg.PopupGetText("Enter the Yahoo Draft ID or URL.", default_text=default_text)
             # print(draft_id)
             if not draft_id:
@@ -209,7 +220,7 @@ if __name__ == '__main__':
                 with open('data/draft_ids.json', "w") as file:
                     json.dump(id_list, file, indent=4)
                 id_text = draft_id
-                draft_id = "414.l." + draft_id[-7:]
+                draft_id = "414.l." + draft_id
                 # draft_id = "414.l." + draft_id[-7:]
                 # draft_id = 9881550
                 # draft_id = "414.l." + "9882969"

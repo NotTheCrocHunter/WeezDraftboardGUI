@@ -17,7 +17,7 @@ fdf = scrape_fantasy_pros()
 cdf = get_chen_tiers()
 adf = get_adp_df()
 
-print("hi")
+
 def scrape_data():
     """
     Check Local File and date , If local file not found or date note today, script commences
