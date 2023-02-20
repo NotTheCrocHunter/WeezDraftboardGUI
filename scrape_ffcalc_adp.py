@@ -43,7 +43,7 @@ def get_adp_df(teams=12, year=YEAR):
     cols = {"2qb": 'superflex', 'ppr': 'ppr', 'half-ppr': 'half_ppr', 'standard': 'non_ppr'}
     df_list = []
     for adp_type in api_points:
-        url = f"https://fantasyfootballcalculator.com/api/v1/adp/{adp_type}?teams={teams}&year={YEAR}&position=all"
+        url = f"https://fantasyfootballcalculator.com/api/v1/adp/{adp_type}?teams={teams}&year=2021&position=all"
 
         response = requests.get(url)
         adp_data = response.json()
@@ -78,6 +78,7 @@ def get_adp_df(teams=12, year=YEAR):
 
 """
 df = get_adp_df()
-
+df.to_html('data/calc.html')
 print(df)
+
 """

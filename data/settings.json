@@ -1,5 +1,5 @@
 {
-    "roster_format": "superflex",
+    "roster_format": "overall",
     "scoring_format": "ppr",
     "scoring_settings": {
         "pass_yd": 0.04,
@@ -11,7 +11,7 @@
         "rush_yd": 0.1,
         "rush_td": 6.0,
         "fum": -2.0,
-        "bonus_rec_te": 0.5,
+        "bonus_rec_te": 0.0,
         "bonus_rec_rb": 0.0,
         "bonus_rec_wr": 0.0
     }

@@ -63,7 +63,7 @@ def get_chen_tiers():
                                         'Tier': f'chen_tier_{s}',
                                         'Player.Name': 'name',
                                         'Position': 'position'}, inplace=True)
-                temp_df['name_pos'] = temp_df['name'] + " " + temp_df['position']
+                temp_df['name_pos'] = temp_df['name'] + " " + p
                 pos_df_list.append(temp_df)
             pos_df = pd.concat(pos_df_list)
             score_df_list.append(pos_df)

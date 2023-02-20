@@ -111,6 +111,8 @@ class Stats(BaseApi):
     def get_consistency_ranks(self):
 
         pass
+
+
     def get_stats_average(self):
         exclude_keys = ["position", "name", "age", "sleeper_id", "total_gp", "total_gms_active",
                         "total_pts_ppr", "total_pts_custom", "total_pts_std"]

@@ -1,3 +1,5 @@
+import pandas as pd
+
 import DraftboardWindow
 from DraftboardWindow import SEC1_KEY, SEC2_KEY
 import pdb
@@ -51,7 +53,7 @@ if __name__ == '__main__':
     draft_order used to set the buttons for the board columns/teams.
     The league info should change if a new league is loaded. 
     """
-    leauge_scoring_settings, draft_order, league_found = load_saved_league()
+    league_scoring_settings, draft_order, league_found = load_saved_league()
     # draft_order = [f'TEAM {x}' for x in range(13)]
     # scoring_settings = SettingsWindow.get()
     PP = get_player_pool()
@@ -60,6 +62,9 @@ if __name__ == '__main__':
     drafted_ids = PP.loc[PP["is_drafted"] == True, "sleeper_id"].tolist()
 
     adp_db = get_db_arr(PP, "adp", roster=roster_format, scoring=scoring_format)
+    adp_html_df = pd.DataFrame(adp_db)
+    #with open('data/adp_html.html') as file:
+    adp_html_df.to_html('data/adp_html.html')
     ecr_db = get_db_arr(PP, "ecr", roster=roster_format, scoring=scoring_format)
     db = get_db_arr(PP, "keepers", roster=roster_format, scoring=scoring_format)
     sleeper_live_draft = False
