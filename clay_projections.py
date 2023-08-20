@@ -11,6 +11,7 @@ import json
 import time
 import re
 
+
 def download_clay_pdf():
     clay_url = 'https://g.espncdn.com/s/ffldraftkit/22/NFLDK2022_CS_ClayProjections2022.pdf'
     file_name = 'data/clay/clay_projections.pdf'
@@ -42,7 +43,8 @@ def get_clay_projections():
     try:
         with open(clay_json, "r") as file:
             clay_dict = json.load(file)
-            clay_saved_date = datetime.fromisoformat(clay_dict["accessed"]).strftime('%Y-%m-%d')
+            clay_saved_date = datetime.fromisoformat(clay_dict["last_saved"]).strftime('%Y-%m-%d')
+            # last_update = clay_dict['last_update']
     except FileNotFoundError:
         clay_saved_date = None
 
@@ -53,9 +55,12 @@ def get_clay_projections():
     else:
         print("Updating Mike Clay projections. This may take a moment")
         pass
+
     start_time = time.time()
     download_clay_pdf()
     file = 'data/clay/clay_projections.pdf'
+
+
 
     print("Reading QB Table")
     qb_tables = camelot.read_pdf(file, pages='35', flavor="stream")
@@ -134,7 +139,7 @@ def get_clay_projections():
     clay_df = pd.concat(clay_sl_list)
 
     clay_df.to_csv('data/clay/clay_projections.csv', index=False)
-    clay_dict = {"accessed": TODAY, "players": clay_df.to_dict(orient="records")}
+    clay_dict = {'last_saved': TODAY, 'players': clay_df.to_dict(orient='records'), 'last_update': last_update}
 
     with open(clay_json, "w") as file:
         json.dump(clay_dict, file, indent=4)

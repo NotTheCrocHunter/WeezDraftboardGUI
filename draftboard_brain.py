@@ -71,8 +71,7 @@ def get_db_arr(df, key, roster, scoring):
         scoring = 'non_ppr'
     elif scoring.lower() in ['half', 'half-ppr', 'half_ppr']:
         scoring = 'half_ppr'
-    # else:
-    #     scoring = scoring.lower()
+
     if roster.lower() == 'superflex':
         adp_sort = roster.lower()
     else:
